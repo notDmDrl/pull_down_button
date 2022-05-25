@@ -8,8 +8,7 @@ customisation options.
 
 ---
 
-This package only tries to visually replicate native counterpart, some parts might be somewhat different
-(e.g route animations are copied from `PopupMenuButton`). Pull requests are welcomed.
+This package only tries to visually replicate native counterpart, some parts might be somewhat different.
 
 #### Flutter availabilty:
 
@@ -32,7 +31,7 @@ Since this package uses new Flutter feature `ThemeExtension` for theming, minimu
 
 ## PullDownButton
 
-![PullDownButton example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/usage.png)
+![PullDownButton example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/usage.png)
 
 `PullDownButton` is a widget used to show pull-down menu. Unlike `PopupMenuButton`, `PullDownButton` allows better customization of button that will be used to show pull-down menu via `buttonBuilder` builder function.
 
@@ -85,7 +84,7 @@ Available options:
 
 ## PullDownMenuItem
 
-![PullDownMenuItem example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/item.png)
+![PullDownMenuItem example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/item.png)
 
 `PullDownMenuItem` is a widget used to create cupertino style pull-down menu item.
 
@@ -112,7 +111,7 @@ PullDownMenuItem(
 
 ## SelectablePullDownMenuItem
 
-![SelectablePullDownMenuItem example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/selectable_item.png)
+![SelectablePullDownMenuItem example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/selectable_item.png)
 
 `SelectablePullDownMenuItem` is a widget used to create cupertino style pull-down menu item with selection state.
 
@@ -129,7 +128,7 @@ SelectablePullDownMenuItem(
 
 Based on [guidelines](hig_link), if menu items contains at least one tappable menu item of type `SelectablePullDownMenuItem` all of `PullDownMenuItem`s should also be of type `SelectablePullDownMenuItem` (to insert additional padding so all items have same). Although, manual change of all `PullDownMenuItem`s is not needed, it is done automatically.
 
-![SelectablePullDownMenuItem conversion example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/dividers.png)
+![SelectablePullDownMenuItem conversion example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/dividers.png)
 
 <br/>
 
@@ -146,7 +145,7 @@ Based on [guidelines](hig_link), if menu items contains at least one tappable me
 
 ### PullDownMenuDivider
 
-![PullDownMenuDivider example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/dividers.png)
+![PullDownMenuDivider example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/dividers.png)
 
 `PullDownMenuDivider` is a widget used to create cupertino style pull-down menu divider (small or large).
 
@@ -186,7 +185,7 @@ There is also convenience method to wrap multiple menu items with small dividers
 
 ### PullDownMenuTitle
 
-![PullDownMenuTitle example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/title.png)
+![PullDownMenuTitle example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title.png)
 
 `PullDownMenuTitle` is a widget used to create cupertino style pull-down menu title (usually at the top of menu).
 
@@ -204,6 +203,12 @@ const PullDownMenuTitle(title: Text('Pull-down menu')),
 ## Theming
 
 This package also provides additional customisation. By default, iOS15 theme is used, but it is also possible to override defaults with widget parameters (see above) or with `PullDownButtonTheme` theme extension.
+
+#### Default theme
+
+| Light Theme                                                                                                               | Dark Theme                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| ![light default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title.png) | ![dark default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title_dark.png) |
 
 ### PullDownButtonTheme
 
@@ -243,7 +248,7 @@ ThemeData(
 Here is example of using `PullDownButtonTheme` with Material 3 color scheme colors & text styles from [Material 3 Menu specs](https://m3.material.io/components/menus/specs).
 | Custom Material 3 light theme | Custom Material 3 dark theme |
 | --- | --- |
-| ![light theme example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/theme_light.png) | ![dark theme example](https://github.com/notDmDrl/pull_down_button/raw/master/readme_content/theme_dark.png) |
+| ![light theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/theme_light.png) | ![dark theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/theme_dark.png) |
 
 ---
 
