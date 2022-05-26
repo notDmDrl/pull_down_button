@@ -14,7 +14,7 @@ const _kLargeDividerColor = CupertinoDynamicColor.withBrightness(
 
 const _kBackgroundColor = CupertinoDynamicColor.withBrightness(
   color: Color.fromRGBO(237, 237, 237, 0.8),
-  darkColor: Color.fromRGBO(30, 30, 30, 0.75),
+  darkColor: Color.fromRGBO(37, 37, 37, 0.5),
 );
 
 const _kTitleColor = CupertinoDynamicColor.withBrightness(

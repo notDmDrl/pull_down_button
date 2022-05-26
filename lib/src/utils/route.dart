@@ -1,36 +1,46 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 
-import '../items/entry.dart';
+import '../../pull_down_button.dart';
 import 'constants.dart';
 import 'menu.dart';
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, comment_references
 
-// ignore: comment_references
 /// Copy of [_PopupMenuRoute] from [PopupMenuButton] implementation since it's
 /// private there.
 @protected
 class PullDownMenuRoute extends PopupRoute<void> {
+  /// Copy of [_PopupMenuRoute] from [PopupMenuButton] implementation since it's
+  /// private there.
   PullDownMenuRoute({
     required this.position,
     required this.items,
     required this.barrierLabel,
-    required this.capturedThemes,
     required this.backgroundColor,
+    required this.buttonSize,
+    required this.menuPosition,
   }) : itemSizes = List<Size?>.filled(items.length, null);
 
-  final RelativeRect position;
   final List<PullDownMenuEntry> items;
   final List<Size?> itemSizes;
-  final CapturedThemes capturedThemes;
   final Color? backgroundColor;
+
+  @protected
+  final RelativeRect position;
+
+  @protected
+  final Size buttonSize;
+
+  @protected
+  final PullDownMenuPosition menuPosition;
 
   @override
   Animation<double> createAnimation() => CurvedAnimation(
         parent: super.createAnimation(),
         curve: kCurve,
-        reverseCurve: kCurve.flipped,
+        reverseCurve: kCloseCurve.flipped,
       );
 
   @override
@@ -54,6 +64,7 @@ class PullDownMenuRoute extends PopupRoute<void> {
     final Widget menu = PullDownMenu(route: this);
 
     final mediaQuery = MediaQuery.of(context);
+
     return MediaQuery.removePadding(
       context: context,
       removeTop: true,
@@ -68,8 +79,10 @@ class PullDownMenuRoute extends PopupRoute<void> {
             Directionality.of(context),
             mediaQuery.padding,
             _avoidBounds(mediaQuery),
+            buttonSize,
+            menuPosition,
           ),
-          child: capturedThemes.wrap(menu),
+          child: menu,
         ),
       ),
     );
@@ -87,6 +100,8 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     this.textDirection,
     this.padding,
     this.avoidBounds,
+    this.buttonSize,
+    this.menuPosition,
   );
 
   final RelativeRect position;
@@ -94,6 +109,8 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   final TextDirection textDirection;
   final EdgeInsets padding;
   final Set<Rect> avoidBounds;
+  final Size buttonSize;
+  final PullDownMenuPosition menuPosition;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
@@ -127,6 +144,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
       avoidBounds,
     );
     final subScreen = _closestScreen(subScreens, originCenter);
+
     return _fitInsideScreen(subScreen, childSize, wantedPosition);
   }
 
@@ -138,6 +156,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
         closest = screen;
       }
     }
+
     return closest;
   }
 
@@ -151,14 +170,32 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
         screen.right - kMenuScreenPadding - padding.right) {
       x = screen.right - childSize.width - kMenuScreenPadding - padding.right;
     }
+
+    // Subtract from `y` to fit all of a menu above wanted position.
+    if (menuPosition == PullDownMenuPosition.above) {
+      y -= childSize.height;
+    }
+    // Add to `y` to fit all of a menu under wanted position.
+    else if (menuPosition == PullDownMenuPosition.under) {
+      y += buttonSize.height;
+    }
+
+    // Check for available space at the top of the screen.
+
+    // Never triggers if `menuPosition` == [PullDownMenuPosition.under] since
+    // we already apply correct offset in `showButtonMenu()`.
     if (y < screen.top + kMenuScreenPadding + padding.top) {
-      y = kMenuScreenPadding + padding.top;
-    } else if (y + childSize.height >
+      // Threat [PullDownMenuPosition.over] and [PullDownMenuPosition.above]
+      // as same.
+
+      y = padding.top;
+    }
+    // Check for available space at the bottom of the screen.
+    else if (y + childSize.height >
         screen.bottom - kMenuScreenPadding - padding.bottom) {
-      y = screen.bottom -
-          childSize.height -
-          kMenuScreenPadding -
-          padding.bottom;
+      // Threat [PullDownMenuPosition.over] and [PullDownMenuPosition.under]
+      // as same.
+      y = screen.bottom - childSize.height - padding.bottom;
     }
 
     return Offset(x, y);

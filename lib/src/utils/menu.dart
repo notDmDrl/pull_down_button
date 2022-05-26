@@ -26,8 +26,6 @@ class PullDownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final unit = 1.0 / route.items.length;
-
     final children = <Widget>[];
 
     for (var i = 0; i < route.items.length; i += 1) {
@@ -39,21 +37,41 @@ class PullDownMenu extends StatelessWidget {
       );
     }
 
-    final height = CurveTween(curve: Interval(0, unit * route.items.length));
-
     final Widget child = _MenuBody(children: children);
 
     return AnimatedBuilder(
       animation: route.animation!,
-      builder: (context, child) => _Decoration(
-        backgroundColor: route.backgroundColor,
-        child: Align(
-          alignment: AlignmentDirectional.topEnd,
-          widthFactor: height.evaluate(route.animation!),
-          heightFactor: height.evaluate(route.animation!),
-          child: child,
-        ),
-      ),
+      builder: (context, child) {
+        final animate = route.animation!;
+        final evaluate = animate.value;
+
+        return FadeTransition(
+          opacity: animate,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              boxShadow: [
+                const BoxShadow(
+                  color: Color.fromRGBO(0, 0, 0, 0.1),
+                  blurRadius: 64,
+                  spreadRadius: 64,
+                ).scale(evaluate),
+              ],
+            ),
+            child: _Decoration(
+              backgroundColor: route.backgroundColor,
+              child: Align(
+                alignment: AlignmentDirectional.center,
+                widthFactor: evaluate,
+                heightFactor: evaluate,
+                child: FadeTransition(
+                  opacity: animate,
+                  child: child,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
       child: child,
     );
   }
@@ -80,10 +98,8 @@ class _Decoration extends StatelessWidget {
       borderRadius: kBorderRadius,
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: kBlurAmount, sigmaY: kBlurAmount),
-        child: Material(
+        child: ColoredBox(
           color: color,
-          type: MaterialType.card,
-          clipBehavior: Clip.antiAlias,
           child: child,
         ),
       ),

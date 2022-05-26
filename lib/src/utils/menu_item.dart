@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, comment_references
 
-// ignore: comment_references
 /// Copy of [_MenuItem] from [PopupMenuButton] implementation since it's
 /// private there;
 @protected
 @immutable
 class MenuItem extends SingleChildRenderObjectWidget {
+  /// Copy of [_MenuItem] from [PopupMenuButton] implementation since it's
+  /// private there;
   const MenuItem({
     super.key,
     required this.onLayout,

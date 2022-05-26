@@ -1,10 +1,8 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 
-import 'items/entry.dart';
-import 'items/item.dart';
 import 'theme/default_theme.dart';
-import 'theme/theme.dart';
 import 'utils/constants.dart';
 import 'utils/route.dart';
 
@@ -110,21 +108,9 @@ class _PullDownButtonState extends State<PullDownButton> {
     final button = context.findRenderObject()! as RenderBox;
     final overlay =
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
-    final Offset offset;
+    final offset = widget.offset;
 
     final items = widget.itemBuilder(context);
-
-    switch (widget.position) {
-      case PullDownMenuPosition.over:
-        offset = widget.offset;
-        break;
-      case PullDownMenuPosition.under:
-        offset = Offset(0, button.size.height) + widget.offset;
-        break;
-      case PullDownMenuPosition.above:
-        offset = Offset(0, -_aboveHeightCalc(items)) + widget.offset;
-        break;
-    }
 
     final position = RelativeRect.fromRect(
       Rect.fromPoints(
@@ -157,6 +143,8 @@ class _PullDownButtonState extends State<PullDownButton> {
         items: items,
         position: position,
         backgroundColor: widget.backgroundColor,
+        buttonSize: button.size,
+        menuPosition: widget.position,
       );
 
       if (!mounted) return;
@@ -165,16 +153,6 @@ class _PullDownButtonState extends State<PullDownButton> {
 
       widget.onCanceled?.call();
     }
-  }
-
-  double _aboveHeightCalc(List<PullDownMenuEntry> items) {
-    var height = 8.0;
-
-    for (final item in items) {
-      height += item.height;
-    }
-
-    return height;
   }
 
   @override
@@ -191,6 +169,8 @@ Future _showCupertinoMenu({
   required RelativeRect position,
   required List<PullDownMenuEntry> items,
   required Color? backgroundColor,
+  required Size buttonSize,
+  required PullDownMenuPosition menuPosition,
 }) {
   final navigator = Navigator.of(context);
 
@@ -199,11 +179,9 @@ Future _showCupertinoMenu({
       position: position,
       items: items,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      capturedThemes: InheritedTheme.capture(
-        from: context,
-        to: navigator.context,
-      ),
       backgroundColor: backgroundColor,
+      buttonSize: buttonSize,
+      menuPosition: menuPosition,
     ),
   );
 }

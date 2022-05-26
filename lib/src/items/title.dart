@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
-import '../pull_down_button.dart';
 import '../theme/default_theme.dart';
 import '../theme/theme.dart';
 import 'entry.dart';
 
 /// The (optional) title of the pull-down menu that is usually displayed at the
-/// top of [PullDownButton.itemBuilder].
+/// top of Pull-Down menu.
 ///
 /// Typically a [Text] widget.
 @immutable

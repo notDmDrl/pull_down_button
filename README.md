@@ -1,9 +1,11 @@
 # Pull-Down Button
 
-[![License: MIT][license_badge]][license_badge_link]
+[![Dart SDK Version](https://badgen.net/pub/sdk-version/pull_down_button)](https://pub.dev/packages/pull_down_button)
+[![Pub Version](https://badgen.net/pub/v/pull_down_button?icon=flutter)](https://pub.dev/packages/pull_down_button)
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
+[![License: MIT](https://badgen.net/pub/license/pull_down_button)](https://github.com/notDmDrl/pull_down_button/blob/main/LICENSE)
 
-**pull_down_button** is a rework of Flutter's `PopupMenuButton` to be styled like [Pop-Up & Pull-Down](hig_link) Buttons from iOS 13+ with some additional
+**pull_down_button** is a rework of Flutter's `PopupMenuButton` to be styled like [Pop-Up & Pull-Down](hig_link) Buttons from iOS 14+ with some additional
 customisation options.
 
 ---
@@ -246,8 +248,9 @@ ThemeData(
 `largeDividerColor` is usually lighter than `dividerColor`.
 
 Here is example of using `PullDownButtonTheme` with Material 3 color scheme colors & text styles from [Material 3 Menu specs](https://m3.material.io/components/menus/specs).
-| Custom Material 3 light theme | Custom Material 3 dark theme |
-| --- | --- |
+
+| Custom Material 3 light theme                                                                                           | Custom Material 3 dark theme                                                                                          |
+| ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | ![light theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/theme_light.png) | ![dark theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/theme_dark.png) |
 
 ---
@@ -262,6 +265,4 @@ If you fixed a bug or implemented a feature by yourself, feel free to send a [pu
 
 [very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
 [very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
-[license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
-[license_badge_link]: https://opensource.org/licenses/MIT
 [hig_link]: https://developer.apple.com/design/human-interface-guidelines/ios/controls/buttons/#pop-up-buttons

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
@@ -170,14 +172,9 @@ class PullDownMenuItem extends PullDownMenuEntry {
       child: Semantics(
         enabled: enabled,
         button: true,
-        child: InkWell(
+        child: _GestureDetector(
           onTap: enabled ? () => _handleTap(context) : null,
-          canRequestFocus: enabled,
-          splashFactory: NoSplash.splashFactory,
-          splashColor: inkwellColor,
-          focusColor: inkwellColor,
-          hoverColor: inkwellColor,
-          highlightColor: inkwellColor,
+          pressedColor: inkwellColor,
           child: item,
         ),
       ),
@@ -207,7 +204,7 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
     required super.title,
     super.icon,
     super.isDestructive,
-    super.onTap,
+    required super.onTap,
     super.iconSize,
     super.textStyle,
     super.destructiveColor,
@@ -346,4 +343,45 @@ class _CheckmarkIcon extends StatelessWidget {
       ),
     );
   }
+}
+
+@immutable
+@protected
+class _GestureDetector extends StatefulWidget {
+  const _GestureDetector({
+    required this.onTap,
+    required this.pressedColor,
+    required this.child,
+  });
+
+  final FutureOr<void> Function()? onTap;
+  final Color? pressedColor;
+  final Widget child;
+
+  @override
+  State<_GestureDetector> createState() => _GestureDetectorState();
+}
+
+class _GestureDetectorState extends State<_GestureDetector> {
+  bool isPressed = false;
+
+  bool get enabled => widget.onTap != null;
+
+  Future<void> onTap() async {
+    await widget.onTap!();
+
+    setState(() => isPressed = false);
+  }
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: enabled ? onTap : null,
+        onTapDown: enabled ? (_) => setState(() => isPressed = true) : null,
+        onTapCancel: enabled ? () => setState(() => isPressed = false) : null,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          color: isPressed ? widget.pressedColor : null,
+          child: widget.child,
+        ),
+      );
 }

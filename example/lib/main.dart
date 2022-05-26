@@ -92,12 +92,10 @@ class PullDownButtonPositionUnder extends StatelessWidget {
   void action2() {}
   void deleteAction() {}
 
-  // convenience method
-
   @override
   Widget build(BuildContext context) => PullDownButton(
         itemBuilder: (context) => [
-          const PullDownMenuTitle(title: Text('Pull-down menu')),
+          const PullDownMenuTitle(title: Text('Pull-Down menu')),
           const PullDownMenuDivider(),
           SelectablePullDownMenuItem(
             title: 'Order by size',
@@ -127,41 +125,3 @@ class PullDownButtonPositionUnder extends StatelessWidget {
         ),
       );
 }
-
-/*
-
-          ...PullDownMenuDivider.wrapWithDivider([
-            const PullDownMenuTitle(
-              title: Text('PullDownMenuPosition.under'),
-            ),
-            PullDownMenuItem(
-              title: 'Item',
-              onTap: () => print('Item tapped'),
-            ),
-            PullDownMenuItem(
-              title: 'Item with icon',
-              icon: CupertinoIcons.star_fill,
-              onTap: () => print('Item with icon tapped'),
-            ),
-          ]),
-          const PullDownMenuDivider.large(),
-          ...PullDownMenuDivider.wrapWithDivider([
-            SelectablePullDownMenuItem(
-              title: 'Is selectable',
-              onTap: () => print('Selectable item tapped'),
-            ),
-            SelectablePullDownMenuItem(
-              title: 'Is selected',
-              selected: true,
-              onTap: () => print('Selected item tapped'),
-            ),
-          ]),
-          const PullDownMenuDivider.large(),
-          PullDownMenuItem(
-            title: 'Destructive item',
-            icon: CupertinoIcons.delete,
-            isDestructive: true,
-            onTap: () => print('Destructive item tapped'),
-          ),
-
- */
