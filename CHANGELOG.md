@@ -1,3 +1,7 @@
+## 0.1.0-beta.3
+
+- **NEW**: Added `PullDownButtonInheritedTheme` as an additional way of defining global `PullDownButtonTheme`.
+
 ## 0.1.0-beta.2
 
 - **NEW**: Added shadow behind pull-down menu.

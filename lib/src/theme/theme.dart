@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,7 @@ import '../items/divider.dart';
 import '../items/entry.dart';
 import '../items/item.dart';
 import 'default_theme.dart';
+import 'inherited_theme.dart';
 
 /// Defines the visual properties of the routes used to display pull-down menus
 /// as well as any widgets that extend [PullDownMenuEntry].
@@ -15,7 +17,9 @@ import 'default_theme.dart';
 /// [PullDownButtonTheme] object using
 /// `PullDownButtonTheme.of(context)`.
 ///
-/// [PullDownButtonTheme] should be specified in [ThemeData.extensions].
+/// [PullDownButtonTheme] should be specified in [ThemeData.extensions] or
+/// using [PullDownButtonInheritedTheme] in `builder` property in [MaterialApp]
+/// or [CupertinoApp].
 ///
 /// All [PullDownButtonTheme] properties are `null` by default.
 /// If any of these properties are null, the pull-down menu will use iOS 15
@@ -69,8 +73,9 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
   /// The text style of title in the pull-down menu.
   final TextStyle? titleStyle;
 
-  /// Get [PullDownButtonTheme] from [ThemeData.extensions] property of the
-  /// ambient [Theme].
+  /// Get [PullDownButtonTheme] from [PullDownButtonInheritedTheme].
+  /// If that's null get [PullDownButtonTheme] from  [ThemeData.extensions]
+  /// property of the ambient [Theme].
   // ignore: prefer_expression_function_bodies
   static PullDownButtonTheme? of(BuildContext context) {
     // return Theme.of(context).extension<PullDownButtonTheme>();
@@ -79,8 +84,9 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     // not null safe yet
     // see https://github.com/flutter/flutter/pull/103343 for fix (not yet available in stable)
 
-    return Theme.of(context).extensions[PullDownButtonTheme]
-        as PullDownButtonTheme?;
+    return PullDownButtonInheritedTheme.of(context) ??
+        Theme.of(context).extensions[PullDownButtonTheme]
+            as PullDownButtonTheme?;
   }
 
   /// Creates a copy of this object with the given fields replaced with the

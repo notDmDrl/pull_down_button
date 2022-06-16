@@ -202,6 +202,64 @@ void main() {
     );
   });
 
+  testWidgets('PullDownButton uses values from PullDownButtonInheritedTheme',
+      (tester) async {
+    final Key pullDownButton = UniqueKey();
+    final Key pullDownApp = UniqueKey();
+    final Key pullDownItem = UniqueKey();
+    final Key pullDownDivider = UniqueKey();
+
+    const theme = PullDownButtonTheme(
+      backgroundColor: Colors.grey,
+      iconSize: 24,
+      dividerColor: Colors.black,
+    );
+
+    await tester.pumpWidget(
+      CupertinoApp(
+        key: pullDownApp,
+        builder: (context, child) => PullDownButtonInheritedTheme(
+          data: theme,
+          child: child!,
+        ),
+        home: Center(
+          child: PullDownButton(
+            key: pullDownButton,
+            itemBuilder: (context) => [
+              const PullDownMenuTitle(
+                title: Text('Title'),
+              ),
+              PullDownMenuDivider(key: pullDownDivider),
+              PullDownMenuItem(
+                key: pullDownItem,
+                title: 'Item',
+                onTap: () {},
+              ),
+            ],
+            buttonBuilder: (context, showMenu) => TextButton(
+              onPressed: showMenu,
+              child: const Text('Show menu'),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byKey(pullDownButton));
+    await tester.pumpAndSettle();
+
+    // find [PullDownMenuItem]s [DefaultTextStyle].
+    final divider = tester.widget<Divider>(
+      find
+          .descendant(
+            of: find.byKey(pullDownDivider),
+            matching: find.byType(Divider),
+          )
+          .last,
+    );
+    expect(divider.color, theme.dividerColor);
+  });
+
   testWidgets(
       'PullDownButton uses widgets properties instead of values from '
       'PullDownButtonTheme', (tester) async {

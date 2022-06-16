@@ -5,3 +5,4 @@ linter:
     always_use_package_imports: false
     library_private_types_in_public_api: false
     sort_pub_dependencies: false
+    no_leading_underscores_for_local_identifiers: true

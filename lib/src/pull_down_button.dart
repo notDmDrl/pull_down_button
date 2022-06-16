@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
@@ -174,11 +175,25 @@ Future _showCupertinoMenu({
 }) {
   final navigator = Navigator.of(context);
 
+  // Use this instead of `MaterialLocalizations.of(context)` because
+  // [MaterialLocalizations] might be null in some cases.
+  final materialLocalizations =
+      Localizations.of<MaterialLocalizations>(context, MaterialLocalizations);
+
+  // Use this instead of `CupertinoLocalizations.of(context)` because
+  // [CupertinoLocalizations] might be null in some cases.
+  final cupertinoLocalizations =
+      Localizations.of<CupertinoLocalizations>(context, CupertinoLocalizations);
+
   return navigator.push(
     PullDownMenuRoute(
       position: position,
       items: items,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      // If both localizations are null, fallback to
+      // [DefaultMaterialLocalizations().modalBarrierDismissLabel].
+      barrierLabel: materialLocalizations?.modalBarrierDismissLabel ??
+          cupertinoLocalizations?.modalBarrierDismissLabel ??
+          const DefaultMaterialLocalizations().modalBarrierDismissLabel,
       backgroundColor: backgroundColor,
       buttonSize: buttonSize,
       menuPosition: menuPosition,

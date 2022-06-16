@@ -216,7 +216,7 @@ This package also provides additional customisation. By default, iOS15 theme is 
 
 #### Usage
 
-To use `PullDownButtonTheme` define it in your `ThemeData` as follows, `PullDownButton` will automatically used if defined:
+To use `PullDownButtonTheme` define it in your `ThemeData` as follows:
 
 ```dart
 ThemeData(
@@ -246,6 +246,24 @@ ThemeData(
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
 `largeDividerColor` is usually lighter than `dividerColor`.
+
+#### PullDownButtonInheritedTheme
+
+If defining `PullDownButtonTheme` in `ThemeData` is not possible, for example if you are using `CupertinoApp`, you can use `PullDownButtonInheritedTheme`:
+
+```dart
+CupertinoApp(
+  builder: (context, child) => PullDownButtonInheritedTheme(
+    data: const PullDownButtonTheme(
+      ...
+    ),
+    child: child!,
+  ),
+  home: ...,
+)
+```
+
+---
 
 Here is example of using `PullDownButtonTheme` with Material 3 color scheme colors & text styles from [Material 3 Menu specs](https://m3.material.io/components/menus/specs).
 
