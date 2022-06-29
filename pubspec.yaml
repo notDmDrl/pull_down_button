@@ -1,22 +1,22 @@
 name: pull_down_button
 description: Cupertino styled Pull-Down Button from iOS 14 with great customisation options.
-version: 0.1.0-beta.3
+version: 0.1.0-beta.4
 homepage: https://github.com/notDmDrl/pull_down_button
 repository: https://github.com/notDmDrl/pull_down_button
 
 environment:
   sdk: ">=2.17.0-0 <3.0.0"
-  flutter: ">=2.13.0-0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
   collection: ^1.16.0
-  meta: ^1.7.0
+  meta: ^1.8.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  very_good_analysis: ^3.0.0
+  very_good_analysis: ^3.0.1

@@ -29,10 +29,15 @@ class PullDownMenuItem extends PullDownMenuEntry {
     required this.title,
     this.icon,
     this.iconSize,
+    this.iconColor,
+    this.iconWidget,
     this.isDestructive = false,
     this.textStyle,
     this.destructiveColor,
-  });
+  }) : assert(
+          icon == null || iconWidget == null,
+          'Please provide either icon or iconWidget',
+        );
 
   /// Called when the menu item is tapped.
   final VoidCallback? onTap;
@@ -47,6 +52,8 @@ class PullDownMenuItem extends PullDownMenuEntry {
   final String title;
 
   /// Icon of this [PullDownMenuItem].
+  ///
+  /// If the [iconWidget] is used, this property must be null;
   final IconData? icon;
 
   /// The icon size.
@@ -55,6 +62,18 @@ class PullDownMenuItem extends PullDownMenuEntry {
   /// [PullDownButtonTheme] theme extension is used. If that's null then
   /// [PullDownButtonThemeDefaults.iconSize] is used.
   final double? iconSize;
+
+  /// Color for this [PullDownMenuItem]'s [icon].
+  ///
+  /// If not provided [PullDownButtonTheme.textStyle].color will be used;
+  ///
+  /// If [PullDownMenuItem] `isDestructive` then [iconColor] will be ignored;
+  final Color? iconColor;
+
+  /// Custom icon widget of this [PullDownMenuItem].
+  ///
+  /// If the [icon] is used, this property must be null;
+  final Widget? iconWidget;
 
   /// The text style to be used by this [PullDownMenuItem].
   ///
@@ -105,20 +124,16 @@ class PullDownMenuItem extends PullDownMenuEntry {
               textAlign: TextAlign.left,
             ),
           ),
-          if (icon != null)
+          if (icon != null || iconWidget != null)
             Padding(
               padding: const EdgeInsets.only(left: 16),
-              child: Icon(icon),
+              child: iconWidget ?? Icon(icon),
             )
         ],
       );
 
   @protected
-  void _handleTap(BuildContext context) {
-    onTap?.call();
-
-    Navigator.pop(context);
-  }
+  void _handleTap(BuildContext context) => Navigator.pop(context, onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -154,19 +169,23 @@ class PullDownMenuItem extends PullDownMenuEntry {
       ),
     );
 
+    var color = style.color;
+
+    if (!isDestructive && iconColor != null) {
+      color = iconColor;
+    }
+
     item = IconTheme.merge(
       data: IconThemeData(
-        color: style.color,
+        color: color,
         size:
             iconSize ?? pullDownButtonThemeData?.iconSize ?? defaults.iconSize,
       ),
       child: item,
     );
 
-    final inkwellColor =
-        (textStyle ?? pullDownButtonThemeData?.textStyle ?? defaults.textStyle)
-            .color
-            ?.withOpacity(0.075);
+    final inkwellColor = pullDownButtonThemeData?.largeDividerColor ??
+        defaults.largeDividerColor;
 
     return MergeSemantics(
       child: Semantics(
@@ -206,6 +225,8 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
     super.isDestructive,
     required super.onTap,
     super.iconSize,
+    super.iconWidget,
+    super.iconColor,
     super.textStyle,
     super.destructiveColor,
     this.checkmark,
@@ -283,10 +304,10 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
               textAlign: TextAlign.left,
             ),
           ),
-          if (icon != null)
+          if (icon != null || iconWidget != null)
             Padding(
               padding: const EdgeInsets.only(left: 16),
-              child: Icon(icon),
+              child: iconWidget ?? Icon(icon),
             )
         ],
       );

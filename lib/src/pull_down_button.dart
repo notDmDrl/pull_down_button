@@ -139,7 +139,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 
       setState(() => isPressed = true);
 
-      await _showCupertinoMenu(
+      final action = await _showCupertinoMenu(
         context: context,
         items: items,
         position: position,
@@ -152,7 +152,11 @@ class _PullDownButtonState extends State<PullDownButton> {
 
       setState(() => isPressed = false);
 
-      widget.onCanceled?.call();
+      if (action != null) {
+        action.call();
+      } else {
+        widget.onCanceled?.call();
+      }
     }
   }
 
@@ -165,7 +169,7 @@ class _PullDownButtonState extends State<PullDownButton> {
       );
 }
 
-Future _showCupertinoMenu({
+Future<VoidCallback?> _showCupertinoMenu({
   required BuildContext context,
   required RelativeRect position,
   required List<PullDownMenuEntry> items,
@@ -185,7 +189,7 @@ Future _showCupertinoMenu({
   final cupertinoLocalizations =
       Localizations.of<CupertinoLocalizations>(context, CupertinoLocalizations);
 
-  return navigator.push(
+  return navigator.push<VoidCallback>(
     PullDownMenuRoute(
       position: position,
       items: items,
@@ -197,6 +201,10 @@ Future _showCupertinoMenu({
       backgroundColor: backgroundColor,
       buttonSize: buttonSize,
       menuPosition: menuPosition,
+      capturedThemes: InheritedTheme.capture(
+        from: context,
+        to: navigator.context,
+      ),
     ),
   );
 }

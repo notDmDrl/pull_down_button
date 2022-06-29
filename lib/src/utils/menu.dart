@@ -24,6 +24,23 @@ class PullDownMenu extends StatelessWidget {
 
   final PullDownMenuRoute route;
 
+  static final _shadowTween = DecorationTween(
+    begin: const BoxDecoration(
+      boxShadow: [
+        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0)),
+      ],
+    ),
+    end: const BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Color.fromRGBO(0, 0, 0, 0.1),
+          blurRadius: 64,
+          spreadRadius: 64,
+        ),
+      ],
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
@@ -37,6 +54,8 @@ class PullDownMenu extends StatelessWidget {
       );
     }
 
+    final opacity = CurveTween(curve: const Interval(0, 1 / 3));
+
     final Widget child = _MenuBody(children: children);
 
     return AnimatedBuilder(
@@ -46,17 +65,9 @@ class PullDownMenu extends StatelessWidget {
         final evaluate = animate.value;
 
         return FadeTransition(
-          opacity: animate,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              boxShadow: [
-                const BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                  blurRadius: 64,
-                  spreadRadius: 64,
-                ).scale(evaluate),
-              ],
-            ),
+          opacity: opacity.animate(animate),
+          child: DecoratedBoxTransition(
+            decoration: _shadowTween.animate(animate),
             child: _Decoration(
               backgroundColor: route.backgroundColor,
               child: Align(
@@ -116,18 +127,15 @@ class _MenuBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ConstrainedBox(
         constraints: kPopupMenuConstraints,
-        child: IntrinsicWidth(
-          stepWidth: kMenuWidthStep,
-          child: Semantics(
-            scopesRoute: true,
-            namesRoute: true,
-            explicitChildNodes: true,
-            label: 'Pull-Down menu',
-            child: CupertinoUserInterfaceLevel(
-              data: CupertinoUserInterfaceLevelData.elevated,
-              child: SingleChildScrollView(
-                child: ListBody(children: children),
-              ),
+        child: Semantics(
+          scopesRoute: true,
+          namesRoute: true,
+          explicitChildNodes: true,
+          label: 'Pull-Down menu',
+          child: CupertinoUserInterfaceLevel(
+            data: CupertinoUserInterfaceLevelData.elevated,
+            child: SingleChildScrollView(
+              child: ListBody(children: children),
             ),
           ),
         ),

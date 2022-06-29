@@ -2,11 +2,11 @@
 
 [![Dart SDK Version](https://badgen.net/pub/sdk-version/pull_down_button)](https://pub.dev/packages/pull_down_button)
 [![Pub Version](https://badgen.net/pub/v/pull_down_button?icon=flutter)](https://pub.dev/packages/pull_down_button)
-[![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
-[![License: MIT](https://badgen.net/pub/license/pull_down_button)](https://github.com/notDmDrl/pull_down_button/blob/main/LICENSE)
+[![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 
-**pull_down_button** is a rework of Flutter's `PopupMenuButton` to be styled like [Pop-Up & Pull-Down](hig_link) Buttons from iOS 14+ with some additional
-customisation options.
+**pull_down_button** is a rework of Flutter's `PopupMenuButton` to be styled like
+[Pop-Up & Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pop-up-buttons)
+Buttons from iOS 14+ with some additional customisation options.
 
 ---
 
@@ -14,7 +14,7 @@ This package only tries to visually replicate native counterpart, some parts mig
 
 #### Flutter availabilty:
 
-Since this package uses new Flutter feature `ThemeExtension` for theming, minimum supported version is stable **3.0.0** or beta **2.13.0-0**.
+Since this package uses new Flutter feature `ThemeExtension` for theming, minimum supported version is stable **3.0.0**.
 
 ---
 
@@ -104,9 +104,11 @@ PullDownMenuItem(
 | enabled          | Whether the user is permitted to tap this item.  | true     |
 | title            | Title of this `PullDownMenuItem`.                | required |
 | icon             | Trailing icon of this `PullDownMenuItem`.        | optional |
-| isDestructive    | Whether this item represents destructive action. | false    |
+| iconColor        | Trailing icon's color.                           | optional |
 | iconSize         | Size of trailing icon.                           | optional |
+| iconWidget       | Custom trailing widget.                          | optional |
 | textStyle        | Title text style.                                | optional |
+| isDestructive    | Whether this item represents destructive action. | false    |
 | destructiveColor | Color for destructive action.                    | optional |
 
 ---
@@ -280,7 +282,3 @@ Feel free to contribute to this project.
 Please file feature requests and bugs at the [issue tracker](https://github.com/notDmDrl/pull_down_button).
 
 If you fixed a bug or implemented a feature by yourself, feel free to send a [pull request](https://github.com/notDmDrl/pull_down_button/pulls).
-
-[very_good_analysis_badge]: https://img.shields.io/badge/style-very_good_analysis-B22C89.svg
-[very_good_analysis_link]: https://pub.dev/packages/very_good_analysis
-[hig_link]: https://developer.apple.com/design/human-interface-guidelines/ios/controls/buttons/#pop-up-buttons

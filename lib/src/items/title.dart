@@ -44,8 +44,8 @@ class PullDownMenuTitle extends PullDownMenuEntry {
 
     final defaults = PullDownButtonThemeDefaults(context);
 
-    return SizedBox(
-      height: height,
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: height),
       child: Center(
         child: DefaultTextStyle(
           style: titleStyle ??

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
-import '../../pull_down_button.dart';
 import 'constants.dart';
 import 'menu.dart';
 
@@ -11,7 +10,7 @@ import 'menu.dart';
 /// Copy of [_PopupMenuRoute] from [PopupMenuButton] implementation since it's
 /// private there.
 @protected
-class PullDownMenuRoute extends PopupRoute<void> {
+class PullDownMenuRoute extends PopupRoute<VoidCallback> {
   /// Copy of [_PopupMenuRoute] from [PopupMenuButton] implementation since it's
   /// private there.
   PullDownMenuRoute({
@@ -21,11 +20,13 @@ class PullDownMenuRoute extends PopupRoute<void> {
     required this.backgroundColor,
     required this.buttonSize,
     required this.menuPosition,
+    required this.capturedThemes,
   }) : itemSizes = List<Size?>.filled(items.length, null);
 
   final List<PullDownMenuEntry> items;
   final List<Size?> itemSizes;
   final Color? backgroundColor;
+  final CapturedThemes capturedThemes;
 
   @protected
   final RelativeRect position;
@@ -40,7 +41,7 @@ class PullDownMenuRoute extends PopupRoute<void> {
   Animation<double> createAnimation() => CurvedAnimation(
         parent: super.createAnimation(),
         curve: kCurve,
-        reverseCurve: kCloseCurve.flipped,
+        reverseCurve: kCurve.flipped,
       );
 
   @override
@@ -82,7 +83,7 @@ class PullDownMenuRoute extends PopupRoute<void> {
             buttonSize,
             menuPosition,
           ),
-          child: menu,
+          child: capturedThemes.wrap(menu),
         ),
       ),
     );

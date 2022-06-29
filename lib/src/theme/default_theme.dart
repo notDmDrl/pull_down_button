@@ -8,8 +8,8 @@ const _kDividerColor = CupertinoDynamicColor.withBrightness(
 );
 
 const _kLargeDividerColor = CupertinoDynamicColor.withBrightness(
-  color: Color.fromRGBO(20, 20, 20, 0.15),
-  darkColor: Color.fromRGBO(0, 0, 0, 0.7),
+  color: Color.fromARGB(190, 208, 208, 208),
+  darkColor: Color.fromARGB(190, 4, 4, 4),
 );
 
 const _kBackgroundColor = CupertinoDynamicColor.withBrightness(

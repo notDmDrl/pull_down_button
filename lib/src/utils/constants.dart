@@ -5,21 +5,13 @@ import 'package:meta/meta.dart';
 @internal
 const double kMenuScreenPadding = 8;
 
-/// Intrinsic width step
-@internal
-const double kMenuWidthStep = 250;
-
 /// Pull-down menu animation duration.
 @internal
 const Duration kMenuDuration = Duration(milliseconds: 335);
 
-/// Pull-down menu animation curve (slightly modified [Curves.easeOutBack]).
+/// Pull-down menu  animation curve.
 @internal
-const Curve kCurve = Cubic(0.175, 0.885, 0.265, 1.175);
-
-/// Pull-down menu close animation curve.
-@internal
-const Curve kCloseCurve = Curves.linearToEaseOut;
+const Curve kCurve = Curves.linearToEaseOut;
 
 /// Pull-down menu border radius.
 @internal

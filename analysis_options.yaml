@@ -6,3 +6,5 @@ linter:
     library_private_types_in_public_api: false
     sort_pub_dependencies: false
     no_leading_underscores_for_local_identifiers: true
+    unnecessary_to_list_in_spreads: true
+    unnecessary_null_aware_operator_on_extension_on_nullable: true
