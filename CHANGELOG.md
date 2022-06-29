@@ -1,3 +1,7 @@
+## 0.1.0-beta.4.1
+
+- Lower `meta` version (to avoid conflicts since it's pinned in Flutter SDK).
+
 ## 0.1.0-beta.4
 
 - Fix `showDialog` (and other actions the change navigation stack) to work directly without any workarounds -
