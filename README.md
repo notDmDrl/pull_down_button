@@ -5,7 +5,8 @@
 [![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 
 **pull_down_button** is a rework of Flutter's `PopupMenuButton` to be styled like
-[Pop-Up & Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pop-up-buttons)
+[Pop-Up](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pop-up-buttons) and
+[Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons)
 Buttons from iOS 14+ with some additional customisation options.
 
 ---
@@ -61,16 +62,21 @@ PullDownButton(
 );
 ```
 
-| Parameters      | Description                                                                                              | Value                        |
-| --------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| itemBuilder     | Called when the button is pressed to create the items to show in the menu.                               | required                     |
-| buttonBuilder   | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. | required                     |
-| onCanceled      | Called when the user dismisses the pull-down menu.                                                       | optional                     |
-| offset          | The offset is applied relative to the initial position set by the `position`.                            | `Offset.zero`                |
-| position        | Whether the popup menu is positioned over or under the popup menu button.                                | `PullDownMenuPosition.above` |
-| backgroundColor | The background color of pull-down menu.                                                                  | optional                     |
+<details><summary>Parameters table</summary>
+
+| Parameters         | Description                                                                                              | Value                        |
+| ------------------ | -------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| itemBuilder        | Called when the button is pressed to create the items to show in the menu.                               | required                     |
+| buttonBuilder      | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. | required                     |
+| onCanceled         | Called when the user dismisses the pull-down menu.                                                       | optional                     |
+| offset             | The offset is applied relative to the initial position set by the `position`.                            | `Offset.zero`                |
+| position           | Whether the popup menu is positioned over or under the popup menu button.                                | `PullDownMenuPosition.above` |
+| backgroundColor    | The background color of pull-down menu.                                                                  | optional                     |
+| widthConfiguration | Pull-down menu width.                                                                                    | optional                     |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
+
+</details>
 
 #### PullDownMenuPosition
 
@@ -98,6 +104,8 @@ PullDownMenuItem(
 ),
 ```
 
+<details><summary>Parameters table</summary>
+
 | Parameters       | Description                                      | Value    |
 | ---------------- | ------------------------------------------------ | -------- |
 | onTap            | Called when the menu item is tapped.             | required |
@@ -111,7 +119,7 @@ PullDownMenuItem(
 | isDestructive    | Whether this item represents destructive action. | false    |
 | destructiveColor | Color for destructive action.                    | optional |
 
----
+## </details>
 
 ## SelectablePullDownMenuItem
 
@@ -134,7 +142,7 @@ Based on [guidelines](hig_link), if menu items contains at least one tappable me
 
 ![SelectablePullDownMenuItem conversion example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/dividers.png)
 
-<br/>
+<details><summary>Parameters table</summary>
 
 `SelectablePullDownMenuItem` uses all of `PullDownMenuItem` parameters as well as a few `SelectablePullDownMenuItem` specific:
 
@@ -144,6 +152,8 @@ Based on [guidelines](hig_link), if menu items contains at least one tappable me
 | checkmark       | Checkmark icon.                                       | optional |
 | checkmarkWeight | Weight of checkmark icon.                             | optional |
 | checkmarkSize   | Size of checkmark icon                                | optional |
+
+</details>
 
 ---
 
@@ -233,21 +243,26 @@ ThemeData(
 ),
 ```
 
-| Parameters        | Description                             | Value    |
-| ----------------- | --------------------------------------- | -------- |
-| backgroundColor   | The background color of pull-down menu. | optional |
-| dividerColor      | Small divider color.                    | optional |
-| largeDividerColor | Large divider color.                    | optional |
-| destructiveColor  | Color for destructive action.           | optional |
-| iconSize          | Size of trailing icon.                  | optional |
-| checkmark         | Checkmark icon.                         | optional |
-| checkmarkWeight   | Weight of checkmark icon.               | optional |
-| checkmarkSize     | Size of checkmark icon                  | optional |
-| textStyle         | Title text style.                       | optional |
-| titleStyle        | Title widget style.                     | optional |
+<details><summary>Parameters table</summary>
+
+| Parameters         | Description                             | Value    |
+| ------------------ | --------------------------------------- | -------- |
+| backgroundColor    | The background color of pull-down menu. | optional |
+| dividerColor       | Small divider color.                    | optional |
+| largeDividerColor  | Large divider color.                    | optional |
+| destructiveColor   | Color for destructive action.           | optional |
+| iconSize           | Size of trailing icon.                  | optional |
+| checkmark          | Checkmark icon.                         | optional |
+| checkmarkWeight    | Weight of checkmark icon.               | optional |
+| checkmarkSize      | Size of checkmark icon                  | optional |
+| textStyle          | Title text style.                       | optional |
+| titleStyle         | Title widget style.                     | optional |
+| widthConfiguration | Pull-down menu width.                   | optional |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
 `largeDividerColor` is usually lighter than `dividerColor`.
+
+</details>
 
 #### PullDownButtonInheritedTheme
 

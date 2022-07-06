@@ -81,4 +81,8 @@ class PullDownButtonThemeDefaults extends PullDownButtonTheme {
         height: 1.3,
         textBaseline: TextBaseline.alphabetic,
       );
+
+  @override
+  PullDownMenuWidthConfiguration get widthConfiguration =>
+      const PullDownMenuWidthConfiguration(250);
 }

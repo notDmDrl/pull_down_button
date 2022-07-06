@@ -56,34 +56,44 @@ class PullDownMenu extends StatelessWidget {
 
     final opacity = CurveTween(curve: const Interval(0, 1 / 3));
 
-    final Widget child = _MenuBody(children: children);
+    final Widget menuBody = _MenuBody(
+      widthConfiguration: route.widthConfiguration,
+      children: children,
+    );
+
+    // animation for menu content.
+    final innerAnimation = AnimatedBuilder(
+      animation: route.animation!,
+      builder: (_, child) {
+        final animate = route.animation!;
+        final evaluate = animate.value;
+
+        return Center(
+          widthFactor: evaluate,
+          heightFactor: evaluate,
+          child: FadeTransition(opacity: animate, child: child),
+        );
+      },
+      child: menuBody,
+    );
 
     return AnimatedBuilder(
       animation: route.animation!,
-      builder: (context, child) {
+      builder: (_, child) {
         final animate = route.animation!;
-        final evaluate = animate.value;
 
         return FadeTransition(
           opacity: opacity.animate(animate),
           child: DecoratedBoxTransition(
             decoration: _shadowTween.animate(animate),
-            child: _Decoration(
-              backgroundColor: route.backgroundColor,
-              child: Align(
-                alignment: AlignmentDirectional.center,
-                widthFactor: evaluate,
-                heightFactor: evaluate,
-                child: FadeTransition(
-                  opacity: animate,
-                  child: child,
-                ),
-              ),
-            ),
+            child: child!,
           ),
         );
       },
-      child: child,
+      child: _Decoration(
+        backgroundColor: route.backgroundColor,
+        child: innerAnimation,
+      ),
     );
   }
 }
@@ -120,24 +130,35 @@ class _Decoration extends StatelessWidget {
 
 @immutable
 class _MenuBody extends StatelessWidget {
-  const _MenuBody({required this.children});
+  const _MenuBody({required this.children, required this.widthConfiguration});
 
   final List<Widget> children;
+  final PullDownMenuWidthConfiguration? widthConfiguration;
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: kPopupMenuConstraints,
-        child: Semantics(
-          scopesRoute: true,
-          namesRoute: true,
-          explicitChildNodes: true,
-          label: 'Pull-Down menu',
-          child: CupertinoUserInterfaceLevel(
-            data: CupertinoUserInterfaceLevelData.elevated,
-            child: SingleChildScrollView(
-              child: ListBody(children: children),
-            ),
+  Widget build(BuildContext context) {
+    final pullDownButtonThemeData = PullDownButtonTheme.of(context);
+
+    final defaults = PullDownButtonThemeDefaults(context);
+
+    final constraints = widthConfiguration ??
+        pullDownButtonThemeData?.widthConfiguration ??
+        defaults.widthConfiguration;
+
+    return ConstrainedBox(
+      constraints: constraints,
+      child: Semantics(
+        scopesRoute: true,
+        namesRoute: true,
+        explicitChildNodes: true,
+        label: 'Pull-Down menu',
+        child: CupertinoUserInterfaceLevel(
+          data: CupertinoUserInterfaceLevelData.elevated,
+          child: SingleChildScrollView(
+            child: ListBody(children: children),
           ),
         ),
-      );
+      ),
+    );
+  }
 }

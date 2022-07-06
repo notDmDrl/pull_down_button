@@ -53,6 +53,7 @@ class PullDownButton extends StatefulWidget {
     this.offset = Offset.zero,
     this.position = PullDownMenuPosition.over,
     this.backgroundColor,
+    this.widthConfiguration,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -97,6 +98,13 @@ class PullDownButton extends StatefulWidget {
   /// [PullDownButtonTheme] theme extension is used. If that's null then
   /// [PullDownButtonThemeDefaults.backgroundColor] is used.
   final Color? backgroundColor;
+
+  /// The width of pull-down menu.
+  ///
+  /// If this property is null then [PullDownButtonTheme.widthConfiguration]
+  /// from [PullDownButtonTheme] theme extension is used. If that's null then
+  /// [PullDownButtonThemeDefaults.widthConfiguration] is used.
+  final PullDownMenuWidthConfiguration? widthConfiguration;
 
   @override
   State<PullDownButton> createState() => _PullDownButtonState();
@@ -146,6 +154,7 @@ class _PullDownButtonState extends State<PullDownButton> {
         backgroundColor: widget.backgroundColor,
         buttonSize: button.size,
         menuPosition: widget.position,
+        widthConfiguration: widget.widthConfiguration,
       );
 
       if (!mounted) return;
@@ -176,6 +185,7 @@ Future<VoidCallback?> _showCupertinoMenu({
   required Color? backgroundColor,
   required Size buttonSize,
   required PullDownMenuPosition menuPosition,
+  required PullDownMenuWidthConfiguration? widthConfiguration,
 }) {
   final navigator = Navigator.of(context);
 
@@ -205,6 +215,7 @@ Future<VoidCallback?> _showCupertinoMenu({
         from: context,
         to: navigator.context,
       ),
+      widthConfiguration: widthConfiguration,
     ),
   );
 }

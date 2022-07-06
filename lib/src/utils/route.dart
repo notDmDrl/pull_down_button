@@ -21,12 +21,14 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
     required this.buttonSize,
     required this.menuPosition,
     required this.capturedThemes,
+    required this.widthConfiguration,
   }) : itemSizes = List<Size?>.filled(items.length, null);
 
   final List<PullDownMenuEntry> items;
   final List<Size?> itemSizes;
   final Color? backgroundColor;
   final CapturedThemes capturedThemes;
+  final PullDownMenuWidthConfiguration? widthConfiguration;
 
   @protected
   final RelativeRect position;

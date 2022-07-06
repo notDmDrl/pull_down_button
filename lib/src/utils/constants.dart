@@ -17,11 +17,6 @@ const Curve kCurve = Curves.linearToEaseOut;
 @internal
 const BorderRadius kBorderRadius = BorderRadius.all(Radius.circular(12));
 
-/// Pull-down menu size constraints.
-@internal
-const BoxConstraints kPopupMenuConstraints =
-    BoxConstraints.tightFor(width: 250);
-
 /// Pull-down menu background blur.
 @internal
 const double kBlurAmount = 50;

@@ -1,3 +1,8 @@
+## 0.1.0-beta.5
+
+- Added `PullDownMenuWidthConfiguration` to allow customizing pull-down menu's width -
+  [issue](https://github.com/notDmDrl/pull_down_button/issues/3).
+
 ## 0.1.0-beta.4.1
 
 - Lower `meta` version (to avoid conflicts since it's pinned in Flutter SDK).
@@ -5,7 +10,7 @@
 ## 0.1.0-beta.4
 
 - Fix `showDialog` (and other actions the change navigation stack) to work directly without any workarounds -
-  [issue](https://github.com/notDmDrl/pull_down_button/issues/1)):
+  [issue](https://github.com/notDmDrl/pull_down_button/issues/1):
 
   Instead of
 
@@ -37,7 +42,8 @@
 
 ## 0.1.0-beta.3
 
-- Added `PullDownButtonInheritedTheme` as an additional way of defining global `PullDownButtonTheme`.
+- Added `PullDownButtonInheritedTheme` as an additional way of defining global `PullDownButtonTheme` -
+  [issue](https://github.com/notDmDrl/pull_down_button/issues/2).
 
 ## 0.1.0-beta.2
 

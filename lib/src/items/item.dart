@@ -219,6 +219,9 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
   const SelectablePullDownMenuItem({
     super.key,
     this.selected = false,
+    this.checkmark,
+    this.checkmarkWeight,
+    this.checkmarkSize,
     super.enabled,
     required super.title,
     super.icon,
@@ -229,9 +232,6 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
     super.iconColor,
     super.textStyle,
     super.destructiveColor,
-    this.checkmark,
-    this.checkmarkWeight,
-    this.checkmarkSize,
   });
 
   /// Helper constructor for converting [PullDownMenuItem] to
@@ -250,6 +250,8 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
           isDestructive: item.isDestructive,
           onTap: item.onTap,
           iconSize: item.iconSize,
+          iconWidget: item.iconWidget,
+          iconColor: item.iconColor,
           textStyle: item.textStyle,
           destructiveColor: item.destructiveColor,
         );

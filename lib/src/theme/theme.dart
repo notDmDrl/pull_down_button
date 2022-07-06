@@ -3,12 +3,20 @@ import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 
-import '../items/divider.dart';
-import '../items/entry.dart';
-import '../items/item.dart';
 import 'default_theme.dart';
-import 'inherited_theme.dart';
+
+/// Width configuration for pull-down menu.
+///
+/// Only `width` is passed to [BoxConstraints] so that `height` is always
+/// unconstrained.
+@immutable
+class PullDownMenuWidthConfiguration extends BoxConstraints {
+  /// Creates pull-down menu width configuration.
+  const PullDownMenuWidthConfiguration(double width)
+      : super.tightFor(width: width);
+}
 
 /// Defines the visual properties of the routes used to display pull-down menus
 /// as well as any widgets that extend [PullDownMenuEntry].
@@ -39,6 +47,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     this.checkmarkSize,
     this.textStyle,
     this.titleStyle,
+    this.widthConfiguration,
   });
 
   /// The background color of the pull-down menu.
@@ -73,21 +82,15 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
   /// The text style of title in the pull-down menu.
   final TextStyle? titleStyle;
 
+  /// The width configuration for pull-down menu.
+  final PullDownMenuWidthConfiguration? widthConfiguration;
+
   /// Get [PullDownButtonTheme] from [PullDownButtonInheritedTheme].
   /// If that's null get [PullDownButtonTheme] from  [ThemeData.extensions]
   /// property of the ambient [Theme].
-  // ignore: prefer_expression_function_bodies
-  static PullDownButtonTheme? of(BuildContext context) {
-    // return Theme.of(context).extension<PullDownButtonTheme>();
-
-    // todo: use this workaround since `extension<PullDownButtonTheme>()` is
-    // not null safe yet
-    // see https://github.com/flutter/flutter/pull/103343 for fix (not yet available in stable)
-
-    return PullDownButtonInheritedTheme.of(context) ??
-        Theme.of(context).extensions[PullDownButtonTheme]
-            as PullDownButtonTheme?;
-  }
+  static PullDownButtonTheme? of(BuildContext context) =>
+      PullDownButtonInheritedTheme.of(context) ??
+      Theme.of(context).extensions[PullDownButtonTheme] as PullDownButtonTheme?;
 
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
@@ -103,6 +106,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     double? checkmarkSize,
     TextStyle? textStyle,
     TextStyle? titleStyle,
+    PullDownMenuWidthConfiguration? widthConfiguration,
   }) =>
       PullDownButtonTheme(
         backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -115,6 +119,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         checkmarkSize: checkmarkSize ?? this.checkmarkSize,
         textStyle: textStyle ?? this.textStyle,
         titleStyle: titleStyle ?? this.titleStyle,
+        widthConfiguration: widthConfiguration ?? this.widthConfiguration,
       );
 
   /// Linearly interpolate between two pull-down menu themes.
@@ -146,6 +151,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
       checkmarkSize: ui.lerpDouble(checkmarkSize, other.checkmarkSize, t),
       textStyle: TextStyle.lerp(textStyle, other.textStyle, t),
       titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t),
+      widthConfiguration: other.widthConfiguration,
     );
   }
 
@@ -161,6 +167,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         checkmarkSize,
         textStyle,
         titleStyle,
+        widthConfiguration,
       );
 
   @override
@@ -178,7 +185,8 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         other.checkmarkWeight == checkmarkWeight &&
         other.checkmarkSize == checkmarkSize &&
         other.titleStyle == titleStyle &&
-        other.textStyle == textStyle;
+        other.textStyle == textStyle &&
+        other.widthConfiguration == widthConfiguration;
   }
 
   @override
@@ -228,6 +236,13 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         DiagnosticsProperty<TextStyle>(
           'titleStyle',
           titleStyle,
+          defaultValue: null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<PullDownMenuWidthConfiguration>(
+          'widthConfiguration',
+          widthConfiguration,
           defaultValue: null,
         ),
       );
