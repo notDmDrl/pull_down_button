@@ -85,4 +85,7 @@ class PullDownButtonThemeDefaults extends PullDownButtonTheme {
   @override
   PullDownMenuWidthConfiguration get widthConfiguration =>
       const PullDownMenuWidthConfiguration(250);
+
+  @override
+  bool get applyOpacity => true;
 }

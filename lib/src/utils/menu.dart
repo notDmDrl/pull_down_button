@@ -107,13 +107,15 @@ class _Decoration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pullDownButtonThemeData = PullDownButtonTheme.of(context);
-
+    final theme = PullDownButtonTheme.of(context);
     final defaults = PullDownButtonThemeDefaults(context);
 
-    final color = backgroundColor ??
-        pullDownButtonThemeData?.backgroundColor ??
-        defaults.backgroundColor;
+    final color = PullDownButtonTheme.getProperty<Color>(
+      widgetProperty: backgroundColor,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.backgroundColor,
+    );
 
     return ClipRRect(
       borderRadius: kBorderRadius,
@@ -137,13 +139,16 @@ class _MenuBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pullDownButtonThemeData = PullDownButtonTheme.of(context);
-
+    final theme = PullDownButtonTheme.of(context);
     final defaults = PullDownButtonThemeDefaults(context);
 
-    final constraints = widthConfiguration ??
-        pullDownButtonThemeData?.widthConfiguration ??
-        defaults.widthConfiguration;
+    final constraints =
+        PullDownButtonTheme.getProperty<PullDownMenuWidthConfiguration>(
+      widgetProperty: widthConfiguration,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.widthConfiguration,
+    );
 
     return ConstrainedBox(
       constraints: constraints,

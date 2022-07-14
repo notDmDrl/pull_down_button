@@ -65,34 +65,24 @@ class PullDownMenuDivider extends PullDownMenuEntry {
         items.last,
       ];
 
-  Color _getLargeDividerColor(
-    PullDownButtonTheme? pullDownButtonThemeData,
-    PullDownButtonThemeDefaults defaults,
-  ) =>
-      largeDividerColor ??
-      pullDownButtonThemeData?.largeDividerColor ??
-      defaults.largeDividerColor;
-
-  Color _getDividerColor(
-    PullDownButtonTheme? pullDownButtonThemeData,
-    PullDownButtonThemeDefaults defaults,
-  ) =>
-      dividerColor ??
-      pullDownButtonThemeData?.dividerColor ??
-      defaults.dividerColor;
-
   @override
   Widget build(BuildContext context) {
-    final pullDownButtonThemeData = PullDownButtonTheme.of(context);
-
-    final defaults = PullDownButtonThemeDefaults(context);
-
     final Color color;
 
     if (height != 0) {
-      color = _getLargeDividerColor(pullDownButtonThemeData, defaults);
+      color = PullDownButtonTheme.getProperty<Color>(
+        widgetProperty: largeDividerColor,
+        theme: PullDownButtonTheme.of(context),
+        defaults: PullDownButtonThemeDefaults(context),
+        getThemeProperty: (theme) => theme?.largeDividerColor,
+      );
     } else {
-      color = _getDividerColor(pullDownButtonThemeData, defaults);
+      color = PullDownButtonTheme.getProperty<Color>(
+        widgetProperty: dividerColor,
+        theme: PullDownButtonTheme.of(context),
+        defaults: PullDownButtonThemeDefaults(context),
+        getThemeProperty: (theme) => theme?.dividerColor,
+      );
     }
 
     return Divider(

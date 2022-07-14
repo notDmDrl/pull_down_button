@@ -54,6 +54,7 @@ class PullDownButton extends StatefulWidget {
     this.position = PullDownMenuPosition.over,
     this.backgroundColor,
     this.widthConfiguration,
+    this.applyOpacity,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -105,6 +106,14 @@ class PullDownButton extends StatefulWidget {
   /// from [PullDownButtonTheme] theme extension is used. If that's null then
   /// [PullDownButtonThemeDefaults.widthConfiguration] is used.
   final PullDownMenuWidthConfiguration? widthConfiguration;
+
+  /// Whether to apply opacity on [buttonBuilder] as it is in iOS
+  /// or not.
+  ///
+  /// If this property is null then [PullDownButtonTheme.applyOpacity]
+  /// from [PullDownButtonTheme] theme extension is used. If that's null then
+  /// [PullDownButtonThemeDefaults.applyOpacity] is used.
+  final bool? applyOpacity;
 
   @override
   State<PullDownButton> createState() => _PullDownButtonState();
@@ -170,12 +179,28 @@ class _PullDownButtonState extends State<PullDownButton> {
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedOpacity(
-        opacity: isPressed ? 0.5 : 1,
-        duration: kMenuDuration,
-        curve: kCurve,
-        child: widget.buttonBuilder(context, showButtonMenu),
-      );
+  Widget build(BuildContext context) {
+    final theme = PullDownButtonTheme.of(context);
+    final defaults = PullDownButtonThemeDefaults(context);
+
+    final apply = PullDownButtonTheme.getProperty<bool>(
+      widgetProperty: widget.applyOpacity,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.applyOpacity,
+    );
+
+    final buttonBuilder = widget.buttonBuilder(context, showButtonMenu);
+
+    if (!apply) return buttonBuilder;
+
+    return AnimatedOpacity(
+      opacity: isPressed ? 0.5 : 1,
+      duration: kMenuDuration,
+      curve: kCurve,
+      child: buttonBuilder,
+    );
+  }
 }
 
 Future<VoidCallback?> _showCupertinoMenu({

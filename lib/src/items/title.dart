@@ -39,21 +39,18 @@ class PullDownMenuTitle extends PullDownMenuEntry {
   bool get isDestructive => false;
 
   @override
-  Widget build(BuildContext context) {
-    final pullDownButtonThemeData = PullDownButtonTheme.of(context);
-
-    final defaults = PullDownButtonThemeDefaults(context);
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: height),
-      child: Center(
-        child: DefaultTextStyle(
-          style: titleStyle ??
-              pullDownButtonThemeData?.titleStyle ??
-              defaults.titleStyle,
-          child: title,
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: BoxConstraints(minHeight: height),
+        child: Center(
+          child: DefaultTextStyle(
+            style: PullDownButtonTheme.getProperty<TextStyle>(
+              widgetProperty: titleStyle,
+              theme: PullDownButtonTheme.of(context),
+              defaults: PullDownButtonThemeDefaults(context),
+              getThemeProperty: (theme) => theme?.titleStyle,
+            ),
+            child: title,
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

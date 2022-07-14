@@ -1,3 +1,8 @@
+## 0.1.0-beta.6
+
+- Added ability to choose to whether apply opacity on menu open for `PullDownButton.buttonBuilder` or not -
+  [issue](https://github.com/notDmDrl/pull_down_button/issues/4).
+
 ## 0.1.0-beta.5
 
 - Added `PullDownMenuWidthConfiguration` to allow customizing pull-down menu's width -

@@ -137,19 +137,25 @@ class PullDownMenuItem extends PullDownMenuEntry {
 
   @override
   Widget build(BuildContext context) {
-    final pullDownButtonThemeData = PullDownButtonTheme.of(context);
-
+    final theme = PullDownButtonTheme.of(context);
     final defaults = PullDownButtonThemeDefaults(context);
 
-    var style =
-        textStyle ?? pullDownButtonThemeData?.textStyle ?? defaults.textStyle;
+    var style = PullDownButtonTheme.getProperty<TextStyle>(
+      widgetProperty: textStyle,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.textStyle,
+    );
 
     if (isDestructive) {
-      style = style.copyWith(
-        color: destructiveColor ??
-            pullDownButtonThemeData?.destructiveColor ??
-            defaults.destructiveColor,
+      final color = PullDownButtonTheme.getProperty<Color>(
+        widgetProperty: destructiveColor,
+        theme: theme,
+        defaults: defaults,
+        getThemeProperty: (theme) => theme?.destructiveColor,
       );
+
+      style = style.copyWith(color: color);
     }
 
     if (!enabled) {
@@ -178,14 +184,21 @@ class PullDownMenuItem extends PullDownMenuEntry {
     item = IconTheme.merge(
       data: IconThemeData(
         color: color,
-        size:
-            iconSize ?? pullDownButtonThemeData?.iconSize ?? defaults.iconSize,
+        size: PullDownButtonTheme.getProperty<double>(
+          widgetProperty: iconSize,
+          theme: theme,
+          defaults: defaults,
+          getThemeProperty: (theme) => theme?.iconSize,
+        ),
       ),
       child: item,
     );
 
-    final inkwellColor = pullDownButtonThemeData?.largeDividerColor ??
-        defaults.largeDividerColor;
+    final inkwellColor = PullDownButtonTheme.getProperty<Color>(
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.largeDividerColor,
+    );
 
     return MergeSemantics(
       child: Semantics(
@@ -332,20 +345,30 @@ class _CheckmarkIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pullDownButtonThemeData = PullDownButtonTheme.of(context);
+    final theme = PullDownButtonTheme.of(context);
 
     final defaults = PullDownButtonThemeDefaults(context);
 
-    final icon =
-        checkmark ?? pullDownButtonThemeData?.checkmark ?? defaults.checkmark;
+    final icon = PullDownButtonTheme.getProperty<IconData>(
+      widgetProperty: checkmark,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.checkmark,
+    );
 
-    final weight = checkmarkWeight ??
-        pullDownButtonThemeData?.checkmarkWeight ??
-        defaults.checkmarkWeight;
+    final weight = PullDownButtonTheme.getProperty<FontWeight>(
+      widgetProperty: checkmarkWeight,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.checkmarkWeight,
+    );
 
-    final size = checkmarkSize ??
-        pullDownButtonThemeData?.checkmarkSize ??
-        defaults.checkmarkSize;
+    final size = PullDownButtonTheme.getProperty<double>(
+      widgetProperty: checkmarkSize,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.checkmarkSize,
+    );
 
     if (!selected) {
       return SizedBox.square(dimension: size);

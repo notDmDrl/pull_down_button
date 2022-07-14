@@ -73,6 +73,7 @@ PullDownButton(
 | position           | Whether the popup menu is positioned over or under the popup menu button.                                | `PullDownMenuPosition.above` |
 | backgroundColor    | The background color of pull-down menu.                                                                  | optional                     |
 | widthConfiguration | Pull-down menu width.                                                                                    | optional                     |
+| applyOpacity       | Whether to apply opacity on `buttonBuilder` when menu is open.                                           | optional                     |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
 
@@ -245,19 +246,20 @@ ThemeData(
 
 <details><summary>Parameters table</summary>
 
-| Parameters         | Description                             | Value    |
-| ------------------ | --------------------------------------- | -------- |
-| backgroundColor    | The background color of pull-down menu. | optional |
-| dividerColor       | Small divider color.                    | optional |
-| largeDividerColor  | Large divider color.                    | optional |
-| destructiveColor   | Color for destructive action.           | optional |
-| iconSize           | Size of trailing icon.                  | optional |
-| checkmark          | Checkmark icon.                         | optional |
-| checkmarkWeight    | Weight of checkmark icon.               | optional |
-| checkmarkSize      | Size of checkmark icon                  | optional |
-| textStyle          | Title text style.                       | optional |
-| titleStyle         | Title widget style.                     | optional |
-| widthConfiguration | Pull-down menu width.                   | optional |
+| Parameters         | Description                                                                   | Value    |
+| ------------------ | ----------------------------------------------------------------------------- | -------- |
+| backgroundColor    | The background color of pull-down menu.                                       | optional |
+| dividerColor       | Small divider color.                                                          | optional |
+| largeDividerColor  | Large divider color.                                                          | optional |
+| destructiveColor   | Color for destructive action.                                                 | optional |
+| iconSize           | Size of trailing icon.                                                        | optional |
+| checkmark          | Checkmark icon.                                                               | optional |
+| checkmarkWeight    | Weight of checkmark icon.                                                     | optional |
+| checkmarkSize      | Size of checkmark icon                                                        | optional |
+| textStyle          | Title text style.                                                             | optional |
+| titleStyle         | Title widget style.                                                           | optional |
+| widthConfiguration | Pull-down menu width.                                                         | optional |
+| applyOpacity       | Whether to apply opacity on `PullDownButton.buttonBuilder` when menu is open. | optional |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
 `largeDividerColor` is usually lighter than `dividerColor`.

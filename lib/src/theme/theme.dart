@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
 import 'default_theme.dart';
@@ -48,6 +49,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     this.textStyle,
     this.titleStyle,
     this.widthConfiguration,
+    this.applyOpacity,
   });
 
   /// The background color of the pull-down menu.
@@ -85,12 +87,34 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
   /// The width configuration for pull-down menu.
   final PullDownMenuWidthConfiguration? widthConfiguration;
 
+  /// Whether to apply opacity on [PullDownButton.buttonBuilder] as it is in iOS
+  /// or not.
+  final bool? applyOpacity;
+
   /// Get [PullDownButtonTheme] from [PullDownButtonInheritedTheme].
   /// If that's null get [PullDownButtonTheme] from  [ThemeData.extensions]
   /// property of the ambient [Theme].
   static PullDownButtonTheme? of(BuildContext context) =>
       PullDownButtonInheritedTheme.of(context) ??
       Theme.of(context).extensions[PullDownButtonTheme] as PullDownButtonTheme?;
+
+  /// Helper method to get required theme property.
+  ///
+  /// Inspired by [ButtonStyleButton] `effectiveValue` function.
+  @internal
+  static T getProperty<T>({
+    T? widgetProperty,
+    required PullDownButtonTheme? theme,
+    required PullDownButtonThemeDefaults defaults,
+    required T? Function(PullDownButtonTheme? theme) getThemeProperty,
+  }) {
+    if (widgetProperty != null) return widgetProperty;
+
+    final themeValue = getThemeProperty(theme);
+    final defaultValue = getThemeProperty(defaults) as T;
+
+    return themeValue ?? defaultValue;
+  }
 
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
@@ -107,6 +131,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     TextStyle? textStyle,
     TextStyle? titleStyle,
     PullDownMenuWidthConfiguration? widthConfiguration,
+    bool? applyOpacity,
   }) =>
       PullDownButtonTheme(
         backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -120,6 +145,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         textStyle: textStyle ?? this.textStyle,
         titleStyle: titleStyle ?? this.titleStyle,
         widthConfiguration: widthConfiguration ?? this.widthConfiguration,
+        applyOpacity: applyOpacity ?? this.applyOpacity,
       );
 
   /// Linearly interpolate between two pull-down menu themes.
@@ -152,6 +178,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
       textStyle: TextStyle.lerp(textStyle, other.textStyle, t),
       titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t),
       widthConfiguration: other.widthConfiguration,
+      applyOpacity: other.applyOpacity,
     );
   }
 
@@ -168,6 +195,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         textStyle,
         titleStyle,
         widthConfiguration,
+        applyOpacity,
       );
 
   @override
@@ -186,7 +214,8 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         other.checkmarkSize == checkmarkSize &&
         other.titleStyle == titleStyle &&
         other.textStyle == textStyle &&
-        other.widthConfiguration == widthConfiguration;
+        other.widthConfiguration == widthConfiguration &&
+        other.applyOpacity == applyOpacity;
   }
 
   @override
@@ -243,6 +272,13 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         DiagnosticsProperty<PullDownMenuWidthConfiguration>(
           'widthConfiguration',
           widthConfiguration,
+          defaultValue: null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<bool>(
+          'applyOpacity',
+          applyOpacity,
           defaultValue: null,
         ),
       );
