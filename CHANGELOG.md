@@ -1,3 +1,8 @@
+## 0.1.0-beta.7
+
+- Added `onHoverColor` to `PullDownButtonTheme` + support for mouse pointers for `PullDownMenuItem` -
+  [issue](https://github.com/notDmDrl/pull_down_button/issues/6).
+
 ## 0.1.0-beta.6
 
 - Added ability to choose to whether apply opacity on menu open for `PullDownButton.buttonBuilder` or not -

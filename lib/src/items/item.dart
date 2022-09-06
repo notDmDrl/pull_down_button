@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -34,6 +35,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
     this.isDestructive = false,
     this.textStyle,
     this.destructiveColor,
+    this.onHoverColor,
   }) : assert(
           icon == null || iconWidget == null,
           'Please provide either icon or iconWidget',
@@ -88,6 +90,13 @@ class PullDownMenuItem extends PullDownMenuEntry {
   /// [PullDownButtonTheme] theme extension is used. If that's null then
   /// [PullDownButtonThemeDefaults.destructiveColor] is used.
   final Color? destructiveColor;
+
+  /// The on hover color of this [PullDownMenuItem].
+  ///
+  /// If this property is null then [PullDownButtonTheme.onHoverColor] from
+  /// [PullDownButtonTheme] theme extension is used. If that's null then
+  /// [PullDownButtonThemeDefaults.onHoverColor] is used.
+  final Color? onHoverColor;
 
   /// Whether this item represents destructive action;
   ///
@@ -194,10 +203,17 @@ class PullDownMenuItem extends PullDownMenuEntry {
       child: item,
     );
 
-    final inkwellColor = PullDownButtonTheme.getProperty<Color>(
+    final pressedColor = PullDownButtonTheme.getProperty<Color>(
       theme: theme,
       defaults: defaults,
       getThemeProperty: (theme) => theme?.largeDividerColor,
+    );
+
+    final hoverColor = PullDownButtonTheme.getProperty<Color>(
+      widgetProperty: onHoverColor,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.onHoverColor,
     );
 
     return MergeSemantics(
@@ -206,7 +222,8 @@ class PullDownMenuItem extends PullDownMenuEntry {
         button: true,
         child: _GestureDetector(
           onTap: enabled ? () => _handleTap(context) : null,
-          pressedColor: inkwellColor,
+          pressedColor: pressedColor,
+          hoverColor: hoverColor,
           child: item,
         ),
       ),
@@ -245,6 +262,7 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
     super.iconColor,
     super.textStyle,
     super.destructiveColor,
+    super.onHoverColor,
   });
 
   /// Helper constructor for converting [PullDownMenuItem] to
@@ -397,11 +415,13 @@ class _GestureDetector extends StatefulWidget {
   const _GestureDetector({
     required this.onTap,
     required this.pressedColor,
+    required this.hoverColor,
     required this.child,
   });
 
   final FutureOr<void> Function()? onTap;
-  final Color? pressedColor;
+  final Color pressedColor;
+  final Color hoverColor;
   final Widget child;
 
   @override
@@ -410,6 +430,7 @@ class _GestureDetector extends StatefulWidget {
 
 class _GestureDetectorState extends State<_GestureDetector> {
   bool isPressed = false;
+  bool isHovered = false;
 
   bool get enabled => widget.onTap != null;
 
@@ -420,14 +441,25 @@ class _GestureDetectorState extends State<_GestureDetector> {
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: enabled ? onTap : null,
-        onTapDown: enabled ? (_) => setState(() => isPressed = true) : null,
-        onTapCancel: enabled ? () => setState(() => isPressed = false) : null,
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          color: isPressed ? widget.pressedColor : null,
-          child: widget.child,
+  Widget build(BuildContext context) => MouseRegion(
+        cursor:
+            enabled && kIsWeb ? SystemMouseCursors.click : MouseCursor.defer,
+        onEnter: enabled ? (_) => setState(() => isHovered = true) : null,
+        onExit: enabled ? (_) => setState(() => isHovered = false) : null,
+        hitTestBehavior: HitTestBehavior.opaque,
+        child: GestureDetector(
+          onTap: enabled ? onTap : null,
+          onTapDown: enabled ? (_) => setState(() => isPressed = true) : null,
+          onTapCancel: enabled ? () => setState(() => isPressed = false) : null,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            color: isPressed
+                ? widget.pressedColor
+                : isHovered
+                    ? widget.hoverColor
+                    : null,
+            child: widget.child,
+          ),
         ),
       );
 }

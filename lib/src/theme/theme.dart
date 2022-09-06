@@ -50,6 +50,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     this.titleStyle,
     this.widthConfiguration,
     this.applyOpacity,
+    this.onHoverColor,
   });
 
   /// The background color of the pull-down menu.
@@ -90,6 +91,9 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
   /// Whether to apply opacity on [PullDownButton.buttonBuilder] as it is in iOS
   /// or not.
   final bool? applyOpacity;
+
+  /// The on hover color of [PullDownMenuItem].
+  final Color? onHoverColor;
 
   /// Get [PullDownButtonTheme] from [PullDownButtonInheritedTheme].
   /// If that's null get [PullDownButtonTheme] from  [ThemeData.extensions]
@@ -132,6 +136,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     TextStyle? titleStyle,
     PullDownMenuWidthConfiguration? widthConfiguration,
     bool? applyOpacity,
+    Color? onHoverColor,
   }) =>
       PullDownButtonTheme(
         backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -146,6 +151,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         titleStyle: titleStyle ?? this.titleStyle,
         widthConfiguration: widthConfiguration ?? this.widthConfiguration,
         applyOpacity: applyOpacity ?? this.applyOpacity,
+        onHoverColor: onHoverColor ?? this.onHoverColor,
       );
 
   /// Linearly interpolate between two pull-down menu themes.
@@ -179,6 +185,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
       titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t),
       widthConfiguration: other.widthConfiguration,
       applyOpacity: other.applyOpacity,
+      onHoverColor: Color.lerp(onHoverColor, other.onHoverColor, t),
     );
   }
 
@@ -196,6 +203,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         titleStyle,
         widthConfiguration,
         applyOpacity,
+        onHoverColor,
       );
 
   @override
@@ -215,7 +223,8 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         other.titleStyle == titleStyle &&
         other.textStyle == textStyle &&
         other.widthConfiguration == widthConfiguration &&
-        other.applyOpacity == applyOpacity;
+        other.applyOpacity == applyOpacity &&
+        other.onHoverColor == onHoverColor;
   }
 
   @override
@@ -281,6 +290,9 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
           applyOpacity,
           defaultValue: null,
         ),
+      )
+      ..add(
+        ColorProperty('onHoverColor', onHoverColor, defaultValue: null),
       );
   }
 }

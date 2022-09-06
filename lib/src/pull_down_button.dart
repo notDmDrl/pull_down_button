@@ -38,7 +38,7 @@ typedef PullDownMenuItemBuilder = List<PullDownMenuEntry> Function(
 /// Used by [PullDownButton.buttonBuilder].
 typedef PullDownMenuButtonBuilder = Widget Function(
   BuildContext context,
-  void Function() showMenu,
+  Future<void> Function() showMenu,
 );
 
 /// Displays a pull-down menu and animates button to lower opacity when pressed.

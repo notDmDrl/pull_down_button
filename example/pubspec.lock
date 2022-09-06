@@ -21,7 +21,7 @@ packages:
       name: cupertino_icons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.4"
+    version: "1.0.5"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -47,7 +47,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.1.0-beta.3"
+    version: "0.1.0-beta.7"
   sky_engine:
     dependency: transitive
     description: flutter

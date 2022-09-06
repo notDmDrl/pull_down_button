@@ -22,6 +22,12 @@ const _kTitleColor = CupertinoDynamicColor.withBrightness(
   darkColor: Color.fromRGBO(235, 235, 245, 0.6),
 );
 
+/// Taken from https://developer.apple.com/design/human-interface-guidelines/inputs/pointing-devices#pointer-shape-and-content-effects
+const _kOnHoverColor = CupertinoDynamicColor.withBrightness(
+  color: Color.fromRGBO(225, 226, 229, 1),
+  darkColor: Color.fromRGBO(46, 45, 46, 1),
+);
+
 /// Based on values from https://www.figma.com/community/file/984106517828363349
 @immutable
 class PullDownButtonThemeDefaults extends PullDownButtonTheme {
@@ -88,4 +94,8 @@ class PullDownButtonThemeDefaults extends PullDownButtonTheme {
 
   @override
   bool get applyOpacity => true;
+
+  @override
+  Color? get onHoverColor =>
+      CupertinoDynamicColor.resolve(_kOnHoverColor, context);
 }
