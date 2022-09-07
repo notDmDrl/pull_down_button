@@ -110,7 +110,7 @@ class _Decoration extends StatelessWidget {
     final theme = PullDownButtonTheme.of(context);
     final defaults = PullDownButtonThemeDefaults(context);
 
-    final color = PullDownButtonTheme.getProperty<Color>(
+    final color = PullDownButtonTheme.getProperty(
       widgetProperty: backgroundColor,
       theme: theme,
       defaults: defaults,
@@ -142,8 +142,7 @@ class _MenuBody extends StatelessWidget {
     final theme = PullDownButtonTheme.of(context);
     final defaults = PullDownButtonThemeDefaults(context);
 
-    final constraints =
-        PullDownButtonTheme.getProperty<PullDownMenuWidthConfiguration>(
+    final constraints = PullDownButtonTheme.getProperty(
       widgetProperty: widthConfiguration,
       theme: theme,
       defaults: defaults,

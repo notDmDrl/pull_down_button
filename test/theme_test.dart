@@ -49,10 +49,14 @@ void main() {
     expect(theme.checkmarkSize, null);
     expect(theme.textStyle, null);
     expect(theme.titleStyle, null);
+    expect(theme.widthConfiguration, null);
+    expect(theme.applyOpacity, null);
+    expect(theme.onHoverColor, null);
+    expect(theme.onHoverTextStyle, null);
   });
 
   testWidgets('PullDownButtonTheme implements debugFillProperties',
-      (WidgetTester tester) async {
+      (tester) async {
     final builder = DiagnosticPropertiesBuilder();
     const PullDownButtonTheme(
       backgroundColor: Color(0xFFFFFFFF),
@@ -111,12 +115,12 @@ void main() {
 
     final defaults = PullDownButtonThemeDefaults(context);
 
-    // find [Material] that is used to create pull-down menu surface.
-    final button = tester.widget<Material>(
+    // find [ColoredBox] that is used to create pull-down menu surface.
+    final button = tester.widget<ColoredBox>(
       find
           .descendant(
             of: find.byKey(pullDownApp),
-            matching: find.byType(Material),
+            matching: find.byType(ColoredBox),
           )
           .last,
     );
@@ -175,12 +179,12 @@ void main() {
     await tester.tap(find.byKey(pullDownButton));
     await tester.pumpAndSettle();
 
-    // find [Material] that is used to create pull-down menu surface.
-    final button = tester.widget<Material>(
+    // find [ColoredBox] that is used to create pull-down menu surface.
+    final button = tester.widget<ColoredBox>(
       find
           .descendant(
             of: find.byKey(pullDownApp),
-            matching: find.byType(Material),
+            matching: find.byType(ColoredBox),
           )
           .last,
     );
@@ -304,12 +308,12 @@ void main() {
     await tester.tap(find.byKey(pullDownButton));
     await tester.pumpAndSettle();
 
-    // find [Material] that is used to create pull-down menu surface.
-    final button = tester.widget<Material>(
+    // find [ColoredBox] that is used to create pull-down menu surface.
+    final button = tester.widget<ColoredBox>(
       find
           .descendant(
             of: find.byKey(pullDownApp),
-            matching: find.byType(Material),
+            matching: find.byType(ColoredBox),
           )
           .last,
     );

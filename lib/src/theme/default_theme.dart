@@ -98,4 +98,7 @@ class PullDownButtonThemeDefaults extends PullDownButtonTheme {
   @override
   Color? get onHoverColor =>
       CupertinoDynamicColor.resolve(_kOnHoverColor, context);
+
+  @override
+  TextStyle? get onHoverTextStyle => textStyle;
 }

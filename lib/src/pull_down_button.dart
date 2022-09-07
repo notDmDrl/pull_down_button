@@ -183,7 +183,7 @@ class _PullDownButtonState extends State<PullDownButton> {
     final theme = PullDownButtonTheme.of(context);
     final defaults = PullDownButtonThemeDefaults(context);
 
-    final apply = PullDownButtonTheme.getProperty<bool>(
+    final apply = PullDownButtonTheme.getProperty(
       widgetProperty: widget.applyOpacity,
       theme: theme,
       defaults: defaults,

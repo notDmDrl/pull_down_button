@@ -43,7 +43,7 @@ class PullDownMenuTitle extends PullDownMenuEntry {
         constraints: BoxConstraints(minHeight: height),
         child: Center(
           child: DefaultTextStyle(
-            style: PullDownButtonTheme.getProperty<TextStyle>(
+            style: PullDownButtonTheme.getProperty(
               widgetProperty: titleStyle,
               theme: PullDownButtonTheme.of(context),
               defaults: PullDownButtonThemeDefaults(context),

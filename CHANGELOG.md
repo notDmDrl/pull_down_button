@@ -1,3 +1,8 @@
+## 0.1.0-beta.8
+
+- Added `onHoverTextStyle` to `PullDownButtonTheme` -
+  [issue](https://github.com/notDmDrl/pull_down_button/issues/6).
+
 ## 0.1.0-beta.7
 
 - Added `onHoverColor` to `PullDownButtonTheme` + support for mouse pointers for `PullDownMenuItem` -

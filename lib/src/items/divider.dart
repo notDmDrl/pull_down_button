@@ -70,14 +70,14 @@ class PullDownMenuDivider extends PullDownMenuEntry {
     final Color color;
 
     if (height != 0) {
-      color = PullDownButtonTheme.getProperty<Color>(
+      color = PullDownButtonTheme.getProperty(
         widgetProperty: largeDividerColor,
         theme: PullDownButtonTheme.of(context),
         defaults: PullDownButtonThemeDefaults(context),
         getThemeProperty: (theme) => theme?.largeDividerColor,
       );
     } else {
-      color = PullDownButtonTheme.getProperty<Color>(
+      color = PullDownButtonTheme.getProperty(
         widgetProperty: dividerColor,
         theme: PullDownButtonTheme.of(context),
         defaults: PullDownButtonThemeDefaults(context),

@@ -36,6 +36,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
     this.textStyle,
     this.destructiveColor,
     this.onHoverColor,
+    this.onHoverTextStyle,
   }) : assert(
           icon == null || iconWidget == null,
           'Please provide either icon or iconWidget',
@@ -98,6 +99,13 @@ class PullDownMenuItem extends PullDownMenuEntry {
   /// [PullDownButtonThemeDefaults.onHoverColor] is used.
   final Color? onHoverColor;
 
+  /// The on hover text style to be used by this [PullDownMenuItem].
+  ///
+  /// If this property is null then [PullDownButtonTheme.onHoverTextStyle] from
+  /// [PullDownButtonTheme] theme extension is used. If that's null then
+  /// [PullDownButtonThemeDefaults.onHoverTextStyle] is used.
+  final TextStyle? onHoverTextStyle;
+
   /// Whether this item represents destructive action;
   ///
   /// If true, the contents of entry are being colored with
@@ -149,7 +157,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
     final theme = PullDownButtonTheme.of(context);
     final defaults = PullDownButtonThemeDefaults(context);
 
-    var style = PullDownButtonTheme.getProperty<TextStyle>(
+    var style = PullDownButtonTheme.getProperty(
       widgetProperty: textStyle,
       theme: theme,
       defaults: defaults,
@@ -157,7 +165,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
     );
 
     if (isDestructive) {
-      final color = PullDownButtonTheme.getProperty<Color>(
+      final color = PullDownButtonTheme.getProperty(
         widgetProperty: destructiveColor,
         theme: theme,
         defaults: defaults,
@@ -173,47 +181,30 @@ class PullDownMenuItem extends PullDownMenuEntry {
       );
     }
 
-    Widget item = AnimatedDefaultTextStyle(
-      style: style,
-      duration: kThemeChangeDuration,
-      child: Container(
-        alignment: AlignmentDirectional.centerStart,
-        constraints: BoxConstraints(minHeight: height),
-        padding: padding,
-        child: buildChild(),
-      ),
-    );
-
-    var color = style.color;
+    var colorIcon = style.color;
 
     if (!isDestructive && iconColor != null) {
-      color = iconColor;
+      colorIcon = iconColor;
     }
 
-    item = IconTheme.merge(
-      data: IconThemeData(
-        color: color,
-        size: PullDownButtonTheme.getProperty<double>(
-          widgetProperty: iconSize,
-          theme: theme,
-          defaults: defaults,
-          getThemeProperty: (theme) => theme?.iconSize,
-        ),
-      ),
-      child: item,
-    );
-
-    final pressedColor = PullDownButtonTheme.getProperty<Color>(
+    final pressedColor = PullDownButtonTheme.getProperty(
       theme: theme,
       defaults: defaults,
       getThemeProperty: (theme) => theme?.largeDividerColor,
     );
 
-    final hoverColor = PullDownButtonTheme.getProperty<Color>(
+    final hoverColor = PullDownButtonTheme.getProperty(
       widgetProperty: onHoverColor,
       theme: theme,
       defaults: defaults,
       getThemeProperty: (theme) => theme?.onHoverColor,
+    );
+
+    final hoverTextStyle = PullDownButtonTheme.getProperty(
+      widgetProperty: onHoverTextStyle,
+      theme: theme,
+      defaults: defaults,
+      getThemeProperty: (theme) => theme?.onHoverTextStyle,
     );
 
     return MergeSemantics(
@@ -224,7 +215,27 @@ class PullDownMenuItem extends PullDownMenuEntry {
           onTap: enabled ? () => _handleTap(context) : null,
           pressedColor: pressedColor,
           hoverColor: hoverColor,
-          child: item,
+          builder: (context, isHovered) => IconTheme.merge(
+            data: IconThemeData(
+              color: isHovered ? hoverTextStyle.color : colorIcon,
+              size: PullDownButtonTheme.getProperty(
+                widgetProperty: iconSize,
+                theme: theme,
+                defaults: defaults,
+                getThemeProperty: (theme) => theme?.iconSize,
+              ),
+            ),
+            child: AnimatedDefaultTextStyle(
+              style: isHovered ? hoverTextStyle : style,
+              duration: kThemeChangeDuration,
+              child: Container(
+                alignment: AlignmentDirectional.centerStart,
+                constraints: BoxConstraints(minHeight: height),
+                padding: padding,
+                child: buildChild(),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -263,6 +274,7 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
     super.textStyle,
     super.destructiveColor,
     super.onHoverColor,
+    super.onHoverTextStyle,
   });
 
   /// Helper constructor for converting [PullDownMenuItem] to
@@ -285,6 +297,8 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
           iconColor: item.iconColor,
           textStyle: item.textStyle,
           destructiveColor: item.destructiveColor,
+          onHoverColor: item.onHoverColor,
+          onHoverTextStyle: item.onHoverTextStyle,
         );
 
   /// Whether to display a checkmark next to the menu item.
@@ -367,21 +381,21 @@ class _CheckmarkIcon extends StatelessWidget {
 
     final defaults = PullDownButtonThemeDefaults(context);
 
-    final icon = PullDownButtonTheme.getProperty<IconData>(
+    final icon = PullDownButtonTheme.getProperty(
       widgetProperty: checkmark,
       theme: theme,
       defaults: defaults,
       getThemeProperty: (theme) => theme?.checkmark,
     );
 
-    final weight = PullDownButtonTheme.getProperty<FontWeight>(
+    final weight = PullDownButtonTheme.getProperty(
       widgetProperty: checkmarkWeight,
       theme: theme,
       defaults: defaults,
       getThemeProperty: (theme) => theme?.checkmarkWeight,
     );
 
-    final size = PullDownButtonTheme.getProperty<double>(
+    final size = PullDownButtonTheme.getProperty(
       widgetProperty: checkmarkSize,
       theme: theme,
       defaults: defaults,
@@ -416,13 +430,13 @@ class _GestureDetector extends StatefulWidget {
     required this.onTap,
     required this.pressedColor,
     required this.hoverColor,
-    required this.child,
+    required this.builder,
   });
 
   final FutureOr<void> Function()? onTap;
   final Color pressedColor;
   final Color hoverColor;
-  final Widget child;
+  final Widget Function(BuildContext context, bool isHovered) builder;
 
   @override
   State<_GestureDetector> createState() => _GestureDetectorState();
@@ -437,7 +451,12 @@ class _GestureDetectorState extends State<_GestureDetector> {
   Future<void> onTap() async {
     await widget.onTap!();
 
-    setState(() => isPressed = false);
+    if (mounted) {
+      setState(() {
+        isPressed = false;
+        isHovered = false;
+      });
+    }
   }
 
   @override
@@ -452,13 +471,15 @@ class _GestureDetectorState extends State<_GestureDetector> {
           onTapDown: enabled ? (_) => setState(() => isPressed = true) : null,
           onTapCancel: enabled ? () => setState(() => isPressed = false) : null,
           behavior: HitTestBehavior.opaque,
-          child: Container(
-            color: isPressed
-                ? widget.pressedColor
-                : isHovered
-                    ? widget.hoverColor
-                    : null,
-            child: widget.child,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: isPressed
+                  ? widget.pressedColor
+                  : isHovered
+                      ? widget.hoverColor
+                      : null,
+            ),
+            child: widget.builder(context, isHovered && !isPressed),
           ),
         ),
       );

@@ -120,6 +120,7 @@ PullDownMenuItem(
 | isDestructive    | Whether this item represents destructive action. | false    |
 | destructiveColor | Color for destructive action.                    | optional |
 | onHoverColor     | On hover color                                   | optional |
+| onHoverTextStyle | On hover text style                              | optional |
 
 ## </details>
 
@@ -257,11 +258,12 @@ ThemeData(
 | checkmark          | Checkmark icon.                                                               | optional |
 | checkmarkWeight    | Weight of checkmark icon.                                                     | optional |
 | checkmarkSize      | Size of checkmark icon                                                        | optional |
-| textStyle          | Title text style.                                                             | optional |
-| titleStyle         | Title widget style.                                                           | optional |
+| textStyle          | `PullDownMenuItem` text style.                                                | optional |
+| titleStyle         | `PullDownMenuTitle` style.                                                    | optional |
 | widthConfiguration | Pull-down menu width.                                                         | optional |
 | applyOpacity       | Whether to apply opacity on `PullDownButton.buttonBuilder` when menu is open. | optional |
 | onHoverColor       | On hover color of `PullDownMenuItem`                                          | optional |
+| onHoverTextStyle   | On hover text style of `PullDownMenuItem`                                     | optional |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
 `largeDividerColor` is usually lighter than `dividerColor`.
