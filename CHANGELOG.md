@@ -1,4 +1,4 @@
-## 0.2.0-beta.1
+## 0.2.0-beta.1.1
 
 - Fix issue where it was not possible to open pull-down menu when no items where provided to `PullDownMenuDivider.wrapWithDivider`.
 - Updated examples.
@@ -41,10 +41,6 @@
 
 - Added `PullDownMenuWidthConfiguration` to allow customizing pull-down menu's width -
   [issue](https://github.com/notDmDrl/pull_down_button/issues/3).
-
-## 0.1.0-beta.4.1
-
-- Lower `meta` version (to avoid conflicts since it's pinned in Flutter SDK).
 
 ## 0.1.0-beta.4
 

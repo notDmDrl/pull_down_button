@@ -7,10 +7,10 @@ import 'package:flutter/rendering.dart';
 /// private there;
 @protected
 @immutable
-class MenuItem extends SingleChildRenderObjectWidget {
+class RenderMenuItem extends SingleChildRenderObjectWidget {
   /// Copy of [_MenuItem] from [PopupMenuButton] implementation since it's
   /// private there;
-  const MenuItem({
+  const RenderMenuItem({
     super.key,
     required this.onLayout,
     required super.child,
