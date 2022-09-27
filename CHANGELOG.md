@@ -1,3 +1,27 @@
+## 0.2.0-beta.1
+
+- Fix issue where it was not possible to open pull-down menu when no items where provided to `PullDownMenuDivider.wrapWithDivider`.
+- Updated examples.
+
+**BREAKING CHANGES**:
+
+- Update `PullDownMenuDivider`'s constructors - deprecate (removed any usages) `dividerColor` and `largeDividerColor` from `PullDownMenuDivider` and `PullDownMenuDivider.large` respectivly. Both constructors now use same `color` property.
+
+  Migration:
+
+  ```dart
+    PullDownMenuDivider(dividerColor: Colors.black) -> PullDownMenuDivider(color: Colors.black)
+
+    PullDownMenuDivider.large(largeDividerColor: Colors.black) -> PullDownMenuDivider.large(color: Colors.black)
+  ```
+
+- Default `PullDownMenuPosition` of `PullDownButton` is now `under` since this behaviour is the most frequent across iOS system apps.
+- Reworked the way menus are rendered on screen (position and size) and added new position mode `automatic` [issue](https://github.com/notDmDrl/pull_down_button/issues/5):
+  - `over` - will attempt to fill as much space as possible.
+  - `under` - is forced to be under an anchor. If there is no available space, will be placed above an anchor.
+  - `above` - is forced to be above an anchor. If there is no available space, will be placed under an anchor.
+  - `automatic` - is positioned under or above an anchor depending on side that has more space available.
+
 ## 0.1.0-beta.8
 
 - Added `onHoverTextStyle` to `PullDownButtonTheme` -
@@ -24,7 +48,7 @@
 
 ## 0.1.0-beta.4
 
-- Fix `showDialog` (and other actions the change navigation stack) to work directly without any workarounds -
+- Fix `showDialog` (and other actions that change navigation stack) to work directly without any workarounds -
   [issue](https://github.com/notDmDrl/pull_down_button/issues/1):
 
   Instead of

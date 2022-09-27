@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
@@ -138,7 +137,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
           Expanded(
             child: Text(
               title,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.start,
             ),
           ),
           if (icon != null || iconWidget != null)
@@ -225,9 +224,8 @@ class PullDownMenuItem extends PullDownMenuEntry {
                 getThemeProperty: (theme) => theme?.iconSize,
               ),
             ),
-            child: AnimatedDefaultTextStyle(
+            child: DefaultTextStyle(
               style: isHovered ? hoverTextStyle : style,
-              duration: kThemeChangeDuration,
               child: Container(
                 alignment: AlignmentDirectional.centerStart,
                 constraints: BoxConstraints(minHeight: height),
@@ -248,9 +246,9 @@ class PullDownMenuItem extends PullDownMenuEntry {
 /// use [PullDownButton.buttonBuilder].
 ///
 /// To show normal pull-down menu item, consider using
-/// [SelectablePullDownMenuItem].
+/// [PullDownMenuItem].
 ///
-/// By default, a [PullDownMenuItem] is minimum of
+/// By default, a [SelectablePullDownMenuItem] is minimum of
 /// [kMinInteractiveDimensionCupertino] pixels height.
 @immutable
 class SelectablePullDownMenuItem extends PullDownMenuItem {
@@ -348,7 +346,7 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
           Expanded(
             child: Text(
               title,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.start,
             ),
           ),
           if (icon != null || iconWidget != null)

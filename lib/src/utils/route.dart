@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_down_button/pull_down_button.dart';
@@ -11,8 +12,6 @@ import 'menu.dart';
 /// private there.
 @protected
 class PullDownMenuRoute extends PopupRoute<VoidCallback> {
-  /// Copy of [_PopupMenuRoute] from [PopupMenuButton] implementation since it's
-  /// private there.
   PullDownMenuRoute({
     required this.position,
     required this.items,
@@ -77,13 +76,13 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
       child: Builder(
         builder: (context) => CustomSingleChildLayout(
           delegate: _PopupMenuRouteLayout(
-            position,
-            itemSizes,
-            Directionality.of(context),
-            mediaQuery.padding,
-            _avoidBounds(mediaQuery),
-            buttonSize,
-            menuPosition,
+            position: position,
+            itemSizes: itemSizes,
+            textDirection: Directionality.of(context),
+            padding: mediaQuery.padding,
+            avoidBounds: _avoidBounds(mediaQuery),
+            buttonSize: buttonSize,
+            menuPosition: menuPosition,
           ),
           child: capturedThemes.wrap(menu),
         ),
@@ -95,17 +94,18 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
       DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
 }
 
+/// Positioning and size of the menu on the screen.
 @immutable
 class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
-  const _PopupMenuRouteLayout(
-    this.position,
-    this.itemSizes,
-    this.textDirection,
-    this.padding,
-    this.avoidBounds,
-    this.buttonSize,
-    this.menuPosition,
-  );
+  const _PopupMenuRouteLayout({
+    required this.position,
+    required this.itemSizes,
+    required this.textDirection,
+    required this.padding,
+    required this.avoidBounds,
+    required this.buttonSize,
+    required this.menuPosition,
+  });
 
   final RelativeRect position;
   final List<Size?> itemSizes;
@@ -116,10 +116,91 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   final PullDownMenuPosition menuPosition;
 
   @override
-  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
-      BoxConstraints.loose(constraints.biggest).deflate(
-        const EdgeInsets.all(kMenuScreenPadding) + padding,
-      );
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final double height;
+
+    switch (menuPosition) {
+      case PullDownMenuPosition.under:
+        height = _getHeightForUnder(constraints);
+        break;
+      case PullDownMenuPosition.above:
+        height = _getHeightForAbove(constraints);
+        break;
+      case PullDownMenuPosition.over:
+        height = _getHeightForOver(constraints);
+        break;
+      case PullDownMenuPosition.automatic:
+        height = _getHeightForAutomatic(constraints);
+    }
+
+    return BoxConstraints.loose(
+      Size(constraints.biggest.width, height),
+    ).deflate(
+      const EdgeInsets.symmetric(horizontal: kMenuScreenPadding),
+    );
+  }
+
+  double _getHeightForUnder(BoxConstraints constraints) {
+    final constraintsHeight = constraints.biggest.height;
+    final availableHeight =
+        constraintsHeight - position.top - buttonSize.height;
+
+    if (availableHeight <
+        kMinInteractiveDimensionCupertino * 2 + padding.bottom) {
+      return constraintsHeight -
+          buttonSize.height -
+          padding.top -
+          kMenuScreenPadding -
+          position.bottom;
+    } else {
+      return availableHeight - padding.bottom - kMenuScreenPadding;
+    }
+  }
+
+  double _getHeightForAbove(BoxConstraints constraints) {
+    final constraintsHeight = constraints.biggest.height;
+    final availableHeight =
+        constraintsHeight - position.bottom - buttonSize.height;
+
+    if (availableHeight < kMinInteractiveDimensionCupertino * 2 + padding.top) {
+      return constraintsHeight -
+          buttonSize.height -
+          padding.bottom -
+          kMenuScreenPadding -
+          position.top;
+    } else {
+      return availableHeight - padding.top - kMenuScreenPadding;
+    }
+  }
+
+  double _getHeightForOver(BoxConstraints constraints) {
+    final constraintsHeight = constraints.biggest.height;
+    final availableHeight = constraintsHeight - position.top;
+
+    if (availableHeight < kMinInteractiveDimensionCupertino * 2) {
+      return constraintsHeight - padding.top - position.bottom;
+    } else {
+      return availableHeight - padding.bottom - kMenuScreenPadding;
+    }
+  }
+
+  double _getHeightForAutomatic(BoxConstraints constraints) {
+    final constraintsHeight = constraints.biggest.height;
+
+    if (position.top > constraintsHeight / 2) {
+      return constraintsHeight -
+          position.bottom -
+          buttonSize.height -
+          padding.top -
+          kMenuScreenPadding;
+    } else {
+      return constraintsHeight -
+          position.top -
+          buttonSize.height -
+          padding.bottom -
+          kMenuScreenPadding;
+    }
+  }
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
@@ -164,44 +245,55 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   }
 
   Offset _fitInsideScreen(Rect screen, Size childSize, Offset wantedPosition) {
-    var x = wantedPosition.dx;
+    final x = _fitX(wantedPosition.dx, screen, childSize.width);
+    // y is uppermost position of button
     var y = wantedPosition.dy;
 
-    if (x < screen.left + kMenuScreenPadding + padding.left) {
-      x = screen.left + kMenuScreenPadding + padding.left;
-    } else if (x + childSize.width >
-        screen.right - kMenuScreenPadding - padding.right) {
-      x = screen.right - childSize.width - kMenuScreenPadding - padding.right;
-    }
+    final childHeight = childSize.height;
+    final buttonHeight = buttonSize.height;
 
-    // Subtract from `y` to fit all of a menu above wanted position.
-    if (menuPosition == PullDownMenuPosition.above) {
-      y -= childSize.height;
-    }
-    // Add to `y` to fit all of a menu under wanted position.
-    else if (menuPosition == PullDownMenuPosition.under) {
-      y += buttonSize.height;
-    }
-
-    // Check for available space at the top of the screen.
-
-    // Never triggers if `menuPosition` == [PullDownMenuPosition.under] since
-    // we already apply correct offset in `showButtonMenu()`.
-    if (y < screen.top + kMenuScreenPadding + padding.top) {
-      // Threat [PullDownMenuPosition.over] and [PullDownMenuPosition.above]
-      // as same.
-
-      y = padding.top;
-    }
-    // Check for available space at the bottom of the screen.
-    else if (y + childSize.height >
-        screen.bottom - kMenuScreenPadding - padding.bottom) {
-      // Threat [PullDownMenuPosition.over] and [PullDownMenuPosition.under]
-      // as same.
-      y = screen.bottom - childSize.height - padding.bottom;
+    switch (menuPosition) {
+      case PullDownMenuPosition.over:
+        if (y + childHeight > screen.bottom) {
+          y -= childHeight - buttonHeight;
+        }
+        break;
+      case PullDownMenuPosition.under:
+        if (y + buttonHeight + childHeight > screen.bottom) {
+          y -= childHeight;
+        } else {
+          y += buttonHeight;
+        }
+        break;
+      case PullDownMenuPosition.above:
+        if (y - buttonHeight > screen.top + padding.top) {
+          y -= childHeight;
+        } else {
+          y += buttonHeight;
+        }
+        break;
+      case PullDownMenuPosition.automatic:
+        if (y > screen.height / 2) {
+          y -= childHeight;
+        } else {
+          y += buttonHeight;
+        }
     }
 
     return Offset(x, y);
+  }
+
+  double _fitX(double wantedX, Rect screen, double childWidth) {
+    final fitLeft = screen.left + kMenuScreenPadding + padding.left;
+    final fitRight = screen.right - kMenuScreenPadding - padding.right;
+
+    if (wantedX < fitLeft) {
+      return fitLeft;
+    } else if (wantedX + childWidth > fitRight) {
+      return fitRight - childWidth;
+    }
+
+    return wantedX;
   }
 
   @override
@@ -210,5 +302,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
       textDirection != oldDelegate.textDirection ||
       !listEquals(itemSizes, oldDelegate.itemSizes) ||
       padding != oldDelegate.padding ||
-      !setEquals(avoidBounds, oldDelegate.avoidBounds);
+      !setEquals(avoidBounds, oldDelegate.avoidBounds) ||
+      buttonSize != oldDelegate.buttonSize ||
+      menuPosition != oldDelegate.menuPosition;
 }

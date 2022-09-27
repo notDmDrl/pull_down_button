@@ -16,7 +16,6 @@ import 'theme.dart';
 ///  ),
 /// home: ...,
 /// ```
-///
 @immutable
 class PullDownButtonInheritedTheme extends InheritedTheme {
   /// Creates a [PullDownButtonInheritedTheme].

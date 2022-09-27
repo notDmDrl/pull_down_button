@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_down_button/pull_down_button.dart';
@@ -9,14 +8,26 @@ import 'utils/route.dart';
 
 /// Used to configure how the [PullDownButton] positions its pull-down menu.
 enum PullDownMenuPosition {
-  /// Menu is positioned over the anchor.
+  /// Menu is positioned over an anchor. Will attempt to fill as much space as
+  /// possible.
   over,
 
-  /// Menu is positioned under the anchor.
+  /// Menu is positioned under an anchor and is forced to be under an anchor.
+  ///
+  /// If there is no available space to place menu under an anchor, menu will
+  /// be placed above an anchor.
   under,
 
-  /// Menu is positioned above the anchor.
-  above
+  /// Menu is positioned above an anchor and is forced to always be above an
+  /// anchor.
+  ///
+  /// If there is no available space to place menu above an anchor, menu will
+  /// be placed under an anchor.
+  above,
+
+  /// Menu is positioned under or above an anchor depending on side that has
+  /// more space available.
+  automatic,
 }
 
 /// Signature for the callback invoked when a [PullDownButton] is dismissed
@@ -42,6 +53,17 @@ typedef PullDownMenuButtonBuilder = Widget Function(
 );
 
 /// Displays a pull-down menu and animates button to lower opacity when pressed.
+///
+/// See also:
+///
+/// * [PullDownMenuItem], a pull-down menu entry for a simple action.
+/// * [SelectablePullDownMenuItem], a pull-down menu entry for a selection
+///   action.
+/// * [PullDownMenuDivider], a pull-down menu entry for a divider.
+/// * [PullDownMenuDivider.large], a pull-down menu entry that is a large
+///   divider.
+/// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
+/// * [PullDownButtonTheme], a pull-down button and menu theme configuration.
 @immutable
 class PullDownButton extends StatefulWidget {
   /// Creates a button that shows a pull-down menu.
@@ -51,7 +73,7 @@ class PullDownButton extends StatefulWidget {
     required this.buttonBuilder,
     this.onCanceled,
     this.offset = Offset.zero,
-    this.position = PullDownMenuPosition.over,
+    this.position = PullDownMenuPosition.under,
     this.backgroundColor,
     this.widthConfiguration,
     this.applyOpacity,
@@ -88,8 +110,8 @@ class PullDownButton extends StatefulWidget {
   /// [offset] is used to change the position of the popup menu relative to the
   /// position set by this parameter.
   ///
-  /// When not set, the position defaults to [PullDownMenuPosition.over] which
-  /// makes the popup menu appear directly over the button that was used to
+  /// When not set, the position defaults to [PullDownMenuPosition.under] which
+  /// makes the popup menu appear directly under the button that was used to
   /// create it.
   final PullDownMenuPosition position;
 
@@ -143,15 +165,15 @@ class _PullDownButtonState extends State<PullDownButton> {
 
     if (items.isNotEmpty) {
       if (items.whereType<SelectablePullDownMenuItem>().isNotEmpty) {
-        items.forEachIndexed(
-          (index, item) {
-            if (item.represents && item is! SelectablePullDownMenuItem) {
-              items[index] = SelectablePullDownMenuItem.convertFrom(
-                item as PullDownMenuItem,
-              );
-            }
-          },
-        );
+        for (var index = 0; index < items.length; index++) {
+          final item = items[index];
+
+          if (item.represents && item is! SelectablePullDownMenuItem) {
+            items[index] = SelectablePullDownMenuItem.convertFrom(
+              item as PullDownMenuItem,
+            );
+          }
+        }
       }
 
       setState(() => isPressed = true);

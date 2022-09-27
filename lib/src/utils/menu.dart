@@ -1,7 +1,7 @@
 import 'dart:ui' as ui;
 
-import 'package:flutter/cupertino.dart' hide MenuItem;
-import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../theme/default_theme.dart';
 import '../theme/theme.dart';
@@ -9,9 +9,8 @@ import 'constants.dart';
 import 'menu_item.dart';
 import 'route.dart';
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, comment_references
 
-// ignore: comment_references
 /// Copy of [_PopupMenu] from [PopupMenuButton] implementation since it's
 /// private there.
 @immutable
@@ -43,16 +42,13 @@ class PullDownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[];
-
-    for (var i = 0; i < route.items.length; i += 1) {
-      children.add(
+    final children = <Widget>[
+      for (var i = 0; i < route.items.length; i += 1)
         MenuItem(
           onLayout: (size) => route.itemSizes[i] = size,
           child: route.items[i],
         ),
-      );
-    }
+    ];
 
     final opacity = CurveTween(curve: const Interval(0, 1 / 3));
 
@@ -61,6 +57,7 @@ class PullDownMenu extends StatelessWidget {
       children: children,
     );
 
+    // split open/close animation into to parts to remove unnecessary rebuilds.
     // animation for menu content.
     final innerAnimation = AnimatedBuilder(
       animation: route.animation!,
@@ -77,6 +74,7 @@ class PullDownMenu extends StatelessWidget {
       child: menuBody,
     );
 
+    // animation for menu decoration.
     return AnimatedBuilder(
       animation: route.animation!,
       builder: (_, child) {
@@ -98,6 +96,7 @@ class PullDownMenu extends StatelessWidget {
   }
 }
 
+/// Menu container - shape, blur, color.
 @immutable
 class _Decoration extends StatelessWidget {
   const _Decoration({required this.child, required this.backgroundColor});
@@ -130,6 +129,7 @@ class _Decoration extends StatelessWidget {
   }
 }
 
+/// Menu body - constrained width, scrollbar, list of [PullDownMenuEntry].
 @immutable
 class _MenuBody extends StatelessWidget {
   const _MenuBody({required this.children, required this.widthConfiguration});
@@ -158,8 +158,10 @@ class _MenuBody extends StatelessWidget {
         label: 'Pull-Down menu',
         child: CupertinoUserInterfaceLevel(
           data: CupertinoUserInterfaceLevelData.elevated,
-          child: SingleChildScrollView(
-            child: ListBody(children: children),
+          child: CupertinoScrollbar(
+            child: SingleChildScrollView(
+              child: ListBody(children: children),
+            ),
           ),
         ),
       ),

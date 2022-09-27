@@ -100,7 +100,8 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
   final TextStyle? onHoverTextStyle;
 
   /// Get [PullDownButtonTheme] from [PullDownButtonInheritedTheme].
-  /// If that's null get [PullDownButtonTheme] from  [ThemeData.extensions]
+  ///
+  /// If that's null get [PullDownButtonTheme] from [ThemeData.extensions]
   /// property of the ambient [Theme].
   static PullDownButtonTheme? of(BuildContext context) =>
       PullDownButtonInheritedTheme.of(context) ??

@@ -22,10 +22,10 @@ Since this package uses new Flutter feature `ThemeExtension` for theming, minimu
 ### Contents:
 
 - [PullDownButton](#pulldownbutton)
-  - [PullDownMenuItem](#pulldownbutton)
-  - [SelectablePullDownMenuItem](#pulldownbutton)
-  - [PullDownMenuDivider](#pulldownbutton)
-  - [PullDownMenuTitle](#pulldownbutton)
+  - [PullDownMenuItem](#pulldownmenuitem)
+  - [SelectablePullDownMenuItem](#selectablepulldownmenuitem)
+  - [PullDownMenuDivider](#pulldownmenudivider)
+  - [PullDownMenuTitle](#pulldownmenutitle)
 - [Theming](#theming)
   - [PullDownButtonTheme](#pulldownbuttontheme)
 - [Contributions](#contributions)
@@ -88,6 +88,7 @@ Available options:
 - over
 - under
 - above
+- automatic
 
 ---
 
@@ -119,8 +120,8 @@ PullDownMenuItem(
 | textStyle        | Title text style.                                | optional |
 | isDestructive    | Whether this item represents destructive action. | false    |
 | destructiveColor | Color for destructive action.                    | optional |
-| onHoverColor     | On hover color                                   | optional |
-| onHoverTextStyle | On hover text style                              | optional |
+| onHoverColor     | On hover color.                                  | optional |
+| onHoverTextStyle | On hover text style.                             | optional |
 
 ## </details>
 
@@ -191,13 +192,6 @@ There is also convenience method to wrap multiple menu items with small dividers
 ]),
 ```
 
-| Parameters        | Description          | Value    |
-| ----------------- | -------------------- | -------- |
-| dividerColor      | Small divider color. | optional |
-| largeDividerColor | Large divider color. | optional |
-
-`largeDividerColor` is usually lighter than `dividerColor`.
-
 ---
 
 ### PullDownMenuTitle
@@ -210,10 +204,10 @@ There is also convenience method to wrap multiple menu items with small dividers
 const PullDownMenuTitle(title: Text('Pull-down menu')),
 ```
 
-| Parameters | Description         | Value    |
-| ---------- | ------------------- | -------- |
-| title      | Title widget.       | required |
-| titleStyle | Title widget style. | optional |
+| Parameters | Description              | Value    |
+| ---------- | ------------------------ | -------- |
+| title      | Title widget.            | required |
+| titleStyle | Title widget text style. | optional |
 
 ---
 
