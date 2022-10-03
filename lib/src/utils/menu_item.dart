@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:meta/meta.dart';
 
 // ignore_for_file: public_member_api_docs, comment_references
 
 /// Copy of [_MenuItem] from [PopupMenuButton] implementation since it's
 /// private there;
-@protected
+@internal
 @immutable
 class RenderMenuItem extends SingleChildRenderObjectWidget {
   /// Copy of [_MenuItem] from [PopupMenuButton] implementation since it's

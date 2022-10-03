@@ -1,11 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
 import '../theme/default_theme.dart';
+import '../utils/gesture_detector.dart';
 
 /// An item in a cupertino style pull-down menu.
 ///
@@ -210,7 +208,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
       child: Semantics(
         enabled: enabled,
         button: true,
-        child: _GestureDetector(
+        child: MenuActionGestureDetector(
           onTap: enabled ? () => _handleTap(context) : null,
           pressedColor: pressedColor,
           hoverColor: hoverColor,
@@ -273,7 +271,10 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
     super.destructiveColor,
     super.onHoverColor,
     super.onHoverTextStyle,
-  });
+  }) : assert(
+          icon == null || iconWidget == null,
+          'Please provide either icon or iconWidget',
+        );
 
   /// Helper constructor for converting [PullDownMenuItem] to
   /// [SelectablePullDownMenuItem].
@@ -419,66 +420,4 @@ class _CheckmarkIcon extends StatelessWidget {
       ),
     );
   }
-}
-
-@immutable
-@protected
-class _GestureDetector extends StatefulWidget {
-  const _GestureDetector({
-    required this.onTap,
-    required this.pressedColor,
-    required this.hoverColor,
-    required this.builder,
-  });
-
-  final FutureOr<void> Function()? onTap;
-  final Color pressedColor;
-  final Color hoverColor;
-  final Widget Function(BuildContext context, bool isHovered) builder;
-
-  @override
-  State<_GestureDetector> createState() => _GestureDetectorState();
-}
-
-class _GestureDetectorState extends State<_GestureDetector> {
-  bool isPressed = false;
-  bool isHovered = false;
-
-  bool get enabled => widget.onTap != null;
-
-  Future<void> onTap() async {
-    await widget.onTap!();
-
-    if (mounted) {
-      setState(() {
-        isPressed = false;
-        isHovered = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        cursor:
-            enabled && kIsWeb ? SystemMouseCursors.click : MouseCursor.defer,
-        onEnter: enabled ? (_) => setState(() => isHovered = true) : null,
-        onExit: enabled ? (_) => setState(() => isHovered = false) : null,
-        hitTestBehavior: HitTestBehavior.opaque,
-        child: GestureDetector(
-          onTap: enabled ? onTap : null,
-          onTapDown: enabled ? (_) => setState(() => isPressed = true) : null,
-          onTapCancel: enabled ? () => setState(() => isPressed = false) : null,
-          behavior: HitTestBehavior.opaque,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: isPressed
-                  ? widget.pressedColor
-                  : isHovered
-                      ? widget.hoverColor
-                      : null,
-            ),
-            child: widget.builder(context, isHovered && !isPressed),
-          ),
-        ),
-      );
 }

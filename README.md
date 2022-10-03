@@ -24,6 +24,7 @@ Since this package uses new Flutter feature `ThemeExtension` for theming, minimu
 - [PullDownButton](#pulldownbutton)
   - [PullDownMenuItem](#pulldownmenuitem)
   - [SelectablePullDownMenuItem](#selectablepulldownmenuitem)
+  - [PullDownMenuActionsRow](#pulldownmenuactionsrow)
   - [PullDownMenuDivider](#pulldownmenudivider)
   - [PullDownMenuTitle](#pulldownmenutitle)
 - [Theming](#theming)
@@ -45,12 +46,12 @@ PullDownButton(
   itemBuilder: (context) => [
     PullDownMenuItem(
       title: 'Menu item',
-      onTap: () => action(),
+      onTap: () {},
     ),
     const PullDownMenuDivider(),
     PullDownMenuItem(
       title: 'Menu item 2',
-      onTap: () => action2(),
+      onTap: () {},
     ),
   ],
   position: PullDownMenuPosition.under,
@@ -85,14 +86,14 @@ The way `PullDownButton` positions its pull-down menu.
 
 Available options:
 
-- over
-- under
-- above
-- automatic
+- `over` - menu is positioned over an anchor. Will attempt to fill as much space as possible;
+- `under` - menu is positioned under an anchor and is forced to be under an anchor;
+- `above` - menu is positioned above an anchor and is forced to always be above an anchor;
+- `automatic` - menu is positioned under or above an anchor depending on side that has more space available.
 
 ---
 
-## PullDownMenuItem
+### PullDownMenuItem
 
 ![PullDownMenuItem example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/item.png)
 
@@ -101,7 +102,7 @@ Available options:
 ```dart
 PullDownMenuItem(
   title: 'Add to favourites',
-  onTap: () => action(),
+  onTap: () {},
   icon: CupertinoIcons.star,
 ),
 ```
@@ -123,9 +124,11 @@ PullDownMenuItem(
 | onHoverColor     | On hover color.                                  | optional |
 | onHoverTextStyle | On hover text style.                             | optional |
 
-## </details>
+ </details>
 
-## SelectablePullDownMenuItem
+---
+
+### SelectablePullDownMenuItem
 
 ![SelectablePullDownMenuItem example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/selectable_item.png)
 
@@ -135,7 +138,7 @@ PullDownMenuItem(
 SelectablePullDownMenuItem(
   title: 'Order by size',
   selected: true,
-  onTap: () => action(),
+  onTap: () {},
   icon: CupertinoIcons.chevron_down,
 ),
 ```
@@ -143,8 +146,6 @@ SelectablePullDownMenuItem(
 ##### Note:
 
 Based on [guidelines](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons), if menu items contains at least one tappable menu item of type `SelectablePullDownMenuItem` all of `PullDownMenuItem`s should also be of type `SelectablePullDownMenuItem` (to insert additional padding so all items have same). Although, manual change of all `PullDownMenuItem`s is not needed, it is done automatically.
-
-![SelectablePullDownMenuItem conversion example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/dividers.png)
 
 <details><summary>Parameters table</summary>
 
@@ -156,6 +157,59 @@ Based on [guidelines](https://developer.apple.com/design/human-interface-guideli
 | checkmark       | Checkmark icon.                                       | optional |
 | checkmarkWeight | Weight of checkmark icon.                             | optional |
 | checkmarkSize   | Size of checkmark icon                                | optional |
+
+</details>
+
+---
+
+### PullDownMenuActionsRow
+
+![PullDownMenuActionsRow example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/actions_row.png)
+
+`PullDownMenuActionsRow` is a widget used to create cupertino style pull-down menu row of actions
+([small or medium size](https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize)).
+
+```dart
+PullDownMenuActionsRow.medium(
+  items: [
+    PullDownMenuIconAction(
+      enabled: false,
+      onTap: () {},
+      title: 'Inbox',
+      icon: CupertinoIcons.tray_arrow_down,
+    ),
+    PullDownMenuIconAction(
+      onTap: () {},
+      title: 'Archive',
+      icon: CupertinoIcons.archivebox,
+    ),
+    PullDownMenuIconAction(
+      onTap: () {},
+      title: 'Trash',
+      isDestructive: true,
+      icon: CupertinoIcons.delete,
+    ),
+  ],
+),
+```
+
+| Parameters   | Description                                      | Value    |
+| ------------ | ------------------------------------------------ | -------- |
+| items        | List of `PullDownMenuIconAction`.                | required |
+| dividerColor | Color of vertical dividers used to split `item`. | optional |
+
+### PullDownMenuIconAction
+
+`PullDownMenuIconAction` is used to populate `PullDownMenuActionsRow.items`.
+Depending on `PullDownMenuActionsRow` size might be either icon only or icon and title in vertical array
+
+<details><summary>Parameters table</summary>
+
+`PullDownMenuIconAction` uses all of `PullDownMenuItem` parameters except `textStyle`. Instead `PullDownMenuIconAction` uses `iconActionTextStyle`:
+
+| Parameters          | Description                                                                         | Value    |
+| ------------------- | ----------------------------------------------------------------------------------- | -------- |
+| iconActionTextStyle | Text style for `PullDownMenuIconAction` when using `PullDownMenuActionsRow.medium`. | optional |
 
 </details>
 
@@ -183,11 +237,11 @@ There is also convenience method to wrap multiple menu items with small dividers
 ...PullDownMenuDivider.wrapWithDivider([
   PullDownMenuItem(
     title: 'Menu item',
-    onTap: () => action(),
+    onTap: () {},
   ),
   PullDownMenuItem(
     title: 'Menu item 2',
-    onTap: () => action2(),
+    onTap: () {},
   ),
 ]),
 ```
@@ -219,11 +273,9 @@ This package also provides additional customisation. By default, iOS15 theme is 
 
 | Light Theme                                                                                                               | Dark Theme                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| ![light default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title.png) | ![dark default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title_dark.png) |
+| ![light default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/usage.png) | ![dark default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/usage_dark.png) |
 
 ### PullDownButtonTheme
-
-#### Usage
 
 To use `PullDownButtonTheme` define it in your `ThemeData` as follows:
 
@@ -240,24 +292,25 @@ ThemeData(
 ),
 ```
 
-<details><summary>Parameters table</summary>
+<details><summary>Parameters table (all values are optional)</summary>
 
-| Parameters         | Description                                                                   | Value    |
-| ------------------ | ----------------------------------------------------------------------------- | -------- |
-| backgroundColor    | The background color of pull-down menu.                                       | optional |
-| dividerColor       | Small divider color.                                                          | optional |
-| largeDividerColor  | Large divider color.                                                          | optional |
-| destructiveColor   | Color for destructive action.                                                 | optional |
-| iconSize           | Size of trailing icon.                                                        | optional |
-| checkmark          | Checkmark icon.                                                               | optional |
-| checkmarkWeight    | Weight of checkmark icon.                                                     | optional |
-| checkmarkSize      | Size of checkmark icon                                                        | optional |
-| textStyle          | `PullDownMenuItem` text style.                                                | optional |
-| titleStyle         | `PullDownMenuTitle` style.                                                    | optional |
-| widthConfiguration | Pull-down menu width.                                                         | optional |
-| applyOpacity       | Whether to apply opacity on `PullDownButton.buttonBuilder` when menu is open. | optional |
-| onHoverColor       | On hover color of `PullDownMenuItem`                                          | optional |
-| onHoverTextStyle   | On hover text style of `PullDownMenuItem`                                     | optional |
+| Parameters          | Description                                                                   |
+| ------------------- | ----------------------------------------------------------------------------- |
+| backgroundColor     | The background color of pull-down menu.                                       |
+| dividerColor        | Small divider color.                                                          |
+| largeDividerColor   | Large divider color.                                                          |
+| destructiveColor    | Color for destructive action.                                                 |
+| iconSize            | Size of trailing icon.                                                        |
+| checkmark           | Checkmark icon.                                                               |
+| checkmarkWeight     | Weight of checkmark icon.                                                     |
+| checkmarkSize       | Size of checkmark icon                                                        |
+| textStyle           | `PullDownMenuItem` text style.                                                |
+| iconActionTextStyle | `PullDownMenuIconAction` text style.                                          |
+| titleStyle          | `PullDownMenuTitle` style.                                                    |
+| widthConfiguration  | Pull-down menu width.                                                         |
+| applyOpacity        | Whether to apply opacity on `PullDownButton.buttonBuilder` when menu is open. |
+| onHoverColor        | On hover color of `PullDownMenuItem`                                          |
+| onHoverTextStyle    | On hover text style of `PullDownMenuItem`                                     |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
 `largeDividerColor` is usually lighter than `dividerColor`.
@@ -282,7 +335,8 @@ CupertinoApp(
 
 ---
 
-Here is example of using `PullDownButtonTheme` with Material 3 color scheme colors & text styles from [Material 3 Menu specs](https://m3.material.io/components/menus/specs).
+Here is example of using `PullDownButtonTheme` with Material 3 color scheme colors
+(generated from `CupertinoColors.systemBlue` with `ColorScheme.fromSeed`) from [Material 3 Menu specs](https://m3.material.io/components/menus/specs).
 
 | Custom Material 3 light theme                                                                                           | Custom Material 3 dark theme                                                                                          |
 | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |

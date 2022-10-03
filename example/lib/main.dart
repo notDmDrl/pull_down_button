@@ -4,161 +4,61 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
+import 'item_examples.dart';
+import 'setup.dart';
+
+/// This file includes basic example for [PullDownButton] that uses all of
+/// available menu items and [PullDownMenuPosition.automatic].
+///
+/// For more specific examples (per menu item, theming, positioning) check
+/// [ItemExamples] on [GitHub](https://github.com/notDmDrl/pull_down_button/tree/main/example/lib)
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  ThemeMode mode = ThemeMode.light;
-
-  void onThemeModeChange() {
-    setState(() {
-      if (mode == ThemeMode.light) {
-        mode = ThemeMode.dark;
-      } else {
-        mode = ThemeMode.light;
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: 'PullDownButton Example',
-        theme: ThemeData(
-          cupertinoOverrideTheme: const CupertinoThemeData(
-            scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
-            barBackgroundColor: Color(0xF0F9F9F9),
-          ),
-        ),
-        darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          cupertinoOverrideTheme: const CupertinoThemeData(
-            brightness: Brightness.dark,
-            scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
-            barBackgroundColor: Color(0xF01D1D1D),
-          ),
-        ),
-        themeMode: mode,
-        home: MyHomePage(onThemeModeChange: onThemeModeChange),
-      );
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.onThemeModeChange});
-
-  final GestureTapCallback onThemeModeChange;
+@immutable
+class Example extends StatelessWidget {
+  const Example({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final edgeInsets = MediaQuery.of(context).padding;
     final padding = EdgeInsets.only(
-      left: 16 + MediaQuery.of(context).padding.left,
-      top: MediaQuery.of(context).padding.top +
-          kMinInteractiveDimensionCupertino +
-          24,
-      right: 16 + MediaQuery.of(context).padding.right,
-      bottom: 24,
+      left: 16 + edgeInsets.left,
+      top: edgeInsets.top + 24,
+      right: 16 + edgeInsets.right,
+      bottom: 24 + edgeInsets.bottom,
     );
 
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        leading: CupertinoButton(
-          onPressed: onThemeModeChange,
-          padding: EdgeInsets.zero,
-          child: const Icon(CupertinoIcons.sun_max_fill),
-        ),
-        middle: Text(
-          'PullDownButton Example',
-          style: TextStyle(
-            color: CupertinoDynamicColor.resolve(
-              CupertinoColors.label,
-              context,
-            ),
-          ),
-        ),
-        trailing: _Example(
-          position: PullDownMenuPosition.under,
-          builder: (_, showMenu) => CupertinoButton(
-            onPressed: showMenu,
-            padding: EdgeInsets.zero,
-            child: const Icon(CupertinoIcons.ellipsis_circle),
-          ),
-        ),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.separated(
-              padding: padding,
-              reverse: true,
-              itemBuilder: (context, index) {
-                final isSender = index.isEven;
+    return ListView.separated(
+      padding: padding,
+      reverse: true,
+      itemBuilder: (context, index) {
+        final isSender = index.isEven;
 
-                return Align(
-                  alignment:
-                      isSender ? Alignment.centerRight : Alignment.centerLeft,
-                  child: _Example(
-                    position: PullDownMenuPosition.automatic,
-                    applyOpacity: false,
-                    builder: (_, showMenu) => CupertinoButton(
-                      onPressed: showMenu,
-                      padding: EdgeInsets.zero,
-                      child: _MessageExample(isSender: isSender),
-                    ),
-                  ),
-                );
-              },
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
-              itemCount: 20,
+        return Align(
+          alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
+          child: ExampleMenu(
+            position: PullDownMenuPosition.automatic,
+            applyOpacity: false,
+            builder: (_, showMenu) => CupertinoButton(
+              onPressed: showMenu,
+              padding: EdgeInsets.zero,
+              child: _MessageExample(isSender: isSender),
             ),
           ),
-          ColoredBox(
-            color: CupertinoColors.systemGrey5.resolveFrom(context),
-            child: SafeArea(
-              top: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _Example(
-                        position: PullDownMenuPosition.above,
-                        builder: (_, showMenu) => CupertinoButton(
-                          onPressed: showMenu,
-                          child: const Text('Show menu above'),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: _Example(
-                        position: PullDownMenuPosition.over,
-                        builder: (_, showMenu) => CupertinoButton(
-                          onPressed: showMenu,
-                          child: const Text('Show menu over'),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
-      ),
+        );
+      },
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
+      itemCount: 20,
     );
   }
 }
 
-// iOS Files app menu replica
 @immutable
-class _Example extends StatelessWidget {
-  const _Example({
+class ExampleMenu extends StatelessWidget {
+  const ExampleMenu({
+    super.key,
     required this.position,
     required this.builder,
     this.applyOpacity = true,
@@ -171,6 +71,31 @@ class _Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PullDownButton(
         itemBuilder: (context) => [
+          PullDownMenuActionsRow.small(
+            items: [
+              PullDownMenuIconAction(
+                onTap: () {},
+                title: 'Cut',
+                icon: CupertinoIcons.scissors,
+              ),
+              PullDownMenuIconAction(
+                onTap: () {},
+                title: 'Copy',
+                icon: CupertinoIcons.doc_on_doc,
+              ),
+              PullDownMenuIconAction(
+                onTap: () {},
+                title: 'Paste',
+                icon: CupertinoIcons.doc_on_clipboard,
+              ),
+              PullDownMenuIconAction(
+                onTap: () {},
+                title: 'Look Up',
+                icon: CupertinoIcons.doc_text_search,
+              ),
+            ],
+          ),
+          const PullDownMenuDivider.large(),
           PullDownMenuItem(
             enabled: false,
             title: 'Select',
@@ -198,34 +123,27 @@ class _Example extends StatelessWidget {
             icon: CupertinoIcons.list_bullet,
           ),
           const PullDownMenuDivider.large(),
-          ...PullDownMenuDivider.wrapWithDivider([
-            SelectablePullDownMenuItem(
-              title: 'Name',
-              selected: false,
-              onTap: () {},
-            ),
-            SelectablePullDownMenuItem(
-              title: 'Type',
-              selected: false,
-              onTap: () {},
-            ),
-            SelectablePullDownMenuItem(
-              title: 'Date',
-              selected: true,
-              icon: CupertinoIcons.chevron_down,
-              onTap: () {},
-            ),
-            SelectablePullDownMenuItem(
-              title: 'Size',
-              selected: false,
-              onTap: () {},
-            ),
-            SelectablePullDownMenuItem(
-              title: 'Tags',
-              selected: false,
-              onTap: () {},
-            ),
-          ]),
+          PullDownMenuActionsRow.medium(
+            items: [
+              PullDownMenuIconAction(
+                enabled: false,
+                onTap: () {},
+                title: 'Inbox',
+                icon: CupertinoIcons.tray_arrow_down,
+              ),
+              PullDownMenuIconAction(
+                onTap: () {},
+                title: 'Archive',
+                icon: CupertinoIcons.archivebox,
+              ),
+              PullDownMenuIconAction(
+                onTap: () {},
+                title: 'Trash',
+                isDestructive: true,
+                icon: CupertinoIcons.delete,
+              ),
+            ],
+          ),
         ],
         applyOpacity: applyOpacity,
         position: position,

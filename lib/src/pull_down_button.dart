@@ -63,6 +63,8 @@ typedef PullDownMenuButtonBuilder = Widget Function(
 /// * [PullDownMenuDivider.large], a pull-down menu entry that is a large
 ///   divider.
 /// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
+/// * [PullDownMenuActionsRow], a more compact way to show multiple pull-down
+///   menu entries for a simple action.
 /// * [PullDownButtonTheme], a pull-down button and menu theme configuration.
 @immutable
 class PullDownButton extends StatefulWidget {
@@ -85,7 +87,7 @@ class PullDownButton extends StatefulWidget {
   /// [SelectablePullDownMenuItem] all of [PullDownMenuItem]s should also be of
   /// type [SelectablePullDownMenuItem].
   ///
-  /// See https://developer.apple.com/design/human-interface-guidelines/ios/controls/buttons#pull-down-buttons
+  /// See https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
   ///
   /// In order to achieve it all [PullDownMenuItem]s will be replaced with
   /// [SelectablePullDownMenuItem] with [SelectablePullDownMenuItem.selected]
@@ -168,9 +170,11 @@ class _PullDownButtonState extends State<PullDownButton> {
         for (var index = 0; index < items.length; index++) {
           final item = items[index];
 
-          if (item.represents && item is! SelectablePullDownMenuItem) {
+          if (item.represents &&
+              item is! SelectablePullDownMenuItem &&
+              item is PullDownMenuItem) {
             items[index] = SelectablePullDownMenuItem.convertFrom(
-              item as PullDownMenuItem,
+              item,
             );
           }
         }
@@ -225,6 +229,7 @@ class _PullDownButtonState extends State<PullDownButton> {
   }
 }
 
+/// Show menu.
 Future<VoidCallback?> _showCupertinoMenu({
   required BuildContext context,
   required RelativeRect position,

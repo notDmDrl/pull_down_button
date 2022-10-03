@@ -1,3 +1,10 @@
+## 0.3.0
+
+- Added `PullDownMenuActionsRow` - displays multiple actions in a row (from iOS 16),
+  [iOS docs](https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize).
+- New examples.
+- Updated readme images.
+
 ## 0.2.0-beta.1.1
 
 - Fix issue where it was not possible to open pull-down menu when no items where provided to `PullDownMenuDivider.wrapWithDivider`.
@@ -69,7 +76,7 @@
   ```
 
 - `PullDownMenuItem` and `SelectablePullDownMenuItem` - added `iconColor` and `iconWidget` parameters.
-- `PullDownMenuTitle` replace `SizedBox` with `ConstrainedBox` to allow `PullDownMenuTitle` to have adaptive heigth;
+- `PullDownMenuTitle` replace `SizedBox` with `ConstrainedBox` to allow `PullDownMenuTitle` to have adaptive heigth.
 - Update `largeDividerColor` in `PullDownButtonThemeDefaults` to more correct value.
 - Fix menu background color "jumping" during open animation.
 - Temporarily remove menu open curve due to some animation issues with menus with large amount of items.

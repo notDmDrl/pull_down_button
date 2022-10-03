@@ -47,6 +47,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     this.checkmarkWeight,
     this.checkmarkSize,
     this.textStyle,
+    this.iconActionTextStyle,
     this.titleStyle,
     this.widthConfiguration,
     this.applyOpacity,
@@ -82,6 +83,9 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
 
   /// The text style of items in the pull-down menu.
   final TextStyle? textStyle;
+
+  /// The text style of [PullDownMenuIconAction] items in the pull-down menu.
+  final TextStyle? iconActionTextStyle;
 
   /// The text style of title in the pull-down menu.
   final TextStyle? titleStyle;
@@ -138,6 +142,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     FontWeight? checkmarkWeight,
     double? checkmarkSize,
     TextStyle? textStyle,
+    TextStyle? iconActionTextStyle,
     TextStyle? titleStyle,
     PullDownMenuWidthConfiguration? widthConfiguration,
     bool? applyOpacity,
@@ -154,6 +159,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         checkmarkWeight: checkmarkWeight ?? this.checkmarkWeight,
         checkmarkSize: checkmarkSize ?? this.checkmarkSize,
         textStyle: textStyle ?? this.textStyle,
+        iconActionTextStyle: iconActionTextStyle ?? this.iconActionTextStyle,
         titleStyle: titleStyle ?? this.titleStyle,
         widthConfiguration: widthConfiguration ?? this.widthConfiguration,
         applyOpacity: applyOpacity ?? this.applyOpacity,
@@ -189,6 +195,11 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
       ),
       checkmarkSize: ui.lerpDouble(checkmarkSize, other.checkmarkSize, t),
       textStyle: TextStyle.lerp(textStyle, other.textStyle, t),
+      iconActionTextStyle: TextStyle.lerp(
+        iconActionTextStyle,
+        other.iconActionTextStyle,
+        t,
+      ),
       titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t),
       widthConfiguration: other.widthConfiguration,
       applyOpacity: other.applyOpacity,
@@ -209,6 +220,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         checkmarkWeight,
         checkmarkSize,
         textStyle,
+        iconActionTextStyle,
         titleStyle,
         widthConfiguration,
         applyOpacity,
@@ -231,6 +243,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         other.checkmarkWeight == checkmarkWeight &&
         other.checkmarkSize == checkmarkSize &&
         other.titleStyle == titleStyle &&
+        other.iconActionTextStyle == iconActionTextStyle &&
         other.textStyle == textStyle &&
         other.widthConfiguration == widthConfiguration &&
         other.applyOpacity == applyOpacity &&
@@ -278,6 +291,13 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         DiagnosticsProperty<TextStyle>(
           'textStyle',
           textStyle,
+          defaultValue: null,
+        ),
+      )
+      ..add(
+        DiagnosticsProperty<TextStyle>(
+          'iconButtonTextStyle',
+          iconActionTextStyle,
           defaultValue: null,
         ),
       )

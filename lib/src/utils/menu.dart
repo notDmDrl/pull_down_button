@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 import '../theme/default_theme.dart';
 import '../theme/theme.dart';
@@ -14,7 +15,7 @@ import 'route.dart';
 /// Copy of [_PopupMenu] from [PopupMenuButton] implementation since it's
 /// private there.
 @immutable
-@protected
+@internal
 class PullDownMenu extends StatelessWidget {
   const PullDownMenu({
     super.key,

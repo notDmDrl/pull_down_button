@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
 import 'constants.dart';
@@ -10,7 +11,7 @@ import 'menu.dart';
 
 /// Copy of [_PopupMenuRoute] from [PopupMenuButton] implementation since it's
 /// private there.
-@protected
+@internal
 class PullDownMenuRoute extends PopupRoute<VoidCallback> {
   PullDownMenuRoute({
     required this.position,
@@ -177,7 +178,8 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final constraintsHeight = constraints.biggest.height;
     final availableHeight = constraintsHeight - position.top;
 
-    if (availableHeight < kMinInteractiveDimensionCupertino * 2) {
+    if (availableHeight <
+        kMinInteractiveDimensionCupertino * 2 + padding.vertical) {
       return constraintsHeight - padding.top - position.bottom;
     } else {
       return availableHeight - padding.bottom - kMenuScreenPadding;

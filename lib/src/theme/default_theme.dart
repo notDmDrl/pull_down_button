@@ -78,6 +78,18 @@ class PullDownButtonThemeDefaults extends PullDownButtonTheme {
       );
 
   @override
+  TextStyle get iconActionTextStyle => TextStyle(
+        fontFamily: '.SF UI Text',
+        inherit: false,
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: CupertinoDynamicColor.resolve(CupertinoColors.label, context),
+        height: 1.3,
+        letterSpacing: -0.41,
+        textBaseline: TextBaseline.alphabetic,
+      );
+
+  @override
   TextStyle get titleStyle => TextStyle(
         fontFamily: '.SF UI Text',
         inherit: false,
