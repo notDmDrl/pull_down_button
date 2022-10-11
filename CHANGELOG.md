@@ -1,3 +1,7 @@
+## 0.3.1
+
+- Fixed incorrect padding values for RTL - [issue](https://github.com/notDmDrl/pull_down_button/issues/7) 
+
 ## 0.3.0
 
 - Added `PullDownMenuActionsRow` - displays multiple actions in a row (from iOS 16),
@@ -12,7 +16,7 @@
 
 **BREAKING CHANGES**:
 
-- Update `PullDownMenuDivider`'s constructors - deprecate (removed any usages) `dividerColor` and `largeDividerColor` from `PullDownMenuDivider` and `PullDownMenuDivider.large` respectivly. Both constructors now use same `color` property.
+- Update `PullDownMenuDivider`'s constructors - deprecate (removed any usages) `dividerColor` and `largeDividerColor` from `PullDownMenuDivider` and `PullDownMenuDivider.large` respectively. Both constructors now use same `color` property.
 
   Migration:
 
@@ -76,7 +80,7 @@
   ```
 
 - `PullDownMenuItem` and `SelectablePullDownMenuItem` - added `iconColor` and `iconWidget` parameters.
-- `PullDownMenuTitle` replace `SizedBox` with `ConstrainedBox` to allow `PullDownMenuTitle` to have adaptive heigth.
+- `PullDownMenuTitle` replace `SizedBox` with `ConstrainedBox` to allow `PullDownMenuTitle` to have adaptive height.
 - Update `largeDividerColor` in `PullDownButtonThemeDefaults` to more correct value.
 - Fix menu background color "jumping" during open animation.
 - Temporarily remove menu open curve due to some animation issues with menus with large amount of items.

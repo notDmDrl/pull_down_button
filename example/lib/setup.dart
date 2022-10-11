@@ -37,6 +37,10 @@ class MyApp extends StatelessWidget {
             ),
           ),
           themeMode: value,
+          builder: (context, child) => Directionality(
+            textDirection: TextDirection.ltr,
+            child: child!,
+          ),
           home: child,
         ),
         child: const MyHomePage(),

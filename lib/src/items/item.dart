@@ -114,7 +114,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
   final bool isDestructive;
 
   /// Content padding.
-  EdgeInsets get padding => const EdgeInsets.symmetric(
+  EdgeInsetsGeometry get padding => const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 8,
       );
@@ -140,7 +140,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
           ),
           if (icon != null || iconWidget != null)
             Padding(
-              padding: const EdgeInsets.only(left: 16),
+              padding: const EdgeInsetsDirectional.only(start: 16),
               child: iconWidget ?? Icon(icon),
             )
         ],
@@ -329,14 +329,14 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
   final double? checkmarkSize;
 
   @override
-  EdgeInsets get padding =>
-      const EdgeInsets.only(left: 12, right: 16, top: 8, bottom: 8);
+  EdgeInsetsGeometry get padding =>
+      const EdgeInsetsDirectional.only(start: 12, end: 16, top: 8, bottom: 8);
 
   @override
   Widget buildChild() => Row(
         children: [
           Padding(
-            padding: const EdgeInsets.only(right: 6),
+            padding: const EdgeInsetsDirectional.only(end: 6),
             child: _CheckmarkIcon(
               selected: selected,
               checkmark: checkmark,
@@ -352,7 +352,7 @@ class SelectablePullDownMenuItem extends PullDownMenuItem {
           ),
           if (icon != null || iconWidget != null)
             Padding(
-              padding: const EdgeInsets.only(left: 16),
+              padding: const EdgeInsetsDirectional.only(start: 16),
               child: iconWidget ?? Icon(icon),
             )
         ],

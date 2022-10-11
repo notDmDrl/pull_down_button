@@ -352,8 +352,7 @@ class PullDownMenuIconAction extends StatelessWidget {
                       height: style.height,
                     )
                   : style,
-              child: Container(
-                alignment: AlignmentDirectional.centerStart,
+              child: Padding(
                 padding: padding,
                 child: child,
               ),
