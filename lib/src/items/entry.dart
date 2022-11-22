@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/default_theme.dart';
-import '../theme/theme.dart';
+import '../../pull_down_button.dart';
 
 /// See [PopupMenuEntry].
 @immutable
@@ -13,14 +12,15 @@ abstract class PullDownMenuEntry extends StatelessWidget {
   /// See [PopupMenuEntry.height].
   double get height;
 
-  /// Whether this entry represents any action and is available to tap;
+  /// Whether this entry represents any action and is available to tap.
   bool get represents;
 
   /// Whether this entry represents destructive action;
   ///
   /// If true, the contents of entry are being colored with
-  /// [PullDownButtonTheme.destructiveColor] from [PullDownButtonTheme]
-  /// theme extension. If that's null then
-  /// [PullDownButtonThemeDefaults.destructiveColor] is used.
+  /// [PullDownMenuItemTheme.destructiveColor] from
+  /// [PullDownButtonTheme.itemTheme].
+  ///
+  /// If that's null then defaults from [PullDownMenuItemTheme] are used.
   bool get isDestructive;
 }

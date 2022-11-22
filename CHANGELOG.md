@@ -1,6 +1,78 @@
+## 0.4.0
+
+**BREAKING CHANGES**:
+
+#### Menu items
+
+- Simplified API - action related menu items below are being replaced with `PullDownMenuItem`:
+  - Replaced `SelectablePullDownMenuItem` with `PullDownMenuItem.selectable`.
+  - Removed `PullDownMenuIconAction` - `PullDownMenuActionsRow` now uses `PullDownMenuItem`.
+
+#### Theming
+
+- Modularize `PullDownButtonTheme` - since `PullDownButtonTheme` was becoming a bit overcrowded all properties where split into 4 sub-themes:
+
+  - routeTheme - menu container theme (`PullDownMenuRouteTheme`).
+  - itemTheme - `PullDownMenuItem` theme (`PullDownMenuItemTheme`).
+  - dividerTheme - `PullDownMenuDivider` theme (`PullDownMenuDividerTheme`).
+  - titleTheme - `PullDownMenuTitle` theme (`PullDownMenuTitleTheme`).
+
+  All customization options that were previously available on menu items are now also using sub-themes.
+
+  Please see [README](README.md#theming) for detailed info about new sub-themes.
+
+  Migration:
+
+  ##### Before
+
+  ```dart
+  PullDownButtonTheme(
+    backgroundColor: colorScheme.surface,
+    dividerColor: colorScheme.outline,
+    largeDividerColor: colorScheme.outlineVariant,
+    destructiveColor: colorScheme.error,
+    textStyle: TextStyle(
+      color: colorScheme.onSurface,
+    ),
+    titleStyle: TextStyle(
+      color: colorScheme.onSurface,
+    ),
+    widthConfiguration: const PullDownMenuWidthConfiguration(280),
+  )
+  ```
+
+  ##### After
+
+  ```dart
+  PullDownButtonTheme(
+    routeTheme: PullDownMenuRouteTheme(
+      backgroundColor: colorScheme.surface,
+      width: 280,
+    ),
+    dividerTheme: PullDownMenuDividerTheme(
+      dividerColor: colorScheme.outline,
+      largeDividerColor: colorScheme.outlineVariant,
+    ),
+    itemTheme: PullDownMenuItemTheme(
+      destructiveColor: colorScheme.error,
+      textStyle: TextStyle(
+        color: colorScheme.onSurface,
+      ),
+    ),
+    titleTheme: PullDownMenuTitleTheme(
+      style: TextStyle(
+        color: colorScheme.onSurface,
+      ),
+    ),
+  )
+  ```
+
+- Removed `PullDownMenuWidthConfiguration` - use `PullDownMenuRouteTheme.width`.
+- `PullDownMenuRouteTheme` - added customization of menu's border radius, begin and end shadows [#8](https://github.com/notDmDrl/pull_down_button/issues/8).
+
 ## 0.3.1
 
-- Fixed incorrect padding values for RTL - [issue](https://github.com/notDmDrl/pull_down_button/issues/7) 
+- Fixed incorrect padding values for RTL [#7](https://github.com/notDmDrl/pull_down_button/issues/7)
 
 ## 0.3.0
 
@@ -27,7 +99,7 @@
   ```
 
 - Default `PullDownMenuPosition` of `PullDownButton` is now `under` since this behaviour is the most frequent across iOS system apps.
-- Reworked the way menus are rendered on screen (position and size) and added new position mode `automatic` [issue](https://github.com/notDmDrl/pull_down_button/issues/5):
+- Reworked the way menus are rendered on screen (position and size) and added new position mode `automatic` [#5](https://github.com/notDmDrl/pull_down_button/issues/5):
   - `over` - will attempt to fill as much space as possible.
   - `under` - is forced to be under an anchor. If there is no available space, will be placed above an anchor.
   - `above` - is forced to be above an anchor. If there is no available space, will be placed under an anchor.
@@ -35,28 +107,28 @@
 
 ## 0.1.0-beta.8
 
-- Added `onHoverTextStyle` to `PullDownButtonTheme` -
-  [issue](https://github.com/notDmDrl/pull_down_button/issues/6).
+- Added `onHoverTextStyle` to `PullDownButtonTheme`
+  [#6](https://github.com/notDmDrl/pull_down_button/issues/6).
 
 ## 0.1.0-beta.7
 
-- Added `onHoverColor` to `PullDownButtonTheme` + support for mouse pointers for `PullDownMenuItem` -
-  [issue](https://github.com/notDmDrl/pull_down_button/issues/6).
+- Added `onHoverColor` to `PullDownButtonTheme` + support for mouse pointers for `PullDownMenuItem`
+  [#6](https://github.com/notDmDrl/pull_down_button/issues/6).
 
 ## 0.1.0-beta.6
 
-- Added ability to choose to whether apply opacity on menu open for `PullDownButton.buttonBuilder` or not -
-  [issue](https://github.com/notDmDrl/pull_down_button/issues/4).
+- Added ability to choose to whether apply opacity on menu open for `PullDownButton.buttonBuilder` or not
+  [#4](https://github.com/notDmDrl/pull_down_button/issues/4).
 
 ## 0.1.0-beta.5
 
-- Added `PullDownMenuWidthConfiguration` to allow customizing pull-down menu's width -
-  [issue](https://github.com/notDmDrl/pull_down_button/issues/3).
+- Added `PullDownMenuWidthConfiguration` to allow customizing pull-down menu's width
+  [#3](https://github.com/notDmDrl/pull_down_button/issues/3).
 
 ## 0.1.0-beta.4
 
-- Fix `showDialog` (and other actions that change navigation stack) to work directly without any workarounds -
-  [issue](https://github.com/notDmDrl/pull_down_button/issues/1):
+- Fix `showDialog` (and other actions that change navigation stack) to work directly without any workarounds
+  [#1](https://github.com/notDmDrl/pull_down_button/issues/1):
 
   Instead of
 
@@ -83,13 +155,12 @@
 - `PullDownMenuTitle` replace `SizedBox` with `ConstrainedBox` to allow `PullDownMenuTitle` to have adaptive height.
 - Update `largeDividerColor` in `PullDownButtonThemeDefaults` to more correct value.
 - Fix menu background color "jumping" during open animation.
-- Temporarily remove menu open curve due to some animation issues with menus with large amount of items.
 - Remove Flutter **beta 2.13.0-0** as minimum supported version - now it's **3.0**.
 
 ## 0.1.0-beta.3
 
-- Added `PullDownButtonInheritedTheme` as an additional way of defining global `PullDownButtonTheme` -
-  [issue](https://github.com/notDmDrl/pull_down_button/issues/2).
+- Added `PullDownButtonInheritedTheme` as an additional way of defining global `PullDownButtonTheme`
+  [#2](https://github.com/notDmDrl/pull_down_button/issues/2).
 
 ## 0.1.0-beta.2
 

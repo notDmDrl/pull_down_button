@@ -4,10 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-import '../theme/default_theme.dart';
-import '../theme/theme.dart';
+import '../../pull_down_button.dart';
 import 'constants.dart';
-import 'menu_item.dart';
 import 'route.dart';
 
 // ignore_for_file: public_member_api_docs, comment_references
@@ -24,39 +22,27 @@ class PullDownMenu extends StatelessWidget {
 
   final PullDownMenuRoute route;
 
-  static final _shadowTween = DecorationTween(
-    begin: const BoxDecoration(
-      boxShadow: [
-        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0)),
-      ],
-    ),
-    end: const BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Color.fromRGBO(0, 0, 0, 0.1),
-          blurRadius: 64,
-          spreadRadius: 64,
-        ),
-      ],
-    ),
-  );
+  static DecorationTween _decorationTween(BoxShadow begin, BoxShadow end) =>
+      DecorationTween(
+        begin: BoxDecoration(boxShadow: [begin]),
+        end: BoxDecoration(boxShadow: [end]),
+      );
+
+  static final opacityCurve = CurveTween(curve: const Interval(0, 1 / 3));
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[
-      for (var i = 0; i < route.items.length; i += 1)
-        RenderMenuItem(
-          onLayout: (size) => route.itemSizes[i] = size,
-          child: route.items[i],
-        ),
-    ];
+    final routeTheme = route.routeTheme;
 
-    final opacity = CurveTween(curve: const Interval(0, 1 / 3));
+    final theme = PullDownMenuRouteTheme.of(context);
+    final defaults = PullDownMenuRouteTheme.defaults(context);
 
-    final Widget menuBody = _MenuBody(
-      widthConfiguration: route.widthConfiguration,
-      children: children,
-    );
+    final beginShadow =
+        routeTheme?.beginShadow ?? theme?.beginShadow ?? defaults.beginShadow!;
+    final endShadow =
+        routeTheme?.endShadow ?? theme?.endShadow ?? defaults.endShadow!;
+
+    final shadowTween = _decorationTween(beginShadow, endShadow);
 
     // split open/close animation into to parts to remove unnecessary rebuilds.
     // animation for menu content.
@@ -69,28 +55,35 @@ class PullDownMenu extends StatelessWidget {
         return Center(
           widthFactor: evaluate,
           heightFactor: evaluate,
-          child: FadeTransition(opacity: animate, child: child),
+          child: FadeTransition(
+            opacity: animate,
+            child: child,
+          ),
         );
       },
-      child: menuBody,
+      child: _MenuBody(
+        width: routeTheme?.width,
+        children: route.items,
+      ),
     );
 
-    // animation for menu decoration.
+    // Animation for menu decoration.
     return AnimatedBuilder(
       animation: route.animation!,
       builder: (_, child) {
         final animate = route.animation!;
 
         return FadeTransition(
-          opacity: opacity.animate(animate),
+          opacity: opacityCurve.animate(animate),
           child: DecoratedBoxTransition(
-            decoration: _shadowTween.animate(animate),
+            decoration: shadowTween.animate(animate),
             child: child!,
           ),
         );
       },
       child: _Decoration(
-        backgroundColor: route.backgroundColor,
+        backgroundColor: routeTheme?.backgroundColor,
+        borderRadius: routeTheme?.borderRadius,
         child: innerAnimation,
       ),
     );
@@ -100,25 +93,29 @@ class PullDownMenu extends StatelessWidget {
 /// Menu container - shape, blur, color.
 @immutable
 class _Decoration extends StatelessWidget {
-  const _Decoration({required this.child, required this.backgroundColor});
+  const _Decoration({
+    required this.child,
+    required this.backgroundColor,
+    required this.borderRadius,
+  });
 
   final Widget child;
   final Color? backgroundColor;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownButtonTheme.of(context);
-    final defaults = PullDownButtonThemeDefaults(context);
+    final theme = PullDownMenuRouteTheme.of(context);
+    final defaults = PullDownMenuRouteTheme.defaults(context);
 
-    final color = PullDownButtonTheme.getProperty(
-      widgetProperty: backgroundColor,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.backgroundColor,
-    );
+    final color =
+        backgroundColor ?? theme?.backgroundColor ?? defaults.backgroundColor!;
+
+    final radius =
+        borderRadius ?? theme?.borderRadius ?? defaults.borderRadius!;
 
     return ClipRRect(
-      borderRadius: kBorderRadius,
+      borderRadius: radius,
       child: BackdropFilter(
         filter: ui.ImageFilter.blur(sigmaX: kBlurAmount, sigmaY: kBlurAmount),
         child: ColoredBox(
@@ -133,25 +130,20 @@ class _Decoration extends StatelessWidget {
 /// Menu body - constrained width, scrollbar, list of [PullDownMenuEntry].
 @immutable
 class _MenuBody extends StatelessWidget {
-  const _MenuBody({required this.children, required this.widthConfiguration});
+  const _MenuBody({required this.children, required this.width});
 
   final List<Widget> children;
-  final PullDownMenuWidthConfiguration? widthConfiguration;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownButtonTheme.of(context);
-    final defaults = PullDownButtonThemeDefaults(context);
-
-    final constraints = PullDownButtonTheme.getProperty(
-      widgetProperty: widthConfiguration,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.widthConfiguration,
-    );
+    final theme = PullDownMenuRouteTheme.of(context);
+    final defaults = PullDownMenuRouteTheme.defaults(context);
 
     return ConstrainedBox(
-      constraints: constraints,
+      constraints: BoxConstraints.tightFor(
+        width: width ?? theme?.width ?? defaults.width!,
+      ),
       child: Semantics(
         scopesRoute: true,
         namesRoute: true,

@@ -13,10 +13,6 @@ const Duration kMenuDuration = Duration(milliseconds: 335);
 @internal
 const Curve kCurve = Curves.linearToEaseOut;
 
-/// Pull-down menu border radius.
-@internal
-const BorderRadius kBorderRadius = BorderRadius.all(Radius.circular(12));
-
 /// Pull-down menu background blur.
 @internal
 const double kBlurAmount = 50;

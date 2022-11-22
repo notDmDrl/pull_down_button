@@ -25,14 +25,14 @@ class Divider extends StatelessWidget {
               icon: CupertinoIcons.cloud_upload,
             ),
             const PullDownMenuDivider.large(),
-            SelectablePullDownMenuItem(
+            PullDownMenuItem.selectable(
               title: 'Grid',
               selected: true,
               onTap: () {},
               icon: CupertinoIcons.square_grid_2x2,
             ),
             const PullDownMenuDivider(),
-            SelectablePullDownMenuItem(
+            PullDownMenuItem.selectable(
               title: 'List',
               onTap: () {},
               icon: CupertinoIcons.list_bullet,

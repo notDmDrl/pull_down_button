@@ -1,107 +1,49 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
-import 'package:pull_down_button/pull_down_button.dart';
 
-import 'default_theme.dart';
-
-/// Width configuration for pull-down menu.
-///
-/// Only `width` is passed to [BoxConstraints] so that `height` is always
-/// unconstrained.
-@immutable
-class PullDownMenuWidthConfiguration extends BoxConstraints {
-  /// Creates pull-down menu width configuration.
-  const PullDownMenuWidthConfiguration(double width)
-      : super.tightFor(width: width);
-}
+import '../../pull_down_button.dart';
 
 /// Defines the visual properties of the routes used to display pull-down menus
 /// as well as any widgets that extend [PullDownMenuEntry].
 ///
 /// Widgets that extend [PullDownMenuEntry] obtain current
-/// [PullDownButtonTheme] object using
-/// `PullDownButtonTheme.of(context)`.
+/// [PullDownButtonTheme] object using `PullDownTheme.of(context)`.
 ///
 /// [PullDownButtonTheme] should be specified in [ThemeData.extensions] or
-/// using [PullDownButtonInheritedTheme] in `builder` property in [MaterialApp]
+/// using [PullDownButtonInheritedTheme] in `builder` property of [MaterialApp]
 /// or [CupertinoApp].
 ///
 /// All [PullDownButtonTheme] properties are `null` by default.
-/// If any of these properties are null, the pull-down menu will use iOS 15
-/// defaults specified in [PullDownButtonThemeDefaults].
+/// If any of these properties are null, or some properties of sub-themes are
+/// null, the pull-down menu will use iOS 16 defaults specified in each
+/// sub-theme.
 @immutable
-class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
-    with Diagnosticable {
+class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme> {
   /// Creates the set of properties used to configure [PullDownButtonTheme].
   const PullDownButtonTheme({
-    this.backgroundColor,
-    this.dividerColor,
-    this.largeDividerColor,
-    this.destructiveColor,
-    this.iconSize,
-    this.checkmark,
-    this.checkmarkWeight,
-    this.checkmarkSize,
-    this.textStyle,
-    this.iconActionTextStyle,
-    this.titleStyle,
-    this.widthConfiguration,
+    this.routeTheme,
+    this.itemTheme,
+    this.dividerTheme,
+    this.titleTheme,
     this.applyOpacity,
-    this.onHoverColor,
-    this.onHoverTextStyle,
   });
 
-  /// The background color of the pull-down menu.
-  final Color? backgroundColor;
+  /// Sub-theme for visual properties of the routes used to display pull-down
+  /// menus.
+  final PullDownMenuRouteTheme? routeTheme;
 
-  /// The divider color of the pull-down menu divider [PullDownMenuDivider].
-  final Color? dividerColor;
+  /// Sub-theme for visual properties of the items in pull-down menus.
+  final PullDownMenuItemTheme? itemTheme;
 
-  /// The large divider color of the pull-down menu
-  /// divider [PullDownMenuDivider.large].
-  final Color? largeDividerColor;
+  /// Sub-theme for visual properties of the dividers in pull-down menus.
+  final PullDownMenuDividerTheme? dividerTheme;
 
-  /// The destructive color of items in the pull-down menu.
-  final Color? destructiveColor;
-
-  /// The size of trailing icons of items in the pull-down menu.
-  final double? iconSize;
-
-  /// The selection icon for selected [SelectablePullDownMenuItem]s.
-  final IconData? checkmark;
-
-  /// The font weight of selection icon for selected
-  /// [SelectablePullDownMenuItem]s.
-  final FontWeight? checkmarkWeight;
-
-  /// The size of chevron icons of items in the pull-down menu.
-  final double? checkmarkSize;
-
-  /// The text style of items in the pull-down menu.
-  final TextStyle? textStyle;
-
-  /// The text style of [PullDownMenuIconAction] items in the pull-down menu.
-  final TextStyle? iconActionTextStyle;
-
-  /// The text style of title in the pull-down menu.
-  final TextStyle? titleStyle;
-
-  /// The width configuration for pull-down menu.
-  final PullDownMenuWidthConfiguration? widthConfiguration;
+  /// Sub-theme for visual properties of the titles in pull-down menus.
+  final PullDownMenuTitleTheme? titleTheme;
 
   /// Whether to apply opacity on [PullDownButton.buttonBuilder] as it is in iOS
   /// or not.
   final bool? applyOpacity;
-
-  /// The on hover color of [PullDownMenuItem].
-  final Color? onHoverColor;
-
-  /// The on hover text style of items in the pull-down menu.
-  final TextStyle? onHoverTextStyle;
 
   /// Get [PullDownButtonTheme] from [PullDownButtonInheritedTheme].
   ///
@@ -111,121 +53,49 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
       PullDownButtonInheritedTheme.of(context) ??
       Theme.of(context).extensions[PullDownButtonTheme] as PullDownButtonTheme?;
 
-  /// Helper method to get required theme property.
-  ///
-  /// Inspired by [ButtonStyleButton] `effectiveValue` function.
-  @internal
-  static T getProperty<T>({
-    T? widgetProperty,
-    required PullDownButtonTheme? theme,
-    required PullDownButtonThemeDefaults defaults,
-    required T? Function(PullDownButtonTheme? theme) getThemeProperty,
-  }) {
-    if (widgetProperty != null) return widgetProperty;
-
-    final themeValue = getThemeProperty(theme);
-    final defaultValue = getThemeProperty(defaults) as T;
-
-    return themeValue ?? defaultValue;
-  }
-
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   @override
   PullDownButtonTheme copyWith({
-    Color? backgroundColor,
-    Color? dividerColor,
-    Color? largeDividerColor,
-    Color? destructiveColor,
-    double? iconSize,
-    IconData? checkmark,
-    FontWeight? checkmarkWeight,
-    double? checkmarkSize,
-    TextStyle? textStyle,
-    TextStyle? iconActionTextStyle,
-    TextStyle? titleStyle,
-    PullDownMenuWidthConfiguration? widthConfiguration,
+    PullDownMenuRouteTheme? routeTheme,
+    PullDownMenuItemTheme? itemTheme,
+    PullDownMenuDividerTheme? dividerTheme,
+    PullDownMenuTitleTheme? titleTheme,
     bool? applyOpacity,
-    Color? onHoverColor,
-    TextStyle? onHoverTextStyle,
   }) =>
       PullDownButtonTheme(
-        backgroundColor: backgroundColor ?? this.backgroundColor,
-        dividerColor: dividerColor ?? this.dividerColor,
-        largeDividerColor: largeDividerColor ?? this.largeDividerColor,
-        destructiveColor: destructiveColor ?? this.destructiveColor,
-        iconSize: iconSize ?? this.iconSize,
-        checkmark: checkmark ?? this.checkmark,
-        checkmarkWeight: checkmarkWeight ?? this.checkmarkWeight,
-        checkmarkSize: checkmarkSize ?? this.checkmarkSize,
-        textStyle: textStyle ?? this.textStyle,
-        iconActionTextStyle: iconActionTextStyle ?? this.iconActionTextStyle,
-        titleStyle: titleStyle ?? this.titleStyle,
-        widthConfiguration: widthConfiguration ?? this.widthConfiguration,
+        routeTheme: routeTheme ?? this.routeTheme,
+        itemTheme: itemTheme ?? this.itemTheme,
+        dividerTheme: dividerTheme ?? this.dividerTheme,
+        titleTheme: titleTheme ?? this.titleTheme,
         applyOpacity: applyOpacity ?? this.applyOpacity,
-        onHoverColor: onHoverColor ?? this.onHoverColor,
-        onHoverTextStyle: onHoverTextStyle ?? this.onHoverTextStyle,
       );
 
-  /// Linearly interpolate between two pull-down menu themes.
+  /// Linearly interpolate between two themes.
   @override
   PullDownButtonTheme lerp(
     ThemeExtension<PullDownButtonTheme>? other,
     double t,
   ) {
-    if (other is! PullDownButtonTheme) {
-      return this;
-    }
+    if (other is! PullDownButtonTheme) return this;
 
     return PullDownButtonTheme(
-      backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
-      dividerColor: Color.lerp(dividerColor, other.dividerColor, t),
-      largeDividerColor: Color.lerp(
-        largeDividerColor,
-        other.largeDividerColor,
-        t,
-      ),
-      destructiveColor: Color.lerp(destructiveColor, other.destructiveColor, t),
-      iconSize: ui.lerpDouble(iconSize, other.iconSize, t),
-      checkmark: other.checkmark,
-      checkmarkWeight: FontWeight.lerp(
-        checkmarkWeight,
-        other.checkmarkWeight,
-        t,
-      ),
-      checkmarkSize: ui.lerpDouble(checkmarkSize, other.checkmarkSize, t),
-      textStyle: TextStyle.lerp(textStyle, other.textStyle, t),
-      iconActionTextStyle: TextStyle.lerp(
-        iconActionTextStyle,
-        other.iconActionTextStyle,
-        t,
-      ),
-      titleStyle: TextStyle.lerp(titleStyle, other.titleStyle, t),
-      widthConfiguration: other.widthConfiguration,
-      applyOpacity: other.applyOpacity,
-      onHoverColor: Color.lerp(onHoverColor, other.onHoverColor, t),
-      onHoverTextStyle:
-          TextStyle.lerp(onHoverTextStyle, other.onHoverTextStyle, t),
+      routeTheme: PullDownMenuRouteTheme.lerp(routeTheme, other.routeTheme, t),
+      itemTheme: PullDownMenuItemTheme.lerp(itemTheme, other.itemTheme, t),
+      dividerTheme:
+          PullDownMenuDividerTheme.lerp(dividerTheme, other.dividerTheme, t),
+      titleTheme: PullDownMenuTitleTheme.lerp(titleTheme, other.titleTheme, t),
+      applyOpacity: _lerpBool(applyOpacity, other.applyOpacity, t),
     );
   }
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        dividerColor,
-        largeDividerColor,
-        destructiveColor,
-        iconSize,
-        checkmark,
-        checkmarkWeight,
-        checkmarkSize,
-        textStyle,
-        iconActionTextStyle,
-        titleStyle,
-        widthConfiguration,
+        routeTheme,
+        itemTheme,
+        dividerTheme,
+        titleTheme,
         applyOpacity,
-        onHoverColor,
-        onHoverTextStyle,
       );
 
   @override
@@ -234,103 +104,57 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     if (other.runtimeType != runtimeType) return false;
 
     return other is PullDownButtonTheme &&
-        other.backgroundColor == backgroundColor &&
-        other.dividerColor == dividerColor &&
-        other.largeDividerColor == largeDividerColor &&
-        other.destructiveColor == destructiveColor &&
-        other.iconSize == iconSize &&
-        other.checkmark == checkmark &&
-        other.checkmarkWeight == checkmarkWeight &&
-        other.checkmarkSize == checkmarkSize &&
-        other.titleStyle == titleStyle &&
-        other.iconActionTextStyle == iconActionTextStyle &&
-        other.textStyle == textStyle &&
-        other.widthConfiguration == widthConfiguration &&
-        other.applyOpacity == applyOpacity &&
-        other.onHoverColor == onHoverColor &&
-        other.onHoverTextStyle == onHoverTextStyle;
+        other.routeTheme == routeTheme &&
+        other.itemTheme == itemTheme &&
+        other.dividerTheme == dividerTheme &&
+        other.titleTheme == titleTheme &&
+        other.applyOpacity == applyOpacity;
   }
+}
+
+/// Taken from [ScrollbarThemeData.lerp].
+bool? _lerpBool(bool? a, bool? b, double t) => t < 0.5 ? a : b;
+
+/// Alternative way of defining [PullDownButtonTheme].
+///
+/// Example:
+///
+/// ```dart
+/// CupertinoApp(
+///    builder: (context, child) => PullDownInheritedTheme(
+///      data: const PullDownTheme(
+///        ...
+///      ),
+///      child: child!,
+///  ),
+/// home: ...,
+/// ```
+@immutable
+class PullDownButtonInheritedTheme extends InheritedTheme {
+  /// Creates a [PullDownButtonInheritedTheme].
+  const PullDownButtonInheritedTheme({
+    super.key,
+    required this.data,
+    required super.child,
+  });
+
+  /// The configuration of this theme.
+  final PullDownButtonTheme data;
+
+  /// The closest nullable instance of this class that encloses the given
+  /// context.
+  static PullDownButtonTheme? of(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<PullDownButtonInheritedTheme>()
+      ?.data;
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(
-        ColorProperty('backgroundColor', backgroundColor, defaultValue: null),
-      )
-      ..add(
-        ColorProperty('dividerColor', dividerColor, defaultValue: null),
-      )
-      ..add(
-        ColorProperty(
-          'largeDividerColor',
-          largeDividerColor,
-          defaultValue: null,
-        ),
-      )
-      ..add(
-        ColorProperty('destructiveColor', destructiveColor, defaultValue: null),
-      )
-      ..add(DoubleProperty('iconSize', iconSize, defaultValue: null))
-      ..add(
-        DiagnosticsProperty<IconData>(
-          'checkmark',
-          checkmark,
-          defaultValue: null,
-        ),
-      )
-      ..add(
-        DiagnosticsProperty<FontWeight>(
-          'checkmarkWeight',
-          checkmarkWeight,
-          defaultValue: null,
-        ),
-      )
-      ..add(DoubleProperty('checkmarkSize', checkmarkSize, defaultValue: null))
-      ..add(
-        DiagnosticsProperty<TextStyle>(
-          'textStyle',
-          textStyle,
-          defaultValue: null,
-        ),
-      )
-      ..add(
-        DiagnosticsProperty<TextStyle>(
-          'iconButtonTextStyle',
-          iconActionTextStyle,
-          defaultValue: null,
-        ),
-      )
-      ..add(
-        DiagnosticsProperty<TextStyle>(
-          'titleStyle',
-          titleStyle,
-          defaultValue: null,
-        ),
-      )
-      ..add(
-        DiagnosticsProperty<PullDownMenuWidthConfiguration>(
-          'widthConfiguration',
-          widthConfiguration,
-          defaultValue: null,
-        ),
-      )
-      ..add(
-        DiagnosticsProperty<bool>(
-          'applyOpacity',
-          applyOpacity,
-          defaultValue: null,
-        ),
-      )
-      ..add(
-        ColorProperty('onHoverColor', onHoverColor, defaultValue: null),
-      )
-      ..add(
-        DiagnosticsProperty<TextStyle>(
-          'onHoverTextStyle',
-          onHoverTextStyle,
-          defaultValue: null,
-        ),
+  bool updateShouldNotify(covariant PullDownButtonInheritedTheme oldWidget) =>
+      data != oldWidget.data;
+
+  @override
+  Widget wrap(BuildContext context, Widget child) =>
+      PullDownButtonInheritedTheme(
+        data: data,
+        child: child,
       );
-  }
 }

@@ -1,17 +1,16 @@
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
-import '../theme/default_theme.dart';
 import '../utils/gesture_detector.dart';
+import '../utils/menu_config.dart';
 
 /// An item in a cupertino style pull-down menu.
 ///
 /// To show a pull-down menu and create a button that shows a pull-down menu
 /// use [PullDownButton.buttonBuilder].
 ///
-/// To show a checkmark next to pull-down menu item, consider using
-/// [SelectablePullDownMenuItem].
+/// To show a checkmark next to pull-down menu item (an item with selection
+/// state), consider using [PullDownMenuItem.selectable].
 ///
 /// By default, a [PullDownMenuItem] is minimum of
 /// [kMinInteractiveDimensionCupertino] pixels height.
@@ -26,14 +25,30 @@ class PullDownMenuItem extends PullDownMenuEntry {
     this.enabled = true,
     required this.title,
     this.icon,
-    this.iconSize,
+    this.itemTheme,
     this.iconColor,
     this.iconWidget,
     this.isDestructive = false,
-    this.textStyle,
-    this.destructiveColor,
-    this.onHoverColor,
-    this.onHoverTextStyle,
+  })  : selected = null,
+        assert(
+          icon == null || iconWidget == null,
+          'Please provide either icon or iconWidget',
+        );
+
+  /// Creates a selectable item for a pull-down menu.
+  ///
+  /// By default, the item is [enabled].
+  const PullDownMenuItem.selectable({
+    super.key,
+    required this.onTap,
+    this.enabled = true,
+    required this.title,
+    this.icon,
+    this.itemTheme,
+    this.iconColor,
+    this.iconWidget,
+    this.isDestructive = false,
+    this.selected = false,
   }) : assert(
           icon == null || iconWidget == null,
           'Please provide either icon or iconWidget',
@@ -54,18 +69,22 @@ class PullDownMenuItem extends PullDownMenuEntry {
   /// Icon of this [PullDownMenuItem].
   ///
   /// If the [iconWidget] is used, this property must be null;
+  ///
+  /// If used in [PullDownMenuActionsRow] either this or [iconWidget] are
+  /// required.
   final IconData? icon;
 
-  /// The icon size.
+  /// Theme of this [PullDownMenuItem].
   ///
-  /// If this property is null then [PullDownButtonTheme.iconSize] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.iconSize] is used.
-  final double? iconSize;
+  /// If this property is null then [PullDownMenuItemTheme] from
+  /// [PullDownButtonTheme.itemTheme] is used.
+  ///
+  /// If that's null then defaults from [PullDownMenuItemTheme] are used.
+  final PullDownMenuItemTheme? itemTheme;
 
   /// Color for this [PullDownMenuItem]'s [icon].
   ///
-  /// If not provided [PullDownButtonTheme.textStyle].color will be used;
+  /// If not provided `textStyle.color` from [itemTheme] will be used.
   ///
   /// If [PullDownMenuItem] `isDestructive` then [iconColor] will be ignored;
   final Color? iconColor;
@@ -73,51 +92,40 @@ class PullDownMenuItem extends PullDownMenuEntry {
   /// Custom icon widget of this [PullDownMenuItem].
   ///
   /// If the [icon] is used, this property must be null;
+  ///
+  /// If used in [PullDownMenuActionsRow] either this or [icon] are required.
   final Widget? iconWidget;
-
-  /// The text style to be used by this [PullDownMenuItem].
-  ///
-  /// If this property is null then [PullDownButtonTheme.textStyle] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.textStyle] is used.
-  final TextStyle? textStyle;
-
-  /// The text style to be used by this [PullDownMenuItem].
-  ///
-  /// If this property is null then [PullDownButtonTheme.destructiveColor] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.destructiveColor] is used.
-  final Color? destructiveColor;
-
-  /// The on hover color of this [PullDownMenuItem].
-  ///
-  /// If this property is null then [PullDownButtonTheme.onHoverColor] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.onHoverColor] is used.
-  final Color? onHoverColor;
-
-  /// The on hover text style to be used by this [PullDownMenuItem].
-  ///
-  /// If this property is null then [PullDownButtonTheme.onHoverTextStyle] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.onHoverTextStyle] is used.
-  final TextStyle? onHoverTextStyle;
 
   /// Whether this item represents destructive action;
   ///
-  /// If true, the contents of entry are being colored with
-  /// [PullDownMenuItem.destructiveColor]. If that's null then
-  /// [PullDownButtonTheme.destructiveColor] from [PullDownButtonTheme]
-  /// theme extension. If that's null too then
-  /// [PullDownButtonThemeDefaults.destructiveColor] is used.
+  /// If this property is null then `destructiveColor` from [itemTheme] is used.
+  ///
+  /// If that's null then defaults from [PullDownMenuItemTheme] are used.
   @override
   final bool isDestructive;
 
+  /// Whether to display a checkmark next to the menu item.
+  ///
+  /// Defaults to `null`.
+  ///
+  /// If [PullDownMenuItem] is used inside [PullDownMenuActionsRow] this
+  /// property will be ignored and checkmark will not be showed.
+  ///
+  /// When true, an [PullDownMenuItemTheme.checkmark] checkmark is displayed
+  /// (from [itemTheme]).
+  ///
+  /// If itemTheme is null then defaults from [PullDownMenuItemTheme] are used.
+  final bool? selected;
+
   /// Content padding.
-  EdgeInsetsGeometry get padding => const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      );
+  @protected
+  static const EdgeInsetsGeometry _padding =
+      EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+
+  /// Content padding for selectable item.
+  @protected
+  static const EdgeInsetsGeometry _selectablePadding =
+      EdgeInsetsDirectional.only(start: 12, end: 16, top: 8, bottom: 8);
 
   /// Height of [PullDownMenuItem].
   ///
@@ -128,46 +136,87 @@ class PullDownMenuItem extends PullDownMenuEntry {
   @override
   bool get represents => true;
 
-  /// Build item body.
-  @protected
-  Widget buildChild() => Row(
-        children: [
-          Expanded(
-            child: Text(
-              title,
-              textAlign: TextAlign.start,
-            ),
-          ),
-          if (icon != null || iconWidget != null)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(start: 16),
-              child: iconWidget ?? Icon(icon),
-            )
-        ],
-      );
-
   @protected
   void _handleTap(BuildContext context) => Navigator.pop(context, onTap);
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = PullDownButtonTheme.of(context);
-    final defaults = PullDownButtonThemeDefaults(context);
-
-    var style = PullDownButtonTheme.getProperty(
-      widgetProperty: textStyle,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.textStyle,
+  @protected
+  bool _debugActionRowHasIcon(ElementSize size) {
+    assert(
+      () {
+        switch (size) {
+          case ElementSize.small:
+          case ElementSize.medium:
+            if (icon != null || iconWidget != null) {
+              return true;
+            } else {
+              throw FlutterError(
+                'Either icon or iconWidget should be provided',
+              );
+            }
+          case ElementSize.large:
+            return true;
+        }
+      }(),
+      '',
     );
 
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // don't do unnecessary checks from inherited widget if [selected] is not
+    // null.
+    final viewAsSelectable = selected != null || MenuConfig.of(context);
+    final size = ActionsRowSizeConfig.of(context);
+
+    final theme = PullDownMenuItemTheme.of(context);
+    final defaults = PullDownMenuItemTheme.defaults(context);
+
+    final Widget child;
+
+    assert(_debugActionRowHasIcon(size), '');
+
+    switch (size) {
+      case ElementSize.small:
+        child = Padding(
+          padding: _padding,
+          child: Center(child: iconWidget ?? Icon(icon)),
+        );
+        break;
+      case ElementSize.medium:
+        child = _MediumItem(
+          icon: iconWidget ?? Icon(icon),
+          title: title,
+        );
+        break;
+      case ElementSize.large:
+        child = viewAsSelectable
+            ? _SelectableLargeItem(
+                selected: selected ?? false,
+                itemTheme: itemTheme,
+                title: title,
+                icon: icon,
+                iconWidget: iconWidget,
+              )
+            : _LargeItem(
+                title: title,
+                icon: icon,
+                iconWidget: iconWidget,
+              );
+        break;
+    }
+
+    var style = size == ElementSize.large
+        ? itemTheme?.textStyle ?? theme?.textStyle ?? defaults.textStyle!
+        : itemTheme?.iconActionTextStyle ??
+            theme?.iconActionTextStyle ??
+            defaults.iconActionTextStyle!;
+
     if (isDestructive) {
-      final color = PullDownButtonTheme.getProperty(
-        widgetProperty: destructiveColor,
-        theme: theme,
-        defaults: defaults,
-        getThemeProperty: (theme) => theme?.destructiveColor,
-      );
+      final color = itemTheme?.destructiveColor ??
+          theme?.destructiveColor ??
+          defaults.destructiveColor!;
 
       style = style.copyWith(color: color);
     }
@@ -178,31 +227,20 @@ class PullDownMenuItem extends PullDownMenuEntry {
       );
     }
 
-    var colorIcon = style.color;
+    final colorIcon =
+        !isDestructive && iconColor != null ? iconColor : style.color;
 
-    if (!isDestructive && iconColor != null) {
-      colorIcon = iconColor;
-    }
+    final pressedColor =
+        PullDownMenuDividerTheme.of(context)?.largeDividerColor ??
+            PullDownMenuDividerTheme.defaults(context).largeDividerColor!;
 
-    final pressedColor = PullDownButtonTheme.getProperty(
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.largeDividerColor,
-    );
+    final hoverColor = itemTheme?.onHoverColor ??
+        theme?.onHoverColor ??
+        defaults.onHoverColor!;
 
-    final hoverColor = PullDownButtonTheme.getProperty(
-      widgetProperty: onHoverColor,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.onHoverColor,
-    );
-
-    final hoverTextStyle = PullDownButtonTheme.getProperty(
-      widgetProperty: onHoverTextStyle,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.onHoverTextStyle,
-    );
+    final hoverTextStyle = itemTheme?.onHoverTextStyle ??
+        theme?.onHoverTextStyle ??
+        defaults.onHoverTextStyle!;
 
     return MergeSemantics(
       child: Semantics(
@@ -212,194 +250,180 @@ class PullDownMenuItem extends PullDownMenuEntry {
           onTap: enabled ? () => _handleTap(context) : null,
           pressedColor: pressedColor,
           hoverColor: hoverColor,
-          builder: (context, isHovered) => IconTheme.merge(
-            data: IconThemeData(
-              color: isHovered ? hoverTextStyle.color : colorIcon,
-              size: PullDownButtonTheme.getProperty(
-                widgetProperty: iconSize,
-                theme: theme,
-                defaults: defaults,
-                getThemeProperty: (theme) => theme?.iconSize,
+          builder: (context, isHovered) {
+            final iconSize =
+                itemTheme?.iconSize ?? theme?.iconSize ?? defaults.iconSize!;
+
+            final textStyle = isHovered
+                ? size == ElementSize.large
+                    ? hoverTextStyle
+                    : hoverTextStyle.copyWith(
+                        fontSize: style.fontSize,
+                        height: style.height,
+                      )
+                : style;
+
+            return IconTheme.merge(
+              data: IconThemeData(
+                color: isHovered ? hoverTextStyle.color : colorIcon,
+                size: iconSize,
               ),
-            ),
-            child: DefaultTextStyle(
-              style: isHovered ? hoverTextStyle : style,
-              child: Container(
-                alignment: AlignmentDirectional.centerStart,
-                constraints: BoxConstraints(minHeight: height),
-                padding: padding,
-                child: buildChild(),
+              child: DefaultTextStyle(
+                style: textStyle,
+                child: child,
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-/// An item with selection state in a cupertino style pull-down menu.
-///
-/// To show a pull-down menu and create a button that shows a pull-down menu
-/// use [PullDownButton.buttonBuilder].
-///
-/// To show normal pull-down menu item, consider using
-/// [PullDownMenuItem].
-///
-/// By default, a [SelectablePullDownMenuItem] is minimum of
-/// [kMinInteractiveDimensionCupertino] pixels height.
 @immutable
-class SelectablePullDownMenuItem extends PullDownMenuItem {
-  /// Creates an item with selection state for a pull-down menu.
-  ///
-  /// By default, the item is [enabled] and not [selected].
-  const SelectablePullDownMenuItem({
-    super.key,
-    this.selected = false,
-    this.checkmark,
-    this.checkmarkWeight,
-    this.checkmarkSize,
-    super.enabled,
-    required super.title,
-    super.icon,
-    super.isDestructive,
-    required super.onTap,
-    super.iconSize,
-    super.iconWidget,
-    super.iconColor,
-    super.textStyle,
-    super.destructiveColor,
-    super.onHoverColor,
-    super.onHoverTextStyle,
-  }) : assert(
-          icon == null || iconWidget == null,
-          'Please provide either icon or iconWidget',
-        );
+class _LargeItem extends StatelessWidget {
+  const _LargeItem({
+    required this.title,
+    required this.icon,
+    required this.iconWidget,
+  });
 
-  /// Helper constructor for converting [PullDownMenuItem] to
-  /// [SelectablePullDownMenuItem].
-  @internal
-  SelectablePullDownMenuItem.convertFrom(PullDownMenuItem item)
-      : selected = false,
-        checkmark = null,
-        checkmarkWeight = null,
-        checkmarkSize = null,
-        super(
-          key: item.key,
-          enabled: item.enabled,
-          title: item.title,
-          icon: item.icon,
-          isDestructive: item.isDestructive,
-          onTap: item.onTap,
-          iconSize: item.iconSize,
-          iconWidget: item.iconWidget,
-          iconColor: item.iconColor,
-          textStyle: item.textStyle,
-          destructiveColor: item.destructiveColor,
-          onHoverColor: item.onHoverColor,
-          onHoverTextStyle: item.onHoverTextStyle,
-        );
-
-  /// Whether to display a checkmark next to the menu item.
-  ///
-  /// Defaults to false.
-  ///
-  /// When true, an [CupertinoIcons.checkmark] checkmark is displayed.
-  final bool selected;
-
-  /// The checkmark icon.
-  ///
-  /// If this property is null then [PullDownButtonTheme.checkmark] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.checkmark] is used.
-  final IconData? checkmark;
-
-  /// The checkmark font weight.
-  ///
-  /// If this property is null then [PullDownButtonTheme.checkmarkWeight] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.checkmarkWeight] is used.
-  final FontWeight? checkmarkWeight;
-
-  /// The checkmark size.
-  ///
-  /// If this property is null then [PullDownButtonTheme.checkmarkSize] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.checkmarkSize] is used.
-  final double? checkmarkSize;
+  final String title;
+  final IconData? icon;
+  final Widget? iconWidget;
 
   @override
-  EdgeInsetsGeometry get padding =>
-      const EdgeInsetsDirectional.only(start: 12, end: 16, top: 8, bottom: 8);
-
-  @override
-  Widget buildChild() => Row(
-        children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.only(end: 6),
-            child: _CheckmarkIcon(
-              selected: selected,
-              checkmark: checkmark,
-              checkmarkWeight: checkmarkWeight,
-              checkmarkSize: checkmarkSize,
+  Widget build(BuildContext context) => Container(
+        alignment: AlignmentDirectional.centerStart,
+        constraints: const BoxConstraints(
+          minHeight: kMinInteractiveDimensionCupertino,
+        ),
+        padding: PullDownMenuItem._padding,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                textAlign: TextAlign.start,
+              ),
             ),
-          ),
-          Expanded(
-            child: Text(
-              title,
-              textAlign: TextAlign.start,
-            ),
-          ),
-          if (icon != null || iconWidget != null)
-            Padding(
-              padding: const EdgeInsetsDirectional.only(start: 16),
-              child: iconWidget ?? Icon(icon),
-            )
-        ],
+            if (icon != null || iconWidget != null)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 16),
+                child: iconWidget ?? Icon(icon),
+              )
+          ],
+        ),
       );
 }
 
-// Replicate the Icon logic here to add weight to checkmark as seen in iOS
+@immutable
+class _SelectableLargeItem extends StatelessWidget {
+  const _SelectableLargeItem({
+    required this.selected,
+    required this.itemTheme,
+    required this.title,
+    required this.icon,
+    required this.iconWidget,
+  });
+
+  final bool? selected;
+  final PullDownMenuItemTheme? itemTheme;
+  final String title;
+  final IconData? icon;
+  final Widget? iconWidget;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        alignment: AlignmentDirectional.centerStart,
+        constraints: const BoxConstraints(
+          minHeight: kMinInteractiveDimensionCupertino,
+        ),
+        padding: PullDownMenuItem._selectablePadding,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 6),
+              child: _CheckmarkIcon(
+                selected: selected ?? false,
+                itemTheme: itemTheme,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                title,
+                textAlign: TextAlign.start,
+              ),
+            ),
+            if (icon != null || iconWidget != null)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 16),
+                child: iconWidget ?? Icon(icon),
+              )
+          ],
+        ),
+      );
+}
+
+@immutable
+class _MediumItem extends StatelessWidget {
+  const _MediumItem({
+    required this.icon,
+    required this.title,
+  });
+
+  final Widget icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: PullDownMenuItem._padding,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon,
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+              ),
+            )
+          ],
+        ),
+      );
+}
+
+// Replicate the Icon logic here to add weight to checkmark as seen in iOS.
 @immutable
 class _CheckmarkIcon extends StatelessWidget {
   const _CheckmarkIcon({
-    this.checkmark,
-    this.checkmarkWeight,
-    this.checkmarkSize,
+    required this.itemTheme,
     required this.selected,
   });
 
-  final IconData? checkmark;
-  final FontWeight? checkmarkWeight;
-  final double? checkmarkSize;
+  final PullDownMenuItemTheme? itemTheme;
   final bool selected;
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownButtonTheme.of(context);
+    final theme = PullDownMenuItemTheme.of(context);
+    final defaults = PullDownMenuItemTheme.defaults(context);
 
-    final defaults = PullDownButtonThemeDefaults(context);
+    final icon =
+        itemTheme?.checkmark ?? theme?.checkmark ?? defaults.checkmark!;
 
-    final icon = PullDownButtonTheme.getProperty(
-      widgetProperty: checkmark,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.checkmark,
-    );
+    final weight = itemTheme?.checkmarkWeight ??
+        theme?.checkmarkWeight ??
+        defaults.checkmarkWeight!;
 
-    final weight = PullDownButtonTheme.getProperty(
-      widgetProperty: checkmarkWeight,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.checkmarkWeight,
-    );
-
-    final size = PullDownButtonTheme.getProperty(
-      widgetProperty: checkmarkSize,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.checkmarkSize,
-    );
+    final size = itemTheme?.checkmarkSize ??
+        theme?.checkmarkSize ??
+        defaults.checkmarkSize!;
 
     if (!selected) {
       return SizedBox.square(dimension: size);

@@ -26,27 +26,32 @@ class ThemingCustom extends StatelessWidget {
       data: themeData.copyWith(
         extensions: [
           PullDownButtonTheme(
-            backgroundColor: colorScheme.surface,
-            dividerColor: colorScheme.outline,
-            largeDividerColor: colorScheme.outlineVariant,
-            destructiveColor: colorScheme.error,
-            textStyle: TextStyle(
-              fontSize: 17,
-              fontFamily: '.SF UI Text',
-              height: 1.3,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurface,
-              textBaseline: TextBaseline.alphabetic,
+            routeTheme: PullDownMenuRouteTheme(
+              backgroundColor: colorScheme.surface,
+              borderRadius: const BorderRadius.all(Radius.circular(4)),
+              width: 280,
             ),
-            iconActionTextStyle: TextStyle(
-              fontFamily: '.SF UI Text',
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurface,
-              height: 1.3,
-              textBaseline: TextBaseline.alphabetic,
+            dividerTheme: PullDownMenuDividerTheme(
+              dividerColor: colorScheme.outline,
+              largeDividerColor: colorScheme.outlineVariant,
             ),
-            widthConfiguration: const PullDownMenuWidthConfiguration(280),
+            itemTheme: PullDownMenuItemTheme(
+              destructiveColor: colorScheme.error,
+              textStyle: TextStyle(
+                fontSize: 17,
+                height: 22 / 17,
+                fontFamily: '.SF UI Text',
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
+              ),
+              iconActionTextStyle: TextStyle(
+                fontFamily: '.SF UI Text',
+                fontSize: 12,
+                height: 16 / 12,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
+              ),
+            ),
           ),
         ],
       ),

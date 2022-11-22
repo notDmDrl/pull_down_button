@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:pull_down_button/pull_down_button.dart';
 
+import '../../pull_down_button.dart';
 import 'constants.dart';
 import 'menu.dart';
+import 'menu_config.dart';
 
 // ignore_for_file: public_member_api_docs, comment_references
 
@@ -17,18 +18,18 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
     required this.position,
     required this.items,
     required this.barrierLabel,
-    required this.backgroundColor,
+    required this.routeTheme,
     required this.buttonSize,
     required this.menuPosition,
     required this.capturedThemes,
-    required this.widthConfiguration,
+    required this.hasSelectable,
   }) : itemSizes = List<Size?>.filled(items.length, null);
 
   final List<PullDownMenuEntry> items;
   final List<Size?> itemSizes;
-  final Color? backgroundColor;
   final CapturedThemes capturedThemes;
-  final PullDownMenuWidthConfiguration? widthConfiguration;
+  final PullDownMenuRouteTheme? routeTheme;
+  final bool hasSelectable;
 
   @protected
   final RelativeRect position;
@@ -64,7 +65,10 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Widget menu = PullDownMenu(route: this);
+    final Widget menu = MenuConfig(
+      hasSelectable: hasSelectable,
+      child: PullDownMenu(route: this),
+    );
 
     final mediaQuery = MediaQuery.of(context);
 
@@ -146,16 +150,14 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final availableHeight =
         constraintsHeight - position.top - buttonSize.height;
 
-    if (availableHeight <
-        kMinInteractiveDimensionCupertino * 2 + padding.bottom) {
-      return constraintsHeight -
-          buttonSize.height -
-          padding.top -
-          kMenuScreenPadding -
-          position.bottom;
-    } else {
-      return availableHeight - padding.bottom - kMenuScreenPadding;
-    }
+    return availableHeight <
+            kMinInteractiveDimensionCupertino * 2 + padding.bottom
+        ? constraintsHeight -
+            buttonSize.height -
+            padding.top -
+            kMenuScreenPadding -
+            position.bottom
+        : availableHeight - padding.bottom - kMenuScreenPadding;
   }
 
   double _getHeightForAbove(BoxConstraints constraints) {
@@ -163,45 +165,39 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final availableHeight =
         constraintsHeight - position.bottom - buttonSize.height;
 
-    if (availableHeight < kMinInteractiveDimensionCupertino * 2 + padding.top) {
-      return constraintsHeight -
-          buttonSize.height -
-          padding.bottom -
-          kMenuScreenPadding -
-          position.top;
-    } else {
-      return availableHeight - padding.top - kMenuScreenPadding;
-    }
+    return availableHeight < kMinInteractiveDimensionCupertino * 2 + padding.top
+        ? constraintsHeight -
+            buttonSize.height -
+            padding.bottom -
+            kMenuScreenPadding -
+            position.top
+        : availableHeight - padding.top - kMenuScreenPadding;
   }
 
   double _getHeightForOver(BoxConstraints constraints) {
     final constraintsHeight = constraints.biggest.height;
     final availableHeight = constraintsHeight - position.top;
 
-    if (availableHeight <
-        kMinInteractiveDimensionCupertino * 2 + padding.vertical) {
-      return constraintsHeight - padding.top - position.bottom;
-    } else {
-      return availableHeight - padding.bottom - kMenuScreenPadding;
-    }
+    return availableHeight <
+            kMinInteractiveDimensionCupertino * 2 + padding.vertical
+        ? constraintsHeight - padding.top - position.bottom
+        : availableHeight - padding.bottom - kMenuScreenPadding;
   }
 
   double _getHeightForAutomatic(BoxConstraints constraints) {
     final constraintsHeight = constraints.biggest.height;
 
-    if (position.top > constraintsHeight / 2) {
-      return constraintsHeight -
-          position.bottom -
-          buttonSize.height -
-          padding.top -
-          kMenuScreenPadding;
-    } else {
-      return constraintsHeight -
-          position.top -
-          buttonSize.height -
-          padding.bottom -
-          kMenuScreenPadding;
-    }
+    return position.top > constraintsHeight / 2
+        ? constraintsHeight -
+            position.bottom -
+            buttonSize.height -
+            padding.top -
+            kMenuScreenPadding
+        : constraintsHeight -
+            position.top -
+            buttonSize.height -
+            padding.bottom -
+            kMenuScreenPadding;
   }
 
   @override
@@ -248,7 +244,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
 
   Offset _fitInsideScreen(Rect screen, Size childSize, Offset wantedPosition) {
     final x = _fitX(wantedPosition.dx, screen, childSize.width);
-    // y is uppermost position of button
+    // `y` is uppermost position of button.
     var y = wantedPosition.dy;
 
     final childHeight = childSize.height;
@@ -261,25 +257,17 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
         }
         break;
       case PullDownMenuPosition.under:
-        if (y + buttonHeight + childHeight > screen.bottom) {
-          y -= childHeight;
-        } else {
-          y += buttonHeight;
-        }
+        y + buttonHeight + childHeight > screen.bottom
+            ? y -= childHeight
+            : y += buttonHeight;
         break;
       case PullDownMenuPosition.above:
-        if (y - buttonHeight > screen.top + padding.top) {
-          y -= childHeight;
-        } else {
-          y += buttonHeight;
-        }
+        y - buttonHeight > screen.top + padding.top
+            ? y -= childHeight
+            : y += buttonHeight;
         break;
       case PullDownMenuPosition.automatic:
-        if (y > screen.height / 2) {
-          y -= childHeight;
-        } else {
-          y += buttonHeight;
-        }
+        y > screen.height / 2 ? y -= childHeight : y += buttonHeight;
     }
 
     return Offset(x, y);

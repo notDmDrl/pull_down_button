@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../theme/default_theme.dart';
-import '../theme/theme.dart';
-import 'entry.dart';
+import '../../pull_down_button.dart';
 
 /// The (optional) title of the pull-down menu that is usually displayed at the
 /// top of pull-down menu.
@@ -23,12 +21,13 @@ class PullDownMenuTitle extends PullDownMenuEntry {
 
   /// The text style of title.
   ///
-  /// If this property is null then [PullDownButtonTheme.titleStyle] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.titleStyle] is used.
+  /// If this property is null then [PullDownButtonTheme.titleTheme] from
+  /// [PullDownButtonTheme] theme extension is used.
+  ///
+  /// If that's null then defaults from [PullDownMenuTitleTheme] are used.
   final TextStyle? titleStyle;
 
-  /// Eyeballed from iOS 15.
+  /// Eyeballed from iOS 16.
   @override
   double get height => 26;
 
@@ -39,18 +38,20 @@ class PullDownMenuTitle extends PullDownMenuEntry {
   bool get isDestructive => false;
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: BoxConstraints(minHeight: height),
-        child: Center(
-          child: DefaultTextStyle(
-            style: PullDownButtonTheme.getProperty(
-              widgetProperty: titleStyle,
-              theme: PullDownButtonTheme.of(context),
-              defaults: PullDownButtonThemeDefaults(context),
-              getThemeProperty: (theme) => theme?.titleStyle,
-            ),
-            child: title,
-          ),
+  Widget build(BuildContext context) {
+    final theme = PullDownMenuTitleTheme.of(context);
+    final defaults = PullDownMenuTitleTheme.defaults(context);
+
+    final style = titleStyle ?? theme?.style ?? defaults.style!;
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: height),
+      child: Center(
+        child: DefaultTextStyle(
+          style: style,
+          child: title,
         ),
-      );
+      ),
+    );
+  }
 }

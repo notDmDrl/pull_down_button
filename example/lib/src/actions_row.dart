@@ -18,22 +18,22 @@ class ActionsRow extends StatelessWidget {
             const PullDownMenuDivider(),
             PullDownMenuActionsRow.small(
               items: [
-                PullDownMenuIconAction(
+                PullDownMenuItem(
                   onTap: () {},
                   title: 'Cut',
                   icon: CupertinoIcons.scissors,
                 ),
-                PullDownMenuIconAction(
+                PullDownMenuItem(
                   onTap: () {},
                   title: 'Copy',
                   icon: CupertinoIcons.doc_on_doc,
                 ),
-                PullDownMenuIconAction(
+                PullDownMenuItem(
                   onTap: () {},
                   title: 'Paste',
                   icon: CupertinoIcons.doc_on_clipboard,
                 ),
-                PullDownMenuIconAction(
+                PullDownMenuItem(
                   onTap: () {},
                   title: 'Look Up',
                   icon: CupertinoIcons.doc_text_search,
@@ -47,18 +47,18 @@ class ActionsRow extends StatelessWidget {
             const PullDownMenuDivider(),
             PullDownMenuActionsRow.medium(
               items: [
-                PullDownMenuIconAction(
+                PullDownMenuItem(
                   enabled: false,
                   onTap: () {},
                   title: 'Inbox',
                   icon: CupertinoIcons.tray_arrow_down,
                 ),
-                PullDownMenuIconAction(
+                PullDownMenuItem(
                   onTap: () {},
                   title: 'Archive',
                   icon: CupertinoIcons.archivebox,
                 ),
-                PullDownMenuIconAction(
+                PullDownMenuItem(
                   onTap: () {},
                   title: 'Trash',
                   isDestructive: true,

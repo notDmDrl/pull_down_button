@@ -12,7 +12,7 @@ class SelectableItem extends StatelessWidget {
         title: 'SelectablePullDownMenuItem',
         pullDownButton: PullDownButton(
           itemBuilder: (context) => [
-            SelectablePullDownMenuItem(
+            PullDownMenuItem.selectable(
               title: 'Grid',
               selected: true,
               onTap: () {},

@@ -17,22 +17,22 @@ class ExampleScaffold extends StatelessWidget {
   static List<PullDownMenuEntry> exampleItems(BuildContext context) => [
         PullDownMenuActionsRow.small(
           items: [
-            PullDownMenuIconAction(
+            PullDownMenuItem(
               onTap: () {},
               title: 'Cut',
               icon: CupertinoIcons.scissors,
             ),
-            PullDownMenuIconAction(
+            PullDownMenuItem(
               onTap: () {},
               title: 'Copy',
               icon: CupertinoIcons.doc_on_doc,
             ),
-            PullDownMenuIconAction(
+            PullDownMenuItem(
               onTap: () {},
               title: 'Paste',
               icon: CupertinoIcons.doc_on_clipboard,
             ),
-            PullDownMenuIconAction(
+            PullDownMenuItem(
               onTap: () {},
               title: 'Look Up',
               icon: CupertinoIcons.doc_text_search,
@@ -53,14 +53,14 @@ class ExampleScaffold extends StatelessWidget {
           icon: CupertinoIcons.cloud_upload,
         ),
         const PullDownMenuDivider.large(),
-        SelectablePullDownMenuItem(
+        PullDownMenuItem.selectable(
           title: 'Grid',
           selected: true,
           onTap: () {},
           icon: CupertinoIcons.square_grid_2x2,
         ),
         const PullDownMenuDivider(),
-        SelectablePullDownMenuItem(
+        PullDownMenuItem.selectable(
           title: 'List',
           onTap: () {},
           icon: CupertinoIcons.list_bullet,
@@ -68,18 +68,18 @@ class ExampleScaffold extends StatelessWidget {
         const PullDownMenuDivider.large(),
         PullDownMenuActionsRow.medium(
           items: [
-            PullDownMenuIconAction(
+            PullDownMenuItem(
               enabled: false,
               onTap: () {},
               title: 'Inbox',
               icon: CupertinoIcons.tray_arrow_down,
             ),
-            PullDownMenuIconAction(
+            PullDownMenuItem(
               onTap: () {},
               title: 'Archive',
               icon: CupertinoIcons.archivebox,
             ),
-            PullDownMenuIconAction(
+            PullDownMenuItem(
               onTap: () {},
               title: 'Trash',
               isDestructive: true,

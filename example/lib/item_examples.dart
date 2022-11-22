@@ -34,6 +34,7 @@ class ItemExamples extends StatelessWidget {
           CupertinoSliverNavigationBar(
             previousPageTitle: 'Back',
             largeTitle: Text('Examples', style: textStyle),
+            stretch: true,
             trailing: const CupertinoButton(
               onPressed: onThemeModeChange,
               padding: EdgeInsets.zero,

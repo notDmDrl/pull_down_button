@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_down_button/pull_down_button.dart';
 
-import 'theme/default_theme.dart';
+import '../pull_down_button.dart';
 import 'utils/constants.dart';
 import 'utils/route.dart';
 
@@ -57,7 +56,7 @@ typedef PullDownMenuButtonBuilder = Widget Function(
 /// See also:
 ///
 /// * [PullDownMenuItem], a pull-down menu entry for a simple action.
-/// * [SelectablePullDownMenuItem], a pull-down menu entry for a selection
+/// * [PullDownMenuItem.selectable], a pull-down menu entry for a selection
 ///   action.
 /// * [PullDownMenuDivider], a pull-down menu entry for a divider.
 /// * [PullDownMenuDivider.large], a pull-down menu entry that is a large
@@ -76,22 +75,20 @@ class PullDownButton extends StatefulWidget {
     this.onCanceled,
     this.offset = Offset.zero,
     this.position = PullDownMenuPosition.under,
-    this.backgroundColor,
-    this.widthConfiguration,
+    this.routeTheme,
     this.applyOpacity,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
   ///
   /// If items contains at least one tappable menu item of type
-  /// [SelectablePullDownMenuItem] all of [PullDownMenuItem]s should also be of
-  /// type [SelectablePullDownMenuItem].
+  /// [PullDownMenuItem.selectable] all of [PullDownMenuItem]s should also be of
+  /// type [PullDownMenuItem.selectable].
   ///
   /// See https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
   ///
-  /// In order to achieve it all [PullDownMenuItem]s will be replaced with
-  /// [SelectablePullDownMenuItem] with [SelectablePullDownMenuItem.selected]
-  /// set to `false`.
+  /// In order to achieve it all [PullDownMenuItem]s will automatically switch
+  /// to "selectable" view.
   final PullDownMenuItemBuilder itemBuilder;
 
   /// Builder that provides [BuildContext] as well as `showMenu` function to
@@ -117,26 +114,22 @@ class PullDownButton extends StatefulWidget {
   /// create it.
   final PullDownMenuPosition position;
 
-  /// The background color of pull-down menu.
+  /// Theme of route used to display pull-down menu launched from this
+  /// [PullDownButton].
   ///
-  /// If this property is null then [PullDownButtonTheme.backgroundColor] from
-  /// [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.backgroundColor] is used.
-  final Color? backgroundColor;
-
-  /// The width of pull-down menu.
+  /// If this property is null then [PullDownMenuRouteTheme] from
+  /// [PullDownButtonTheme.routeTheme] is used.
   ///
-  /// If this property is null then [PullDownButtonTheme.widthConfiguration]
-  /// from [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.widthConfiguration] is used.
-  final PullDownMenuWidthConfiguration? widthConfiguration;
+  /// If that's null then defaults from [PullDownMenuRouteTheme] are used.
+  final PullDownMenuRouteTheme? routeTheme;
 
   /// Whether to apply opacity on [buttonBuilder] as it is in iOS
   /// or not.
   ///
   /// If this property is null then [PullDownButtonTheme.applyOpacity]
-  /// from [PullDownButtonTheme] theme extension is used. If that's null then
-  /// [PullDownButtonThemeDefaults.applyOpacity] is used.
+  /// from [PullDownButtonTheme] theme extension is used.
+  ///
+  /// If that's null then [applyOpacity] will be set to `true`.
   final bool? applyOpacity;
 
   @override
@@ -152,8 +145,6 @@ class _PullDownButtonState extends State<PullDownButton> {
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
     final offset = widget.offset;
 
-    final items = widget.itemBuilder(context);
-
     final position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(offset, ancestor: overlay),
@@ -165,20 +156,12 @@ class _PullDownButtonState extends State<PullDownButton> {
       Offset.zero & overlay.size,
     );
 
-    if (items.isNotEmpty) {
-      if (items.whereType<SelectablePullDownMenuItem>().isNotEmpty) {
-        for (var index = 0; index < items.length; index++) {
-          final item = items[index];
+    final items = widget.itemBuilder(context);
 
-          if (item.represents &&
-              item is! SelectablePullDownMenuItem &&
-              item is PullDownMenuItem) {
-            items[index] = SelectablePullDownMenuItem.convertFrom(
-              item,
-            );
-          }
-        }
-      }
+    if (items.isNotEmpty) {
+      final hasSelectable = items.whereType<PullDownMenuItem>().any(
+            (element) => element.selected != null,
+          );
 
       setState(() => isPressed = true);
 
@@ -186,10 +169,10 @@ class _PullDownButtonState extends State<PullDownButton> {
         context: context,
         items: items,
         position: position,
-        backgroundColor: widget.backgroundColor,
         buttonSize: button.size,
         menuPosition: widget.position,
-        widthConfiguration: widget.widthConfiguration,
+        routeTheme: widget.routeTheme,
+        hasSelectable: hasSelectable,
       );
 
       if (!mounted) return;
@@ -207,14 +190,8 @@ class _PullDownButtonState extends State<PullDownButton> {
   @override
   Widget build(BuildContext context) {
     final theme = PullDownButtonTheme.of(context);
-    final defaults = PullDownButtonThemeDefaults(context);
 
-    final apply = PullDownButtonTheme.getProperty(
-      widgetProperty: widget.applyOpacity,
-      theme: theme,
-      defaults: defaults,
-      getThemeProperty: (theme) => theme?.applyOpacity,
-    );
+    final apply = widget.applyOpacity ?? theme?.applyOpacity ?? true;
 
     final buttonBuilder = widget.buttonBuilder(context, showButtonMenu);
 
@@ -234,10 +211,10 @@ Future<VoidCallback?> _showCupertinoMenu({
   required BuildContext context,
   required RelativeRect position,
   required List<PullDownMenuEntry> items,
-  required Color? backgroundColor,
   required Size buttonSize,
   required PullDownMenuPosition menuPosition,
-  required PullDownMenuWidthConfiguration? widthConfiguration,
+  required PullDownMenuRouteTheme? routeTheme,
+  required bool hasSelectable,
 }) {
   final navigator = Navigator.of(context);
 
@@ -260,14 +237,14 @@ Future<VoidCallback?> _showCupertinoMenu({
       barrierLabel: materialLocalizations?.modalBarrierDismissLabel ??
           cupertinoLocalizations?.modalBarrierDismissLabel ??
           const DefaultMaterialLocalizations().modalBarrierDismissLabel,
-      backgroundColor: backgroundColor,
+      routeTheme: routeTheme,
       buttonSize: buttonSize,
       menuPosition: menuPosition,
       capturedThemes: InheritedTheme.capture(
         from: context,
         to: navigator.context,
       ),
-      widthConfiguration: widthConfiguration,
+      hasSelectable: hasSelectable,
     ),
   );
 }

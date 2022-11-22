@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-import '../theme/default_theme.dart';
-import '../theme/theme.dart';
-import 'actions_row.dart';
-import 'entry.dart';
-import 'item.dart';
-import 'title.dart';
+import '../../pull_down_button.dart';
 
 const double _kMenuDividerHeight = 0;
 const double _kMenuLargeDividerHeight = 8;
@@ -18,7 +13,7 @@ const double _kMenuLargeDividerHeight = 8;
 /// See also:
 ///
 /// * [PullDownMenuItem], a pull-down menu entry for a simple action.
-/// * [SelectablePullDownMenuItem], a pull-down menu entry for a selection
+/// * [PullDownMenuItem.selectable], a pull-down menu entry for a selection
 ///   action.
 /// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
 @immutable
@@ -29,11 +24,6 @@ class PullDownMenuDivider extends PullDownMenuEntry {
   const PullDownMenuDivider({
     super.key,
     this.color,
-    @Deprecated(
-      'This value is no longer having any effect, [color] property should be '
-      'used instead. Will be removed after v0.3.0',
-    )
-        Color? dividerColor,
   }) : _isLarge = false;
 
   /// Creates a large horizontal divider for a pull-down menu.
@@ -42,22 +32,16 @@ class PullDownMenuDivider extends PullDownMenuEntry {
   const PullDownMenuDivider.large({
     super.key,
     this.color,
-    @Deprecated(
-      'This value is no longer having any effect, [color] property should be '
-      'used instead. Will be removed after v0.3.0',
-    )
-        Color? largeDividerColor,
   }) : _isLarge = true;
 
   /// The color of divider.
   ///
   /// If this property is null then, depending on constructor,
-  /// [PullDownButtonTheme.dividerColor] or
-  /// [PullDownButtonTheme.largeDividerColor] from [PullDownButtonTheme] theme
-  /// extension is used. If that's null
-  /// then , depending on constructor,
-  /// [PullDownButtonTheme.dividerColor] or
-  /// [PullDownButtonTheme.largeDividerColor] is used.
+  /// [PullDownMenuDividerTheme.dividerColor] or
+  /// [PullDownMenuDividerTheme.largeDividerColor] from
+  /// [PullDownButtonTheme.dividerTheme] is used.
+  ///
+  /// If that's null then defaults from [PullDownMenuDividerTheme] are used.
   final Color? color;
 
   /// Whether this [PullDownMenuDivider] is large or not.
@@ -95,17 +79,21 @@ class PullDownMenuDivider extends PullDownMenuEntry {
   }
 
   @override
-  Widget build(BuildContext context) => Divider(
-        height: height,
-        thickness: height,
-        color: PullDownButtonTheme.getProperty(
-          widgetProperty: color,
-          theme: PullDownButtonTheme.of(context),
-          defaults: PullDownButtonThemeDefaults(context),
-          getThemeProperty: (theme) =>
-              _isLarge ? theme?.largeDividerColor : theme?.dividerColor,
-        ),
-      );
+  Widget build(BuildContext context) {
+    final theme = PullDownMenuDividerTheme.of(context);
+    final defaults = PullDownMenuDividerTheme.defaults(context);
+
+    final divider = color ??
+        (_isLarge
+            ? (theme ?? defaults).largeDividerColor
+            : (theme ?? defaults).dividerColor)!;
+
+    return Divider(
+      height: height,
+      thickness: height,
+      color: divider,
+    );
+  }
 }
 
 /// A vertical divider for cupertino style side-by-side appearance row.
@@ -128,11 +116,10 @@ class PullDownMenuVerticalDivider extends PullDownMenuEntry {
 
   /// The color of divider.
   ///
-  /// If this property is null then
-  /// [PullDownButtonTheme.dividerColor] from [PullDownButtonTheme] theme
-  /// extension is used. If that's null
-  /// then , depending on constructor,
-  /// [PullDownButtonTheme.dividerColor] is used.
+  /// If this property is null then [PullDownMenuDividerTheme.dividerColor] from
+  /// [PullDownButtonTheme.dividerTheme] is used.
+  ///
+  /// If that's null then defaults from [PullDownMenuDividerTheme] are used.
   final Color? color;
 
   @override
@@ -148,12 +135,16 @@ class PullDownMenuVerticalDivider extends PullDownMenuEntry {
   /// items.
   @internal
   static List<Widget> wrapWithDivider(
-    List<PullDownMenuIconAction> items, {
+    List<PullDownMenuItem> items, {
     required double height,
     Color? color,
   }) {
-    if (items.isEmpty || items.length == 1) {
+    if (items.isEmpty) {
       return items;
+    }
+
+    if (items.length == 1) {
+      return [Expanded(child: items.single)];
     }
 
     return [
@@ -166,17 +157,19 @@ class PullDownMenuVerticalDivider extends PullDownMenuEntry {
   }
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: height,
-        child: VerticalDivider(
-          thickness: 0,
-          width: 0,
-          color: PullDownButtonTheme.getProperty(
-            widgetProperty: color,
-            theme: PullDownButtonTheme.of(context),
-            defaults: PullDownButtonThemeDefaults(context),
-            getThemeProperty: (theme) => theme?.dividerColor,
-          ),
-        ),
-      );
+  Widget build(BuildContext context) {
+    final theme = PullDownMenuDividerTheme.of(context);
+    final defaults = PullDownMenuDividerTheme.defaults(context);
+
+    final divider = color ?? theme?.dividerColor ?? defaults.dividerColor!;
+
+    return SizedBox(
+      height: height,
+      child: VerticalDivider(
+        thickness: 0,
+        width: 0,
+        color: divider,
+      ),
+    );
+  }
 }

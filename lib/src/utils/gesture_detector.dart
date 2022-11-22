@@ -40,7 +40,7 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
   bool isPressed = false;
   bool isHovered = false;
 
-  bool get enabled => widget.onTap != null;
+  late final enabled = widget.onTap != null;
 
   Future<void> onTap() async {
     await widget.onTap!();
