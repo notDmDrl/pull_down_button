@@ -1,3 +1,8 @@
+## 0.4.1
+
+- Do not use `BackdropFilter` for blur used in pull-down menu if menu's background color is fully opaque
+  [#9](https://github.com/notDmDrl/pull_down_button/issues/9)
+
 ## 0.4.0
 
 **BREAKING CHANGES**:

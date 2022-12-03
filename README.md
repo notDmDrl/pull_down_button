@@ -297,13 +297,14 @@ ThemeData(
 | width           | Pull-down menu width.                                               |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
+If `backgroundColor`'s is fully opaque (opacity set to **1**), no blue effect will be applied.
 
 </details>
 
 <details><summary>PullDownMenuItemTheme</summary>
 
 | Properties          | Description                                                       |
-| ------------------- | ----------------------------------------------------------------- |
+| ------------------- |-------------------------------------------------------------------|
 | destructiveColor    | Color for destructive action.                                     |
 | iconSize            | Size of trailing icon.                                            |
 | checkmark           | Checkmark icon.                                                   |
@@ -311,8 +312,8 @@ ThemeData(
 | checkmarkSize       | Size of checkmark icon.                                           |
 | textStyle           | `PullDownMenuItem` text style.                                    |
 | iconActionTextStyle | `PullDownMenuItem` text style inside of `PullDownMenuActionsRow`. |
-| onHoverColor        | On hover color of.                                                |
-| onHoverTextStyle    | On hover text style of.                                           |
+| onHoverColor        | On hover color of `PullDownMenuItem`.                             |
+| onHoverTextStyle    | On hover text style of `PullDownMenuItem`.                        |
 
 </details>
 

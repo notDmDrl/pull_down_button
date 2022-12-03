@@ -103,6 +103,17 @@ class _Decoration extends StatelessWidget {
   final Color? backgroundColor;
   final BorderRadius? borderRadius;
 
+  /// Check if the menu's background color is not fully opaque.
+  ///
+  /// Returns false if [color] has no transparency. If so, [BackdropFilter] will
+  /// not be used, since it will be redundant. Also in some cases this might
+  /// help with performance and/or visual bugs;
+  static bool useBackdropFilter(Color color) => color.alpha != 0xFF;
+
+  /// Blur used by [BackdropFilter] if [useBackdropFilter] is `true`.
+  static final blur =
+      ui.ImageFilter.blur(sigmaX: kBlurAmount, sigmaY: kBlurAmount);
+
   @override
   Widget build(BuildContext context) {
     final theme = PullDownMenuRouteTheme.of(context);
@@ -114,15 +125,21 @@ class _Decoration extends StatelessWidget {
     final radius =
         borderRadius ?? theme?.borderRadius ?? defaults.borderRadius!;
 
+    Widget box = ColoredBox(
+      color: color,
+      child: child,
+    );
+
+    if (useBackdropFilter(color)) {
+      box = BackdropFilter(
+        filter: blur,
+        child: box,
+      );
+    }
+
     return ClipRRect(
       borderRadius: radius,
-      child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: kBlurAmount, sigmaY: kBlurAmount),
-        child: ColoredBox(
-          color: color,
-          child: child,
-        ),
-      ),
+      child: box,
     );
   }
 }
