@@ -67,7 +67,7 @@ class ActionsRow extends StatelessWidget {
               ],
             ),
           ],
-          buttonBuilder: (_, showMenu) => ExampleButton(onTap: showMenu),
+          buttonBuilder: ExampleButton.builder,
         ),
       );
 }

@@ -23,7 +23,8 @@ import 'divider.dart';
 /// * preferredElementSize:
 ///   https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize
 @immutable
-class PullDownMenuActionsRow extends PullDownMenuEntry {
+class PullDownMenuActionsRow extends StatelessWidget
+    implements PullDownMenuEntry {
   /// Creates a row of maximum 4 actions, icon only.
   ///
   /// Actions have height of 44 logical pixels.
@@ -69,15 +70,15 @@ class PullDownMenuActionsRow extends PullDownMenuEntry {
   /// [PullDownMenuDividerTheme.dividerColor] from
   /// [PullDownButtonTheme.dividerTheme] is used.
   ///
-  /// If that's null then defaults from [PullDownMenuDividerTheme] are used.
+  /// If that's null then defaults from [PullDownMenuDividerTheme.defaults] are
+  /// used.
   final Color? dividerColor;
 
   /// The height of descendant [PullDownMenuItem]s.
   ///
   /// Can be 44 pixels ([ElementSize.small]) or 66 pixels
   /// ([ElementSize.medium]).
-  @override
-  double get height {
+  double get _height {
     switch (_size) {
       case ElementSize.small:
         return kMinInteractiveDimensionCupertino;
@@ -92,20 +93,14 @@ class PullDownMenuActionsRow extends PullDownMenuEntry {
   }
 
   @override
-  bool get isDestructive => false;
-
-  @override
-  bool get represents => true;
-
-  @override
   Widget build(BuildContext context) => ConstrainedBox(
-        constraints: BoxConstraints.tightFor(height: height),
+        constraints: BoxConstraints.tightFor(height: _height),
         child: ActionsRowSizeConfig(
           size: _size,
           child: Row(
             children: PullDownMenuVerticalDivider.wrapWithDivider(
               items,
-              height: height,
+              height: _height,
               color: dividerColor,
             ),
           ),

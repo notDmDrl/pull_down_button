@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 import '../pull_down_button.dart';
 import 'utils/constants.dart';
@@ -65,6 +66,7 @@ typedef PullDownMenuButtonBuilder = Widget Function(
 /// * [PullDownMenuActionsRow], a more compact way to show multiple pull-down
 ///   menu entries for a simple action.
 /// * [PullDownButtonTheme], a pull-down button and menu theme configuration.
+/// * [showPullDownMenu], a alternative way of displaying a pull-down menu.
 @immutable
 class PullDownButton extends StatefulWidget {
   /// Creates a button that shows a pull-down menu.
@@ -98,13 +100,14 @@ class PullDownButton extends StatefulWidget {
   /// Called when the user dismisses the pull-down menu.
   final PullDownMenuCanceled? onCanceled;
 
-  /// The offset is applied relative to the initial position
-  /// set by the [position].
+  /// The offset is applied relative to the initial position set by the
+  /// [position].
   ///
   /// When not set, the offset defaults to [Offset.zero].
   final Offset offset;
 
-  /// Whether the popup menu is positioned over or under the popup menu button.
+  /// Whether the popup menu is positioned above, over or under the popup menu
+  /// button.
   ///
   /// [offset] is used to change the position of the popup menu relative to the
   /// position set by this parameter.
@@ -120,7 +123,7 @@ class PullDownButton extends StatefulWidget {
   /// If this property is null then [PullDownMenuRouteTheme] from
   /// [PullDownButtonTheme.routeTheme] is used.
   ///
-  /// If that's null then defaults from [PullDownMenuRouteTheme] are used.
+  /// If that's null then [PullDownMenuRouteTheme.defaults] is used.
   final PullDownMenuRouteTheme? routeTheme;
 
   /// Whether to apply opacity on [buttonBuilder] as it is in iOS
@@ -198,11 +201,79 @@ class _PullDownButtonState extends State<PullDownButton> {
     if (!apply) return buttonBuilder;
 
     return AnimatedOpacity(
-      opacity: isPressed ? 0.5 : 1,
+      opacity: isPressed ? 0.4 : 1,
       duration: kMenuDuration,
       curve: kCurve,
       child: buttonBuilder,
     );
+  }
+}
+
+/// Displays a pull-down menu with [items] at [position].
+///
+/// [items] should be not empty for menu to be shown.
+///
+/// If [items] contains at least one tappable menu item of type
+/// [PullDownMenuItem.selectable] all of [PullDownMenuItem]s should also be of
+/// type [PullDownMenuItem.selectable].
+///
+/// See https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
+///
+/// In order to achieve it all [PullDownMenuItem]s will automatically switch
+/// to "selectable" view.
+///
+/// Desired [position] is used to align top of the menu with top of the
+/// [position] rectangle. [buttonSize] can be additionally used to let menu
+/// know about additional bottom offsets it needs to consider while calculating
+/// final menu's position.
+///
+/// [menuPosition] is used to define whether the popup menu is positioned above,
+/// over or under the calculated menu's position. Defaults to
+/// [PullDownMenuPosition.under].
+///
+/// [onCanceled] is called when the user dismisses the pull-down menu.
+///
+/// [routeTheme] is used to define theme of route used to display pull-down menu
+/// launched from this function.
+///
+/// See also:
+///
+/// * [PullDownButton], a default way of displaying a pull-down menu.
+/// * [showMenu], a material design alternative.
+@experimental
+Future<void> showPullDownMenu({
+  required BuildContext context,
+  required List<PullDownMenuEntry> items,
+  required RelativeRect position,
+  Size buttonSize = Size.zero,
+  PullDownMenuPosition menuPosition = PullDownMenuPosition.under,
+  PullDownMenuCanceled? onCanceled,
+  PullDownMenuRouteTheme? routeTheme,
+}) async {
+  if (items.isNotEmpty) {
+    final hasSelectable = items.whereType<PullDownMenuItem>().any(
+          (element) => element.selected != null,
+        );
+
+    final action = await _showCupertinoMenu(
+      context: context,
+      items: items,
+      position: position,
+      buttonSize: buttonSize,
+      menuPosition: menuPosition,
+      routeTheme: routeTheme,
+      hasSelectable: hasSelectable,
+    );
+
+    // TODO(notDmDrl): this was not available at Flutter 3.0.0 release,
+    // uncomment after min dart version for package is 3.0?
+    // if (!context.mounted) return;
+
+    if (action != null) {
+      action.call();
+    } else {
+      onCanceled?.call();
+    }
   }
 }
 
@@ -218,25 +289,11 @@ Future<VoidCallback?> _showCupertinoMenu({
 }) {
   final navigator = Navigator.of(context);
 
-  // Use this instead of `MaterialLocalizations.of(context)` because
-  // [MaterialLocalizations] might be null in some cases.
-  final materialLocalizations =
-      Localizations.of<MaterialLocalizations>(context, MaterialLocalizations);
-
-  // Use this instead of `CupertinoLocalizations.of(context)` because
-  // [CupertinoLocalizations] might be null in some cases.
-  final cupertinoLocalizations =
-      Localizations.of<CupertinoLocalizations>(context, CupertinoLocalizations);
-
   return navigator.push<VoidCallback>(
     PullDownMenuRoute(
       position: position,
       items: items,
-      // If both localizations are null, fallback to
-      // [DefaultMaterialLocalizations().modalBarrierDismissLabel].
-      barrierLabel: materialLocalizations?.modalBarrierDismissLabel ??
-          cupertinoLocalizations?.modalBarrierDismissLabel ??
-          const DefaultMaterialLocalizations().modalBarrierDismissLabel,
+      barrierLabel: _barrierLabel(context),
       routeTheme: routeTheme,
       buttonSize: buttonSize,
       menuPosition: menuPosition,
@@ -247,4 +304,22 @@ Future<VoidCallback?> _showCupertinoMenu({
       hasSelectable: hasSelectable,
     ),
   );
+}
+
+String _barrierLabel(BuildContext context) {
+  // Use this instead of `MaterialLocalizations.of(context)` because
+  // [MaterialLocalizations] might be null in some cases.
+  final materialLocalizations =
+      Localizations.of<MaterialLocalizations>(context, MaterialLocalizations);
+
+  // Use this instead of `CupertinoLocalizations.of(context)` because
+  // [CupertinoLocalizations] might be null in some cases.
+  final cupertinoLocalizations =
+      Localizations.of<CupertinoLocalizations>(context, CupertinoLocalizations);
+
+  // If both localizations are null, fallback to
+  // [DefaultMaterialLocalizations().modalBarrierDismissLabel].
+  return materialLocalizations?.modalBarrierDismissLabel ??
+      cupertinoLocalizations?.modalBarrierDismissLabel ??
+      const DefaultMaterialLocalizations().modalBarrierDismissLabel;
 }

@@ -75,7 +75,9 @@ class PullDownMenuDividerTheme {
   }
 }
 
-// Based on values from https://www.figma.com/community/file/1121065701252736567.
+// Based on values from https://www.figma.com/community/file/1121065701252736567,
+// https://www.figma.com/community/file/1172051389106515682 and direct
+// color compare with native variant.
 @immutable
 class _PullDownMenuDividerDefaults extends PullDownMenuDividerTheme {
   const _PullDownMenuDividerDefaults(this.context);
@@ -83,13 +85,13 @@ class _PullDownMenuDividerDefaults extends PullDownMenuDividerTheme {
   final BuildContext context;
 
   static const kDividerColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(60, 60, 67, 0.36),
-    darkColor: Color.fromRGBO(84, 84, 88, 0.65),
+    color: Color.fromRGBO(0, 0, 0, 0.25),
+    darkColor: Color.fromRGBO(255, 255, 255, 0.3),
   );
 
   static const kLargeDividerColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromARGB(190, 208, 208, 208),
-    darkColor: Color.fromARGB(190, 4, 4, 4),
+    color: Color.fromRGBO(140, 140, 140, 0.18),
+    darkColor: Color.fromRGBO(0, 0, 0, 0.15),
   );
 
   @override

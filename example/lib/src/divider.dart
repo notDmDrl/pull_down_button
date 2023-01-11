@@ -38,7 +38,7 @@ class Divider extends StatelessWidget {
               icon: CupertinoIcons.list_bullet,
             ),
           ],
-          buttonBuilder: (_, showMenu) => ExampleButton(onTap: showMenu),
+          buttonBuilder: ExampleButton.builder,
         ),
       );
 }

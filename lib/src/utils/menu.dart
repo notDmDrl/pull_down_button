@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
-import 'constants.dart';
-import 'route.dart';
 
 // ignore_for_file: public_member_api_docs, comment_references
+
+/// Pull-down menu background blur.
+const double _kBlurAmount = 50;
 
 /// Copy of [_PopupMenu] from [PopupMenuButton] implementation since it's
 /// private there.
@@ -17,10 +18,16 @@ import 'route.dart';
 class PullDownMenu extends StatelessWidget {
   const PullDownMenu({
     super.key,
-    required this.route,
+    required this.items,
+    required this.routeTheme,
+    required this.alignment,
+    required this.animation,
   });
 
-  final PullDownMenuRoute route;
+  final List<PullDownMenuEntry> items;
+  final PullDownMenuRouteTheme? routeTheme;
+  final Animation<double> animation;
+  final Alignment alignment;
 
   static DecorationTween _decorationTween(BoxShadow begin, BoxShadow end) =>
       DecorationTween(
@@ -28,12 +35,8 @@ class PullDownMenu extends StatelessWidget {
         end: BoxDecoration(boxShadow: [end]),
       );
 
-  static final opacityCurve = CurveTween(curve: const Interval(0, 1 / 3));
-
   @override
   Widget build(BuildContext context) {
-    final routeTheme = route.routeTheme;
-
     final theme = PullDownMenuRouteTheme.of(context);
     final defaults = PullDownMenuRouteTheme.defaults(context);
 
@@ -44,47 +47,25 @@ class PullDownMenu extends StatelessWidget {
 
     final shadowTween = _decorationTween(beginShadow, endShadow);
 
-    // split open/close animation into to parts to remove unnecessary rebuilds.
-    // animation for menu content.
-    final innerAnimation = AnimatedBuilder(
-      animation: route.animation!,
-      builder: (_, child) {
-        final animate = route.animation!;
-        final evaluate = animate.value;
-
-        return Center(
-          widthFactor: evaluate,
-          heightFactor: evaluate,
-          child: FadeTransition(
-            opacity: animate,
-            child: child,
+    return ScaleTransition(
+      scale: animation,
+      alignment: alignment,
+      child: DecoratedBoxTransition(
+        decoration: animation.drive(shadowTween),
+        child: FadeTransition(
+          opacity: animation,
+          child: _Decoration(
+            backgroundColor: routeTheme?.backgroundColor,
+            borderRadius: routeTheme?.borderRadius,
+            child: FadeTransition(
+              opacity: animation,
+              child: _MenuBody(
+                width: routeTheme?.width,
+                children: items,
+              ),
+            ),
           ),
-        );
-      },
-      child: _MenuBody(
-        width: routeTheme?.width,
-        children: route.items,
-      ),
-    );
-
-    // Animation for menu decoration.
-    return AnimatedBuilder(
-      animation: route.animation!,
-      builder: (_, child) {
-        final animate = route.animation!;
-
-        return FadeTransition(
-          opacity: opacityCurve.animate(animate),
-          child: DecoratedBoxTransition(
-            decoration: shadowTween.animate(animate),
-            child: child!,
-          ),
-        );
-      },
-      child: _Decoration(
-        backgroundColor: routeTheme?.backgroundColor,
-        borderRadius: routeTheme?.borderRadius,
-        child: innerAnimation,
+        ),
       ),
     );
   }
@@ -112,7 +93,7 @@ class _Decoration extends StatelessWidget {
 
   /// Blur used by [BackdropFilter] if [useBackdropFilter] is `true`.
   static final blur =
-      ui.ImageFilter.blur(sigmaX: kBlurAmount, sigmaY: kBlurAmount);
+      ui.ImageFilter.blur(sigmaX: _kBlurAmount, sigmaY: _kBlurAmount);
 
   @override
   Widget build(BuildContext context) {
@@ -147,9 +128,12 @@ class _Decoration extends StatelessWidget {
 /// Menu body - constrained width, scrollbar, list of [PullDownMenuEntry].
 @immutable
 class _MenuBody extends StatelessWidget {
-  const _MenuBody({required this.children, required this.width});
+  const _MenuBody({
+    required this.children,
+    required this.width,
+  });
 
-  final List<Widget> children;
+  final List<PullDownMenuEntry> children;
   final double? width;
 
   @override
@@ -166,12 +150,9 @@ class _MenuBody extends StatelessWidget {
         namesRoute: true,
         explicitChildNodes: true,
         label: 'Pull-Down menu',
-        child: CupertinoUserInterfaceLevel(
-          data: CupertinoUserInterfaceLevelData.elevated,
-          child: CupertinoScrollbar(
-            child: SingleChildScrollView(
-              child: ListBody(children: children),
-            ),
+        child: CupertinoScrollbar(
+          child: SingleChildScrollView(
+            child: ListBody(children: children),
           ),
         ),
       ),

@@ -1,3 +1,33 @@
+## 0.5.0
+
+- Added `showPullDownMenu` - an alternative way to display menu [#12](https://github.com/notDmDrl/pull_down_button/issues/12).
+- Following things have been updated to be a lot closer to native variant:
+  - Menu open / close animation to use scaling transition.
+  - `PullDownMenuTitle` - minimum height to be uqual to native variant.
+  - Default colors for `PullDownMenuDividerTheme` and `PullDownMenuRouteTheme`.
+  - On menu open opacity for `PullDownButton.buttonBuilder`.
+  - `PullDownMenuItem` text style and icon color opacity when `PullDownMenuItem.enabled` is **false**.
+- `PullDownMenuItem` and `PullDownMenuTitle` - merge default text styles with provided ones (via theme or widget parameters).
+
+**BREAKING CHANGES**:
+
+- `PullDownMenuEntry` no longer provides fields to override due to their redundancy.
+- `PullDownMenuEntry` no longer extends `StatelessWidget`, it now extends `Widget`. This was done to allow `StatefulWidget`s to be used as `PullDownMenuEntry` [#11](https://github.com/notDmDrl/pull_down_button/issues/11).
+
+  Migration:
+
+  ##### Before
+
+  ```dart
+  class PullDownMenuItem extends PullDownMenuEntry {
+  ```
+
+  ##### After
+
+  ```dart
+  class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
+  ```
+
 ## 0.4.1
 
 - Do not use `BackdropFilter` for blur used in pull-down menu if menu's background color is fully opaque

@@ -25,7 +25,7 @@ class Example extends StatelessWidget {
     final edgeInsets = MediaQuery.of(context).padding;
     final padding = EdgeInsets.only(
       left: 16 + edgeInsets.left,
-      top: edgeInsets.top + 24,
+      top: 24 + edgeInsets.top,
       right: 16 + edgeInsets.right,
       bottom: 24 + edgeInsets.bottom,
     );

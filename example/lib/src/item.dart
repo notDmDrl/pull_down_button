@@ -18,7 +18,7 @@ class Item extends StatelessWidget {
               icon: CupertinoIcons.star,
             ),
           ],
-          buttonBuilder: (_, showMenu) => ExampleButton(onTap: showMenu),
+          buttonBuilder: ExampleButton.builder,
         ),
       );
 }

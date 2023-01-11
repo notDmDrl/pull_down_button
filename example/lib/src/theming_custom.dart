@@ -27,8 +27,11 @@ class ThemingCustom extends StatelessWidget {
         extensions: [
           PullDownButtonTheme(
             routeTheme: PullDownMenuRouteTheme(
-              backgroundColor: colorScheme.surface,
-              borderRadius: const BorderRadius.all(Radius.circular(4)),
+              backgroundColor: ElevationOverlay.applySurfaceTint(
+                colorScheme.surface,
+                colorScheme.surfaceTint,
+                3,
+              ),
               width: 280,
             ),
             dividerTheme: PullDownMenuDividerTheme(
@@ -38,16 +41,10 @@ class ThemingCustom extends StatelessWidget {
             itemTheme: PullDownMenuItemTheme(
               destructiveColor: colorScheme.error,
               textStyle: TextStyle(
-                fontSize: 17,
-                height: 22 / 17,
-                fontFamily: '.SF UI Text',
                 fontWeight: FontWeight.w500,
                 color: colorScheme.onSurface,
               ),
               iconActionTextStyle: TextStyle(
-                fontFamily: '.SF UI Text',
-                fontSize: 12,
-                height: 16 / 12,
                 fontWeight: FontWeight.w500,
                 color: colorScheme.onSurface,
               ),
@@ -55,11 +52,11 @@ class ThemingCustom extends StatelessWidget {
           ),
         ],
       ),
-      child: ExampleScaffold(
+      child: const ExampleScaffold(
         title: 'Custom theme',
         pullDownButton: PullDownButton(
           itemBuilder: ExampleScaffold.exampleItems,
-          buttonBuilder: (_, showMenu) => ExampleButton(onTap: showMenu),
+          buttonBuilder: ExampleButton.builder,
         ),
       ),
     );

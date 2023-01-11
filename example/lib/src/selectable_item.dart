@@ -9,7 +9,7 @@ class SelectableItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ExampleScaffold(
-        title: 'SelectablePullDownMenuItem',
+        title: 'PullDownMenuItem.selectable',
         pullDownButton: PullDownButton(
           itemBuilder: (context) => [
             PullDownMenuItem.selectable(
@@ -19,7 +19,7 @@ class SelectableItem extends StatelessWidget {
               icon: CupertinoIcons.square_grid_2x2,
             ),
           ],
-          buttonBuilder: (_, showMenu) => ExampleButton(onTap: showMenu),
+          buttonBuilder: ExampleButton.builder,
         ),
       );
 }

@@ -15,7 +15,7 @@ class Position extends StatelessWidget {
         pullDownButton: PullDownButton(
           position: position,
           itemBuilder: ExampleScaffold.exampleItems,
-          buttonBuilder: (_, showMenu) => ExampleButton(onTap: showMenu),
+          buttonBuilder: ExampleButton.builder,
         ),
       );
 }

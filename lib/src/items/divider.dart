@@ -17,7 +17,7 @@ const double _kMenuLargeDividerHeight = 8;
 ///   action.
 /// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
 @immutable
-class PullDownMenuDivider extends PullDownMenuEntry {
+class PullDownMenuDivider extends StatelessWidget implements PullDownMenuEntry {
   /// Creates a horizontal divider for a pull-down menu.
   ///
   /// Divider has height and thickness of 0 logical pixels.
@@ -41,7 +41,8 @@ class PullDownMenuDivider extends PullDownMenuEntry {
   /// [PullDownMenuDividerTheme.largeDividerColor] from
   /// [PullDownButtonTheme.dividerTheme] is used.
   ///
-  /// If that's null then defaults from [PullDownMenuDividerTheme] are used.
+  /// If that's null then defaults from [PullDownMenuDividerTheme.defaults] are
+  /// used.
   final Color? color;
 
   /// Whether this [PullDownMenuDivider] is large or not.
@@ -51,15 +52,8 @@ class PullDownMenuDivider extends PullDownMenuEntry {
   ///
   /// Can be 0 pixels ([PullDownMenuDivider]) or 8 pixels
   /// ([PullDownMenuDivider.large]) depending on the constructor.
-  @override
   double get height =>
       _isLarge ? _kMenuLargeDividerHeight : _kMenuDividerHeight;
-
-  @override
-  bool get represents => false;
-
-  @override
-  bool get isDestructive => false;
 
   /// Helper method that simplifies separation of pull-down menu items.
   static List<PullDownMenuEntry> wrapWithDivider(
@@ -69,11 +63,10 @@ class PullDownMenuDivider extends PullDownMenuEntry {
       return items;
     }
 
+    const divider = PullDownMenuDivider();
+
     return [
-      for (final i in items.take(items.length - 1)) ...[
-        i,
-        const PullDownMenuDivider()
-      ],
+      for (final i in items.take(items.length - 1)) ...[i, divider],
       items.last,
     ];
   }
@@ -104,7 +97,8 @@ class PullDownMenuDivider extends PullDownMenuEntry {
 /// This widget should not be used outside of [PullDownMenuActionsRow].
 @immutable
 @internal
-class PullDownMenuVerticalDivider extends PullDownMenuEntry {
+class PullDownMenuVerticalDivider extends StatelessWidget
+    implements PullDownMenuEntry {
   /// Creates a vertical divider for a side-by-side appearance row.
   ///
   /// Divider has width and thickness of 0 logical pixels.
@@ -119,17 +113,12 @@ class PullDownMenuVerticalDivider extends PullDownMenuEntry {
   /// If this property is null then [PullDownMenuDividerTheme.dividerColor] from
   /// [PullDownButtonTheme.dividerTheme] is used.
   ///
-  /// If that's null then defaults from [PullDownMenuDividerTheme] are used.
+  /// If that's null then defaults from [PullDownMenuDividerTheme.defaults] are
+  /// used.
   final Color? color;
 
-  @override
+  /// The height ov divider.
   final double height;
-
-  @override
-  bool get represents => false;
-
-  @override
-  bool get isDestructive => false;
 
   /// Helper method that simplifies separation of side-by-side appearance row
   /// items.
@@ -147,10 +136,15 @@ class PullDownMenuVerticalDivider extends PullDownMenuEntry {
       return [Expanded(child: items.single)];
     }
 
+    final divider = PullDownMenuVerticalDivider(
+      height: height,
+      color: color,
+    );
+
     return [
       for (final i in items.take(items.length - 1)) ...[
         Expanded(child: i),
-        PullDownMenuVerticalDivider(height: height, color: color),
+        divider,
       ],
       Expanded(child: items.last),
     ];

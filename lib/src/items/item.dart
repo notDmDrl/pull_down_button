@@ -1,8 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../pull_down_button.dart';
 import '../utils/gesture_detector.dart';
 import '../utils/menu_config.dart';
+
+const EdgeInsetsGeometry _kItemPadding =
+    EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+const EdgeInsetsGeometry _kSelectableItemPadding =
+    EdgeInsetsDirectional.only(start: 12, end: 16, top: 8, bottom: 8);
 
 /// An item in a cupertino style pull-down menu.
 ///
@@ -15,7 +21,7 @@ import '../utils/menu_config.dart';
 /// By default, a [PullDownMenuItem] is minimum of
 /// [kMinInteractiveDimensionCupertino] pixels height.
 @immutable
-class PullDownMenuItem extends PullDownMenuEntry {
+class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// Creates an item for a pull-down menu.
   ///
   /// By default, the item is [enabled].
@@ -79,7 +85,8 @@ class PullDownMenuItem extends PullDownMenuEntry {
   /// If this property is null then [PullDownMenuItemTheme] from
   /// [PullDownButtonTheme.itemTheme] is used.
   ///
-  /// If that's null then defaults from [PullDownMenuItemTheme] are used.
+  /// If that's null then defaults from [PullDownMenuItemTheme.defaults] are
+  /// used.
   final PullDownMenuItemTheme? itemTheme;
 
   /// Color for this [PullDownMenuItem]'s [icon].
@@ -98,10 +105,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
 
   /// Whether this item represents destructive action;
   ///
-  /// If this property is null then `destructiveColor` from [itemTheme] is used.
-  ///
-  /// If that's null then defaults from [PullDownMenuItemTheme] are used.
-  @override
+  /// If this is true then `destructiveColor` from [itemTheme] is used.
   final bool isDestructive;
 
   /// Whether to display a checkmark next to the menu item.
@@ -114,27 +118,9 @@ class PullDownMenuItem extends PullDownMenuEntry {
   /// When true, an [PullDownMenuItemTheme.checkmark] checkmark is displayed
   /// (from [itemTheme]).
   ///
-  /// If itemTheme is null then defaults from [PullDownMenuItemTheme] are used.
+  /// If itemTheme is null then defaults from [PullDownMenuItemTheme.defaults]
+  /// are used.
   final bool? selected;
-
-  /// Content padding.
-  @protected
-  static const EdgeInsetsGeometry _padding =
-      EdgeInsets.symmetric(horizontal: 16, vertical: 8);
-
-  /// Content padding for selectable item.
-  @protected
-  static const EdgeInsetsGeometry _selectablePadding =
-      EdgeInsetsDirectional.only(start: 12, end: 16, top: 8, bottom: 8);
-
-  /// Height of [PullDownMenuItem].
-  ///
-  /// Defaults to [kMinInteractiveDimensionCupertino].
-  @override
-  double get height => kMinInteractiveDimensionCupertino;
-
-  @override
-  bool get represents => true;
 
   @protected
   void _handleTap(BuildContext context) => Navigator.pop(context, onTap);
@@ -163,6 +149,19 @@ class PullDownMenuItem extends PullDownMenuEntry {
     return true;
   }
 
+  static double _disabledOpacity(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+
+    // opacity values were based on direct pixel to pixel comparison with
+    // native variant.
+    switch (brightness) {
+      case Brightness.dark:
+        return 0.55;
+      case Brightness.light:
+        return 0.45;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // don't do unnecessary checks from inherited widget if [selected] is not
@@ -180,7 +179,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
     switch (size) {
       case ElementSize.small:
         child = Padding(
-          padding: _padding,
+          padding: _kItemPadding,
           child: Center(child: iconWidget ?? Icon(icon)),
         );
         break;
@@ -208,10 +207,10 @@ class PullDownMenuItem extends PullDownMenuEntry {
     }
 
     var style = size == ElementSize.large
-        ? itemTheme?.textStyle ?? theme?.textStyle ?? defaults.textStyle!
-        : itemTheme?.iconActionTextStyle ??
-            theme?.iconActionTextStyle ??
-            defaults.iconActionTextStyle!;
+        ? defaults.textStyle!.merge(theme?.textStyle ?? itemTheme?.textStyle)
+        : defaults.iconActionTextStyle!.merge(
+            itemTheme?.iconActionTextStyle ?? theme?.iconActionTextStyle,
+          );
 
     if (isDestructive) {
       final color = itemTheme?.destructiveColor ??
@@ -223,7 +222,7 @@ class PullDownMenuItem extends PullDownMenuEntry {
 
     if (!enabled) {
       style = style.copyWith(
-        color: style.color?.withOpacity(0.38),
+        color: style.color?.withOpacity(_disabledOpacity(context)),
       );
     }
 
@@ -238,9 +237,11 @@ class PullDownMenuItem extends PullDownMenuEntry {
         theme?.onHoverColor ??
         defaults.onHoverColor!;
 
-    final hoverTextStyle = itemTheme?.onHoverTextStyle ??
-        theme?.onHoverTextStyle ??
-        defaults.onHoverTextStyle!;
+    final hoverTextStyle = defaults.onHoverTextStyle!
+        .merge(itemTheme?.onHoverTextStyle ?? theme?.onHoverTextStyle);
+
+    final iconSize =
+        itemTheme?.iconSize ?? theme?.iconSize ?? defaults.iconSize!;
 
     return MergeSemantics(
       child: Semantics(
@@ -251,19 +252,20 @@ class PullDownMenuItem extends PullDownMenuEntry {
           pressedColor: pressedColor,
           hoverColor: hoverColor,
           builder: (context, isHovered) {
-            final iconSize =
-                itemTheme?.iconSize ?? theme?.iconSize ?? defaults.iconSize!;
+            var textStyle = style;
 
-            final textStyle = isHovered
-                ? size == ElementSize.large
-                    ? hoverTextStyle
-                    : hoverTextStyle.copyWith(
-                        fontSize: style.fontSize,
-                        height: style.height,
-                      )
-                : style;
+            if (isHovered) {
+              if (size == ElementSize.large) {
+                textStyle = hoverTextStyle;
+              } else {
+                textStyle = hoverTextStyle.copyWith(
+                  fontSize: style.fontSize,
+                  height: style.height,
+                );
+              }
+            }
 
-            return IconTheme.merge(
+            return IconTheme(
               data: IconThemeData(
                 color: isHovered ? hoverTextStyle.color : colorIcon,
                 size: iconSize,
@@ -298,7 +300,7 @@ class _LargeItem extends StatelessWidget {
         constraints: const BoxConstraints(
           minHeight: kMinInteractiveDimensionCupertino,
         ),
-        padding: PullDownMenuItem._padding,
+        padding: _kItemPadding,
         child: Row(
           children: [
             Expanded(
@@ -339,7 +341,7 @@ class _SelectableLargeItem extends StatelessWidget {
         constraints: const BoxConstraints(
           minHeight: kMinInteractiveDimensionCupertino,
         ),
-        padding: PullDownMenuItem._selectablePadding,
+        padding: _kSelectableItemPadding,
         child: Row(
           children: [
             Padding(
@@ -377,7 +379,7 @@ class _MediumItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: PullDownMenuItem._padding,
+        padding: _kItemPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,

@@ -101,7 +101,8 @@ class ExampleScaffold extends StatelessWidget {
               ),
             ),
           ),
-          previousPageTitle: 'Examples',
+          previousPageTitle: 'Back',
+          padding: const EdgeInsetsDirectional.only(end: 8),
           trailing: const CupertinoButton(
             onPressed: onThemeModeChange,
             padding: EdgeInsets.zero,
@@ -109,15 +110,27 @@ class ExampleScaffold extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                pullDownButton,
-                pullDownButton,
-              ],
-            ),
+          child: Row(
+            children: [
+              for (final alignment in [
+                AlignmentDirectional.centerStart,
+                AlignmentDirectional.center,
+                AlignmentDirectional.centerEnd
+              ])
+                Expanded(
+                  child: Align(
+                    alignment: alignment,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        pullDownButton,
+                        pullDownButton,
+                        pullDownButton,
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       );
@@ -127,11 +140,30 @@ class ExampleScaffold extends StatelessWidget {
 class ExampleButton extends StatelessWidget {
   const ExampleButton({super.key, required this.onTap});
 
+  /// Shortcut constructor to allow easy passing to
+  /// [PullDownButton.buttonBuilder] as tear-off:
+  ///
+  /// ```dart
+  /// buttonBuilder: ExampleButton.builder,
+  /// ```
+  ///
+  /// instead of:
+  ///
+  /// ```dart
+  /// buttonBuilder: (_, showMenu) => ExampleButton(onTap: showMenu),
+  /// ```
+  const ExampleButton.builder(
+    BuildContext _,
+    this.onTap, {
+    super.key,
+  });
+
   final GestureTapCallback onTap;
 
   @override
   Widget build(BuildContext context) => CupertinoButton(
         onPressed: onTap,
+        pressedOpacity: 1,
         child: const Icon(CupertinoIcons.ellipsis_circle),
       );
 }

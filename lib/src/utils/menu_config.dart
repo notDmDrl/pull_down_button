@@ -53,7 +53,7 @@ class ActionsRowSizeConfig extends InheritedWidget {
       ElementSize.large;
 
   @override
-  bool updateShouldNotify(covariant ActionsRowSizeConfig oldWidget) =>
+  bool updateShouldNotify(ActionsRowSizeConfig oldWidget) =>
       size != oldWidget.size;
 }
 
@@ -80,6 +80,6 @@ class MenuConfig extends InheritedWidget {
       context.dependOnInheritedWidgetOfExactType<MenuConfig>()!.hasSelectable;
 
   @override
-  bool updateShouldNotify(covariant MenuConfig oldWidget) =>
+  bool updateShouldNotify(MenuConfig oldWidget) =>
       hasSelectable != oldWidget.hasSelectable;
 }

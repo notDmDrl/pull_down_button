@@ -7,6 +7,7 @@ import 'src/divider.dart';
 import 'src/item.dart';
 import 'src/position.dart';
 import 'src/selectable_item.dart';
+import 'src/show_menu.dart';
 import 'src/theming_custom.dart';
 import 'src/theming_default.dart';
 import 'src/title.dart';
@@ -24,140 +25,137 @@ class ItemExamples extends StatelessWidget {
       ),
     );
 
-    final header = TextStyle(
-      color: CupertinoColors.secondaryLabel.resolveFrom(context),
-    );
-
     return CupertinoPageScaffold(
-      child: CustomScrollView(
-        slivers: [
-          CupertinoSliverNavigationBar(
-            previousPageTitle: 'Back',
-            largeTitle: Text('Examples', style: textStyle),
-            stretch: true,
-            trailing: const CupertinoButton(
-              onPressed: onThemeModeChange,
-              padding: EdgeInsets.zero,
-              child: Icon(CupertinoIcons.sun_max_fill),
+      navigationBar: CupertinoNavigationBar(
+        previousPageTitle: 'Back',
+        middle: Text('Examples', style: textStyle),
+        trailing: const CupertinoButton(
+          onPressed: onThemeModeChange,
+          padding: EdgeInsets.zero,
+          child: Icon(CupertinoIcons.sun_max_fill),
+        ),
+        padding: const EdgeInsetsDirectional.only(end: 8),
+      ),
+      child: Builder(
+        builder: (context) {
+          final edgeInsets = MediaQuery.of(context).padding;
+
+          return ListView(
+            padding: EdgeInsets.only(
+              left: edgeInsets.left,
+              right: edgeInsets.right,
+              bottom: edgeInsets.bottom + 16,
+              top: edgeInsets.top,
             ),
-          ),
-          SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              child: CupertinoListSection.insetGrouped(
-                header: Text(
-                  'Items',
-                  style: header,
-                ),
+            children: [
+              const _Category(
+                header: 'Items',
                 children: [
-                  CupertinoListTile(
-                    onTap: () => context.push(const Item()),
-                    title: Text(
-                      'PullDownMenuItem',
-                      style: textStyle,
-                    ),
-                    trailing: const CupertinoListTileChevron(),
+                  _Tile(
+                    destination: Item(),
+                    title: 'PullDownMenuItem',
                   ),
-                  CupertinoListTile(
-                    onTap: () => context.push(const SelectableItem()),
-                    title: Text(
-                      'SelectablePullDownMenuItem',
-                      style: textStyle,
-                    ),
-                    trailing: const CupertinoListTileChevron(),
+                  _Tile(
+                    destination: SelectableItem(),
+                    title: 'PullDownMenuItem.selectable',
                   ),
-                  CupertinoListTile(
-                    onTap: () => context.push(const Divider()),
-                    title: Text(
-                      'PullDownMenuDivider',
-                      style: textStyle,
-                    ),
-                    trailing: const CupertinoListTileChevron(),
+                  _Tile(
+                    destination: Divider(),
+                    title: 'PullDownMenuDivider',
                   ),
-                  CupertinoListTile(
-                    onTap: () => context.push(const Title()),
-                    title: Text(
-                      'PullDownMenuTitle',
-                      style: textStyle,
-                    ),
-                    trailing: const CupertinoListTileChevron(),
+                  _Tile(
+                    destination: Title(),
+                    title: 'PullDownMenuTitle',
                   ),
-                  CupertinoListTile(
-                    onTap: () => context.push(const ActionsRow()),
-                    title: Text(
-                      'PullDownMenuActionsRow',
-                      style: textStyle,
-                    ),
-                    trailing: const CupertinoListTileChevron(),
+                  _Tile(
+                    destination: ActionsRow(),
+                    title: 'PullDownMenuActionsRow',
                   ),
                 ],
               ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              bottom: false,
-              child: CupertinoListSection.insetGrouped(
-                header: Text(
-                  'PullDownMenuPosition',
-                  style: header,
-                ),
+              _Category(
+                header: 'PullDownMenuPosition',
                 children: [
                   for (final position in PullDownMenuPosition.values)
-                    CupertinoListTile(
-                      onTap: () => context.push(Position(position: position)),
-                      title: Text(
-                        '.${position.name}',
-                        style: textStyle,
-                      ),
-                      trailing: const CupertinoListTileChevron(),
+                    _Tile(
+                      destination: Position(position: position),
+                      title: '.${position.name}',
                     ),
                 ],
               ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: SafeArea(
-              top: false,
-              child: CupertinoListSection.insetGrouped(
-                header: Text(
-                  'Theming',
-                  style: header,
-                ),
+              const _Category(
+                header: 'Theming',
                 children: [
-                  CupertinoListTile(
-                    onTap: () => context.push(const ThemingDefault()),
-                    title: Text(
-                      'Default theme',
-                      style: textStyle,
-                    ),
-                    trailing: const CupertinoListTileChevron(),
+                  _Tile(
+                    destination: ThemingDefault(),
+                    title: 'Default theme',
                   ),
-                  CupertinoListTile(
-                    onTap: () => context.push(const ThemingCustom()),
-                    title: Text(
-                      'Material 3 custom theme',
-                      style: textStyle,
-                    ),
-                    trailing: const CupertinoListTileChevron(),
+                  _Tile(
+                    destination: ThemingCustom(),
+                    title: 'Material 3 custom theme',
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
+              const _Category(
+                header: 'Advanced',
+                children: [
+                  _Tile(
+                    destination: ShowPullDownMenu(),
+                    title: 'showPullDownMenu',
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
-extension on BuildContext {
-  Future<void> push(Widget screen) => Navigator.push(
-        this,
-        CupertinoPageRoute<void>(
-          builder: (_) => screen,
+@immutable
+class _Category extends StatelessWidget {
+  const _Category({required this.header, required this.children});
+
+  final String header;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => CupertinoListSection.insetGrouped(
+        header: Text(
+          header,
+          style: TextStyle(
+            color: CupertinoColors.secondaryLabel.resolveFrom(context),
+          ),
         ),
+        hasLeading: false,
+        additionalDividerMargin: 6,
+        children: children,
+      );
+}
+
+@immutable
+class _Tile extends StatelessWidget {
+  const _Tile({required this.title, required this.destination});
+
+  final String title;
+  final Widget destination;
+
+  @override
+  Widget build(BuildContext context) => CupertinoListTile(
+        onTap: () => Navigator.push(
+          context,
+          CupertinoPageRoute<void>(builder: (_) => destination),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: CupertinoDynamicColor.resolve(
+              CupertinoColors.label,
+              context,
+            ),
+          ),
+        ),
+        trailing: const CupertinoListTileChevron(),
       );
 }

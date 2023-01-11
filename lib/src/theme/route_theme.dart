@@ -109,7 +109,9 @@ class PullDownMenuRouteTheme {
   }
 }
 
-// Based on values from https://www.figma.com/community/file/1121065701252736567.
+// Based on values from https://www.figma.com/community/file/1121065701252736567,
+// https://www.figma.com/community/file/1172051389106515682 and direct
+// color compare with native variant.
 @immutable
 class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
   const _PullDownMenuRouteThemeDefaults(this.context)
@@ -117,7 +119,7 @@ class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
           borderRadius: const BorderRadius.all(Radius.circular(12)),
           beginShadow: const BoxShadow(color: Color.fromRGBO(0, 0, 0, 0)),
           endShadow: const BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.1),
+            color: Color.fromRGBO(0, 0, 0, 0.075),
             blurRadius: 64,
             spreadRadius: 64,
           ),
@@ -127,8 +129,8 @@ class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
   final BuildContext context;
 
   static const kBackgroundColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(237, 237, 237, 0.8),
-    darkColor: Color.fromRGBO(37, 37, 37, 0.5),
+    color: Color.fromRGBO(249, 249, 249, 0.78),
+    darkColor: Color.fromRGBO(84, 84, 88, 0.36),
   );
 
   @override

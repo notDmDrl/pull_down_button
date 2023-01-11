@@ -23,10 +23,11 @@ Since this package uses new Flutter feature `ThemeExtension` for theming, minimu
 
 - [PullDownButton](#pulldownbutton)
   - [PullDownMenuItem](#pulldownmenuitem)
-  - [PullDownMenuItem.selectable](#selectablepulldownmenuitem)
+  - [PullDownMenuItem.selectable](#pulldownmenuitemselectable)
   - [PullDownMenuActionsRow](#pulldownmenuactionsrow)
   - [PullDownMenuDivider](#pulldownmenudivider)
   - [PullDownMenuTitle](#pulldownmenutitle)
+- [showPullDownMenu](#showpulldownmenu)
 - [Theming](#theming)
   - [PullDownButtonTheme](#pulldownbuttontheme)
 - [Contributions](#contributions)
@@ -71,7 +72,7 @@ PullDownButton(
 | buttonBuilder | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
 | onCanceled    | Called when the user dismisses the pull-down menu.                                                       |
 | offset        | The offset is applied relative to the initial position set by the `position`.                            |
-| position      | Whether the popup menu is positioned over or under the popup menu button.                                |
+| position      | Whether the popup menu is positioned above, over or under the popup menu button.                         |
 | routeTheme    | The theme of pull-down menu box.                                                                         |
 | applyOpacity  | Whether to apply opacity on `buttonBuilder` when menu is open.                                           |
 
@@ -239,6 +240,38 @@ const PullDownMenuTitle(title: Text('Pull-down menu')),
 
 ---
 
+### showPullDownMenu
+
+An alternative way of displaying pull-down menu via a function call.
+
+```dart
+onPressed: () async {
+  /* get tap position and / or do something before opening menu */
+
+  await showPullDownMenu(
+    context: context,
+    items: [...],
+    position: position,
+  );
+}
+```
+
+<details><summary>Properties table</summary>
+
+| Properties   | Description                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------- |
+| context      | For looking up `Navigator` for menu.                                                                 |
+| items        | List of `PullDownMenuEntry` widgets.                                                                 |
+| position     | The `RelativeRect` used to align top of the menu with top of the **position** rectangle.             |
+| buttonSize   | Used to let menu know about additional bottom offset to use while calculating final menu's position. |
+| menuPosition | Whether the popup menu is positioned above, over or under the calculated menu's position             |
+| onCanceled   | Called when the user dismisses the pull-down menu.                                                   |
+| routeTheme   | The theme of pull-down menu box.                                                                     |
+
+ </details>
+
+---
+
 ## Theming
 
 This package also provides additional customisation. By default, iOS16 theme is used, but it is also possible to override defaults with widget properties (see above) or with `PullDownButtonTheme` theme extension.
@@ -297,14 +330,14 @@ ThemeData(
 | width           | Pull-down menu width.                                               |
 
 `backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
-If `backgroundColor`'s is fully opaque (opacity set to **1**), no blue effect will be applied.
+If `backgroundColor`'s is fully opaque (opacity set to **1**), no blur effect will be applied.
 
 </details>
 
 <details><summary>PullDownMenuItemTheme</summary>
 
 | Properties          | Description                                                       |
-| ------------------- |-------------------------------------------------------------------|
+| ------------------- | ----------------------------------------------------------------- |
 | destructiveColor    | Color for destructive action.                                     |
 | iconSize            | Size of trailing icon.                                            |
 | checkmark           | Checkmark icon.                                                   |
