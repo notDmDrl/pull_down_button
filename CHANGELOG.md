@@ -1,9 +1,13 @@
+## 0.5.1
+
+- Fix `PullDownMenuItem.itemTheme.textStyle` being overridden by global `PullDownButtonTheme.itemTheme.textStyle` during text styles marge in `PullDownMenuItem` and `PullDownMenuTitle` if both are not null.
+
 ## 0.5.0
 
 - Added `showPullDownMenu` - an alternative way to display menu [#12](https://github.com/notDmDrl/pull_down_button/issues/12).
 - Following things have been updated to be a lot closer to native variant:
   - Menu open / close animation to use scaling transition.
-  - `PullDownMenuTitle` - minimum height to be uqual to native variant.
+  - `PullDownMenuTitle` - minimum height to be equal to native variant.
   - Default colors for `PullDownMenuDividerTheme` and `PullDownMenuRouteTheme`.
   - On menu open opacity for `PullDownButton.buttonBuilder`.
   - `PullDownMenuItem` text style and icon color opacity when `PullDownMenuItem.enabled` is **false**.

@@ -207,10 +207,12 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     }
 
     var style = size == ElementSize.large
-        ? defaults.textStyle!.merge(theme?.textStyle ?? itemTheme?.textStyle)
-        : defaults.iconActionTextStyle!.merge(
-            itemTheme?.iconActionTextStyle ?? theme?.iconActionTextStyle,
-          );
+        ? defaults.textStyle!
+            .merge(theme?.textStyle)
+            .merge(itemTheme?.textStyle)
+        : defaults.iconActionTextStyle!
+            .merge(theme?.iconActionTextStyle)
+            .merge(itemTheme?.iconActionTextStyle);
 
     if (isDestructive) {
       final color = itemTheme?.destructiveColor ??
@@ -238,7 +240,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         defaults.onHoverColor!;
 
     final hoverTextStyle = defaults.onHoverTextStyle!
-        .merge(itemTheme?.onHoverTextStyle ?? theme?.onHoverTextStyle);
+        .merge(theme?.onHoverTextStyle)
+        .merge(itemTheme?.onHoverTextStyle);
 
     final iconSize =
         itemTheme?.iconSize ?? theme?.iconSize ?? defaults.iconSize!;

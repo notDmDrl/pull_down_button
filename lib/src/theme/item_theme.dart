@@ -187,7 +187,7 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
         fontSize: 17,
         height: 22 / 17,
         fontWeight: FontWeight.w400,
-        color: CupertinoDynamicColor.resolve(CupertinoColors.label, context),
+        color: CupertinoColors.label.resolveFrom(context),
         textBaseline: TextBaseline.alphabetic,
         letterSpacing: -0.41,
       );
@@ -199,7 +199,7 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
         fontSize: 12,
         height: 16 / 12,
         fontWeight: FontWeight.w400,
-        color: CupertinoDynamicColor.resolve(CupertinoColors.label, context),
+        color: CupertinoColors.label.resolveFrom(context),
         textBaseline: TextBaseline.alphabetic,
         letterSpacing: -0.41,
       );

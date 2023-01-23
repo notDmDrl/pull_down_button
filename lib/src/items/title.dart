@@ -36,7 +36,7 @@ class PullDownMenuTitle extends StatelessWidget implements PullDownMenuEntry {
     final theme = PullDownMenuTitleTheme.of(context);
     final defaults = PullDownMenuTitleTheme.defaults(context);
 
-    final style = defaults.style!.merge(titleStyle ?? theme?.style);
+    final style = defaults.style!.merge(theme?.style).merge(titleStyle);
 
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: kPullDownMenuTitleHeight),
