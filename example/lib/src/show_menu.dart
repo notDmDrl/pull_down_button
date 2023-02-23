@@ -50,6 +50,7 @@ class ShowPullDownMenu extends StatelessWidget {
                   context: context,
                   items: items,
                   position: position,
+                  itemsOrder: PullDownMenuItemsOrder.automatic,
                   menuPosition: PullDownMenuPosition.automatic,
                 );
               },

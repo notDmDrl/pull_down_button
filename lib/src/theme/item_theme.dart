@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
@@ -11,7 +12,7 @@ import '../../pull_down_button.dart';
 ///
 /// All [PullDownMenuItemTheme] properties are `null` by default. When null,
 /// the pull-down menu will use iOS 16 defaults specified in
-/// [_PullDownMenuItemThemeDefaults].
+/// [PullDownMenuItemTheme.defaults].
 @immutable
 class PullDownMenuItemTheme {
   /// Creates the set of properties used to configure [PullDownMenuItemTheme].
@@ -79,6 +80,75 @@ class PullDownMenuItemTheme {
   static PullDownMenuItemTheme? of(BuildContext context) =>
       PullDownButtonTheme.of(context)?.itemTheme;
 
+  /// The helper method to quickly resolve [PullDownMenuItemTheme] from
+  /// [PullDownButtonTheme.itemTheme] or [PullDownMenuItemTheme.defaults]
+  /// as well as from theme data from [PullDownMenuItem].
+  @internal
+  static PullDownMenuItemTheme resolve(
+    BuildContext context, {
+    required PullDownMenuItemTheme? itemTheme,
+    required bool enabled,
+    required bool isDestructive,
+  }) {
+    final theme = PullDownMenuItemTheme.of(context);
+    final defaults = PullDownMenuItemTheme.defaults(context);
+
+    var resolved = PullDownMenuItemTheme(
+      destructiveColor: itemTheme?.destructiveColor ??
+          theme?.destructiveColor ??
+          defaults.destructiveColor!,
+      iconSize: itemTheme?.iconSize ?? theme?.iconSize ?? defaults.iconSize!,
+      checkmark:
+          itemTheme?.checkmark ?? theme?.checkmark ?? defaults.checkmark!,
+      checkmarkWeight: itemTheme?.checkmarkWeight ??
+          theme?.checkmarkWeight ??
+          defaults.checkmarkWeight!,
+      checkmarkSize: itemTheme?.checkmarkSize ??
+          theme?.checkmarkSize ??
+          defaults.checkmarkSize!,
+      textStyle: defaults.textStyle!
+          .merge(theme?.textStyle)
+          .merge(itemTheme?.textStyle),
+      iconActionTextStyle: defaults.iconActionTextStyle!
+          .merge(theme?.iconActionTextStyle)
+          .merge(itemTheme?.iconActionTextStyle),
+      onHoverColor: itemTheme?.onHoverColor ??
+          theme?.onHoverColor ??
+          defaults.onHoverColor!,
+      onHoverTextStyle: defaults.onHoverTextStyle!
+          .merge(theme?.onHoverTextStyle)
+          .merge(itemTheme?.onHoverTextStyle),
+    );
+
+    if (isDestructive) {
+      resolved = resolved.copyWith(
+        textStyle: resolved.textStyle!.copyWith(
+          color: resolved.destructiveColor,
+        ),
+        iconActionTextStyle: resolved.iconActionTextStyle!.copyWith(
+          color: resolved.destructiveColor,
+        ),
+      );
+    }
+
+    if (!enabled) {
+      resolved = resolved.copyWith(
+        textStyle: resolved.textStyle!.copyWith(
+          color: resolved.textStyle!.color!.withOpacity(
+            _PullDownMenuItemThemeDefaults._disabledOpacity(context),
+          ),
+        ),
+        iconActionTextStyle: resolved.iconActionTextStyle!.copyWith(
+          color: resolved.iconActionTextStyle!.color!.withOpacity(
+            _PullDownMenuItemThemeDefaults._disabledOpacity(context),
+          ),
+        ),
+      );
+    }
+
+    return resolved;
+  }
+
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   PullDownMenuItemTheme copyWith({
@@ -109,21 +179,23 @@ class PullDownMenuItemTheme {
     PullDownMenuItemTheme? a,
     PullDownMenuItemTheme? b,
     double t,
-  ) =>
-      PullDownMenuItemTheme(
-        destructiveColor:
-            Color.lerp(a?.destructiveColor, b?.destructiveColor, t),
-        iconSize: ui.lerpDouble(a?.iconSize, b?.iconSize, t),
-        checkmark: _lerpIconData(a?.checkmark, b?.checkmark, t),
-        checkmarkWeight:
-            FontWeight.lerp(a?.checkmarkWeight, b?.checkmarkWeight, t),
-        checkmarkSize: ui.lerpDouble(a?.checkmarkSize, b?.checkmarkSize, t),
-        textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
-        iconActionTextStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
-        onHoverColor: Color.lerp(a?.onHoverColor, b?.onHoverColor, t),
-        onHoverTextStyle:
-            TextStyle.lerp(a?.onHoverTextStyle, b?.onHoverTextStyle, t),
-      );
+  ) {
+    if (identical(a, b) && a != null) return a;
+
+    return PullDownMenuItemTheme(
+      destructiveColor: Color.lerp(a?.destructiveColor, b?.destructiveColor, t),
+      iconSize: ui.lerpDouble(a?.iconSize, b?.iconSize, t),
+      checkmark: _lerpIconData(a?.checkmark, b?.checkmark, t),
+      checkmarkWeight:
+          FontWeight.lerp(a?.checkmarkWeight, b?.checkmarkWeight, t),
+      checkmarkSize: ui.lerpDouble(a?.checkmarkSize, b?.checkmarkSize, t),
+      textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
+      iconActionTextStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
+      onHoverColor: Color.lerp(a?.onHoverColor, b?.onHoverColor, t),
+      onHoverTextStyle:
+          TextStyle.lerp(a?.onHoverTextStyle, b?.onHoverTextStyle, t),
+    );
+  }
 
   @override
   int get hashCode => Object.hash(
@@ -165,8 +237,8 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
       : super(
           iconSize: 20,
           checkmark: CupertinoIcons.checkmark,
-          checkmarkWeight: FontWeight.w600,
-          checkmarkSize: 15,
+          checkmarkWeight: FontWeight.bold,
+          checkmarkSize: 16,
         );
 
   final BuildContext context;
@@ -177,6 +249,19 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
     darkColor: Color.fromRGBO(46, 45, 46, 1),
   );
 
+  // Opacity values were based on direct pixel to pixel comparison with
+  // native variant.
+  static double _disabledOpacity(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+
+    switch (brightness) {
+      case Brightness.dark:
+        return 0.55;
+      case Brightness.light:
+        return 0.45;
+    }
+  }
+
   @override
   Color get destructiveColor => CupertinoColors.systemRed.resolveFrom(context);
 
@@ -184,12 +269,12 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
   TextStyle get textStyle => TextStyle(
         inherit: false,
         fontFamily: '.SF UI Text',
-        fontSize: 17,
-        height: 22 / 17,
+        fontSize: 16.8,
+        height: 22 / 16.8,
         fontWeight: FontWeight.w400,
         color: CupertinoColors.label.resolveFrom(context),
         textBaseline: TextBaseline.alphabetic,
-        letterSpacing: -0.41,
+        letterSpacing: -0.3,
       );
 
   @override

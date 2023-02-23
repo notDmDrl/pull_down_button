@@ -16,6 +16,7 @@ const double _kBlurAmount = 50;
 @immutable
 @internal
 class PullDownMenu extends StatelessWidget {
+  /// Creates [PullDownMenu].
   const PullDownMenu({
     super.key,
     required this.items,
@@ -37,15 +38,10 @@ class PullDownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuRouteTheme.of(context);
-    final defaults = PullDownMenuRouteTheme.defaults(context);
+    final theme =
+        PullDownMenuRouteTheme.resolve(context, routeTheme: routeTheme);
 
-    final beginShadow =
-        routeTheme?.beginShadow ?? theme?.beginShadow ?? defaults.beginShadow!;
-    final endShadow =
-        routeTheme?.endShadow ?? theme?.endShadow ?? defaults.endShadow!;
-
-    final shadowTween = _decorationTween(beginShadow, endShadow);
+    final shadowTween = _decorationTween(theme.beginShadow!, theme.endShadow!);
 
     return ScaleTransition(
       scale: animation,
@@ -55,12 +51,12 @@ class PullDownMenu extends StatelessWidget {
         child: FadeTransition(
           opacity: animation,
           child: _Decoration(
-            backgroundColor: routeTheme?.backgroundColor,
-            borderRadius: routeTheme?.borderRadius,
+            backgroundColor: theme.backgroundColor!,
+            borderRadius: theme.borderRadius!,
             child: FadeTransition(
               opacity: animation,
               child: _MenuBody(
-                width: routeTheme?.width,
+                width: theme.width!,
                 children: items,
               ),
             ),
@@ -81,8 +77,8 @@ class _Decoration extends StatelessWidget {
   });
 
   final Widget child;
-  final Color? backgroundColor;
-  final BorderRadius? borderRadius;
+  final Color backgroundColor;
+  final BorderRadius borderRadius;
 
   /// Check if the menu's background color is not fully opaque.
   ///
@@ -97,21 +93,12 @@ class _Decoration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuRouteTheme.of(context);
-    final defaults = PullDownMenuRouteTheme.defaults(context);
-
-    final color =
-        backgroundColor ?? theme?.backgroundColor ?? defaults.backgroundColor!;
-
-    final radius =
-        borderRadius ?? theme?.borderRadius ?? defaults.borderRadius!;
-
     Widget box = ColoredBox(
-      color: color,
+      color: backgroundColor,
       child: child,
     );
 
-    if (useBackdropFilter(color)) {
+    if (useBackdropFilter(backgroundColor)) {
       box = BackdropFilter(
         filter: blur,
         child: box,
@@ -119,7 +106,7 @@ class _Decoration extends StatelessWidget {
     }
 
     return ClipRRect(
-      borderRadius: radius,
+      borderRadius: borderRadius,
       child: box,
     );
   }
@@ -134,28 +121,23 @@ class _MenuBody extends StatelessWidget {
   });
 
   final List<PullDownMenuEntry> children;
-  final double? width;
+  final double width;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = PullDownMenuRouteTheme.of(context);
-    final defaults = PullDownMenuRouteTheme.defaults(context);
-
-    return ConstrainedBox(
-      constraints: BoxConstraints.tightFor(
-        width: width ?? theme?.width ?? defaults.width!,
-      ),
-      child: Semantics(
-        scopesRoute: true,
-        namesRoute: true,
-        explicitChildNodes: true,
-        label: 'Pull-Down menu',
-        child: CupertinoScrollbar(
-          child: SingleChildScrollView(
-            child: ListBody(children: children),
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: BoxConstraints.tightFor(
+          width: width,
+        ),
+        child: Semantics(
+          scopesRoute: true,
+          namesRoute: true,
+          explicitChildNodes: true,
+          label: 'Pull-Down menu',
+          child: CupertinoScrollbar(
+            child: SingleChildScrollView(
+              child: ListBody(children: children),
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }

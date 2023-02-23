@@ -10,7 +10,7 @@ import '../../pull_down_button.dart';
 ///
 /// All [PullDownMenuDividerTheme] properties are `null` by default. When null,
 /// the pull-down menu will use iOS 16 defaults specified in
-/// [_PullDownMenuDividerDefaults].
+/// [PullDownMenuDividerTheme.defaults].
 @immutable
 class PullDownMenuDividerTheme {
   /// Creates the set of properties used to configure
@@ -38,6 +38,16 @@ class PullDownMenuDividerTheme {
   static PullDownMenuDividerTheme? of(BuildContext context) =>
       PullDownButtonTheme.of(context)?.dividerTheme;
 
+  /// The helper method to quickly resolve [PullDownMenuDividerTheme] from
+  /// [PullDownButtonTheme.dividerTheme] or [PullDownMenuDividerTheme.defaults].
+  @internal
+  static PullDownMenuDividerTheme resolve(BuildContext context) {
+    final theme = PullDownMenuDividerTheme.of(context);
+    final defaults = PullDownMenuDividerTheme.defaults(context);
+
+    return theme ?? defaults;
+  }
+
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   PullDownMenuDividerTheme copyWith({
@@ -54,12 +64,15 @@ class PullDownMenuDividerTheme {
     PullDownMenuDividerTheme? a,
     PullDownMenuDividerTheme? b,
     double t,
-  ) =>
-      PullDownMenuDividerTheme(
-        dividerColor: Color.lerp(a?.dividerColor, b?.dividerColor, t),
-        largeDividerColor:
-            Color.lerp(a?.largeDividerColor, b?.largeDividerColor, t),
-      );
+  ) {
+    if (identical(a, b) && a != null) return a;
+
+    return PullDownMenuDividerTheme(
+      dividerColor: Color.lerp(a?.dividerColor, b?.dividerColor, t),
+      largeDividerColor:
+          Color.lerp(a?.largeDividerColor, b?.largeDividerColor, t),
+    );
+  }
 
   @override
   int get hashCode => Object.hash(dividerColor, largeDividerColor);

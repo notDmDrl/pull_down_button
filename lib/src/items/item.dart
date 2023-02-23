@@ -1,14 +1,18 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import '../../pull_down_button.dart';
 import '../utils/gesture_detector.dart';
 import '../utils/menu_config.dart';
 
+// Note:
+// I am not entirely sure why top and bottom padding values are that much
+// different but only using those values it was possible to closely match with
+// native counterpart when we have a `PullDownMenuItem.title` long enough to
+// overflow to second row
 const EdgeInsetsGeometry _kItemPadding =
-    EdgeInsets.symmetric(horizontal: 16, vertical: 8);
+    EdgeInsetsDirectional.only(start: 16, end: 18, top: 9.5, bottom: 12.5);
 const EdgeInsetsGeometry _kSelectableItemPadding =
-    EdgeInsetsDirectional.only(start: 12, end: 16, top: 8, bottom: 8);
+    EdgeInsetsDirectional.only(start: 13, end: 18, top: 9.5, bottom: 12.5);
 
 /// An item in a cupertino style pull-down menu.
 ///
@@ -66,7 +70,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// Whether the user is permitted to tap this item.
   ///
   /// Defaults to true. If this is false, then the item will not react to
-  /// touches.
+  /// touches and item's text styles and icon colors will be updated with lower
+  /// opacity to indicate disabled state.
   final bool enabled;
 
   /// Title of this [PullDownMenuItem].
@@ -149,32 +154,20 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     return true;
   }
 
-  static double _disabledOpacity(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-
-    // opacity values were based on direct pixel to pixel comparison with
-    // native variant.
-    switch (brightness) {
-      case Brightness.dark:
-        return 0.55;
-      case Brightness.light:
-        return 0.45;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    // don't do unnecessary checks from inherited widget if [selected] is not
-    // null.
-    final viewAsSelectable = selected != null || MenuConfig.of(context);
     final size = ActionsRowSizeConfig.of(context);
 
-    final theme = PullDownMenuItemTheme.of(context);
-    final defaults = PullDownMenuItemTheme.defaults(context);
+    assert(_debugActionRowHasIcon(size), '');
+
+    final theme = PullDownMenuItemTheme.resolve(
+      context,
+      itemTheme: itemTheme,
+      enabled: enabled,
+      isDestructive: isDestructive,
+    );
 
     final Widget child;
-
-    assert(_debugActionRowHasIcon(size), '');
 
     switch (size) {
       case ElementSize.small:
@@ -190,10 +183,18 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         );
         break;
       case ElementSize.large:
+        // don't do unnecessary checks from inherited widget if [selected] is
+        // not null.
+        final viewAsSelectable = selected != null || MenuConfig.of(context);
+
         child = viewAsSelectable
             ? _SelectableLargeItem(
-                selected: selected ?? false,
-                itemTheme: itemTheme,
+                checkmark: _CheckmarkIcon(
+                  selected: selected ?? false,
+                  checkmark: theme.checkmark!,
+                  checkmarkWeight: theme.checkmarkWeight!,
+                  checkmarkSize: theme.checkmarkSize!,
+                ),
                 title: title,
                 icon: icon,
                 iconWidget: iconWidget,
@@ -206,45 +207,16 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         break;
     }
 
-    var style = size == ElementSize.large
-        ? defaults.textStyle!
-            .merge(theme?.textStyle)
-            .merge(itemTheme?.textStyle)
-        : defaults.iconActionTextStyle!
-            .merge(theme?.iconActionTextStyle)
-            .merge(itemTheme?.iconActionTextStyle);
-
-    if (isDestructive) {
-      final color = itemTheme?.destructiveColor ??
-          theme?.destructiveColor ??
-          defaults.destructiveColor!;
-
-      style = style.copyWith(color: color);
-    }
-
-    if (!enabled) {
-      style = style.copyWith(
-        color: style.color?.withOpacity(_disabledOpacity(context)),
-      );
-    }
+    final style = size == ElementSize.large
+        ? theme.textStyle!
+        : theme.iconActionTextStyle!;
 
     final colorIcon =
         !isDestructive && iconColor != null ? iconColor : style.color;
 
-    final pressedColor =
-        PullDownMenuDividerTheme.of(context)?.largeDividerColor ??
-            PullDownMenuDividerTheme.defaults(context).largeDividerColor!;
+    final hoverTextStyle = theme.onHoverTextStyle!;
 
-    final hoverColor = itemTheme?.onHoverColor ??
-        theme?.onHoverColor ??
-        defaults.onHoverColor!;
-
-    final hoverTextStyle = defaults.onHoverTextStyle!
-        .merge(theme?.onHoverTextStyle)
-        .merge(itemTheme?.onHoverTextStyle);
-
-    final iconSize =
-        itemTheme?.iconSize ?? theme?.iconSize ?? defaults.iconSize!;
+    final iconSize = theme.iconSize;
 
     return MergeSemantics(
       child: Semantics(
@@ -252,8 +224,9 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         button: true,
         child: MenuActionGestureDetector(
           onTap: enabled ? () => _handleTap(context) : null,
-          pressedColor: pressedColor,
-          hoverColor: hoverColor,
+          pressedColor:
+              PullDownMenuDividerTheme.resolve(context).largeDividerColor!,
+          hoverColor: theme.onHoverColor!,
           builder: (context, isHovered) {
             var textStyle = style;
 
@@ -275,6 +248,9 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
               ),
               child: DefaultTextStyle(
                 style: textStyle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
                 child: child,
               ),
             );
@@ -314,7 +290,7 @@ class _LargeItem extends StatelessWidget {
             ),
             if (icon != null || iconWidget != null)
               Padding(
-                padding: const EdgeInsetsDirectional.only(start: 16),
+                padding: const EdgeInsetsDirectional.only(start: 8),
                 child: iconWidget ?? Icon(icon),
               )
           ],
@@ -325,15 +301,13 @@ class _LargeItem extends StatelessWidget {
 @immutable
 class _SelectableLargeItem extends StatelessWidget {
   const _SelectableLargeItem({
-    required this.selected,
-    required this.itemTheme,
+    required this.checkmark,
     required this.title,
     required this.icon,
     required this.iconWidget,
   });
 
-  final bool? selected;
-  final PullDownMenuItemTheme? itemTheme;
+  final Widget checkmark;
   final String title;
   final IconData? icon;
   final Widget? iconWidget;
@@ -348,11 +322,8 @@ class _SelectableLargeItem extends StatelessWidget {
         child: Row(
           children: [
             Padding(
-              padding: const EdgeInsetsDirectional.only(end: 6),
-              child: _CheckmarkIcon(
-                selected: selected ?? false,
-                itemTheme: itemTheme,
-              ),
+              padding: const EdgeInsetsDirectional.only(end: 3),
+              child: checkmark,
             ),
             Expanded(
               child: Text(
@@ -362,7 +333,7 @@ class _SelectableLargeItem extends StatelessWidget {
             ),
             if (icon != null || iconWidget != null)
               Padding(
-                padding: const EdgeInsetsDirectional.only(start: 16),
+                padding: const EdgeInsetsDirectional.only(start: 8),
                 child: iconWidget ?? Icon(icon),
               )
           ],
@@ -407,43 +378,33 @@ class _MediumItem extends StatelessWidget {
 @immutable
 class _CheckmarkIcon extends StatelessWidget {
   const _CheckmarkIcon({
-    required this.itemTheme,
     required this.selected,
+    required this.checkmark,
+    required this.checkmarkWeight,
+    required this.checkmarkSize,
   });
 
-  final PullDownMenuItemTheme? itemTheme;
+  final IconData checkmark;
+  final FontWeight checkmarkWeight;
+  final double checkmarkSize;
   final bool selected;
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuItemTheme.of(context);
-    final defaults = PullDownMenuItemTheme.defaults(context);
-
-    final icon =
-        itemTheme?.checkmark ?? theme?.checkmark ?? defaults.checkmark!;
-
-    final weight = itemTheme?.checkmarkWeight ??
-        theme?.checkmarkWeight ??
-        defaults.checkmarkWeight!;
-
-    final size = itemTheme?.checkmarkSize ??
-        theme?.checkmarkSize ??
-        defaults.checkmarkSize!;
-
     if (!selected) {
-      return SizedBox.square(dimension: size);
+      return SizedBox.square(dimension: checkmarkSize);
     }
 
     return SizedBox(
-      width: size,
+      width: checkmarkSize,
       child: Text.rich(
         TextSpan(
-          text: String.fromCharCode(icon.codePoint),
+          text: String.fromCharCode(checkmark.codePoint),
           style: TextStyle(
-            fontSize: size,
-            fontWeight: weight,
-            fontFamily: icon.fontFamily,
-            package: icon.fontPackage,
+            fontSize: checkmarkSize,
+            fontWeight: checkmarkWeight,
+            fontFamily: checkmark.fontFamily,
+            package: checkmark.fontPackage,
           ),
         ),
       ),

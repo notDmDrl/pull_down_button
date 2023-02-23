@@ -25,6 +25,7 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
     required this.menuPosition,
     required this.capturedThemes,
     required this.hasSelectable,
+    required this.itemsOrder,
   });
 
   final List<PullDownMenuEntry> items;
@@ -34,6 +35,7 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
   final RelativeRect position;
   final Size buttonSize;
   final PullDownMenuPosition menuPosition;
+  final PullDownMenuItemsOrder itemsOrder;
 
   @override
   final String barrierLabel;
@@ -61,15 +63,35 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
     Animation<double> secondaryAnimation,
   ) {
     final Widget menu = MenuConfig(
-      hasSelectable: hasSelectable,
+      hasLeading: hasSelectable,
       child: ValueListenableBuilder<Alignment>(
         valueListenable: _menuAlignmentNotifier,
-        builder: (_, alignment, __) => PullDownMenu(
-          items: items,
-          routeTheme: routeTheme,
-          animation: animation,
-          alignment: alignment,
-        ),
+        builder: (_, alignment, __) {
+          final Iterable<PullDownMenuEntry> orderedItems;
+
+          switch (itemsOrder) {
+            case PullDownMenuItemsOrder.downwards:
+              orderedItems = items;
+              break;
+            case PullDownMenuItemsOrder.upwards:
+              orderedItems = items.reversed;
+              break;
+            case PullDownMenuItemsOrder.automatic:
+              if (alignment.y == -1) {
+                orderedItems = items;
+              } else {
+                orderedItems = items.reversed;
+              }
+              break;
+          }
+
+          return PullDownMenu(
+            items: orderedItems.toList(),
+            routeTheme: routeTheme,
+            animation: animation,
+            alignment: alignment,
+          );
+        },
       ),
     );
 

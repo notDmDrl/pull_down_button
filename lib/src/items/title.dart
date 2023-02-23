@@ -33,16 +33,16 @@ class PullDownMenuTitle extends StatelessWidget implements PullDownMenuEntry {
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuTitleTheme.of(context);
-    final defaults = PullDownMenuTitleTheme.defaults(context);
-
-    final style = defaults.style!.merge(theme?.style).merge(titleStyle);
+    final theme = PullDownMenuTitleTheme.resolve(
+      context,
+      titleStyle: titleStyle,
+    );
 
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: kPullDownMenuTitleHeight),
       child: Center(
         child: DefaultTextStyle(
-          style: style,
+          style: theme.style!,
           child: title,
         ),
       ),

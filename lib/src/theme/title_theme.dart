@@ -31,6 +31,22 @@ class PullDownMenuTitleTheme {
   static PullDownMenuTitleTheme? of(BuildContext context) =>
       PullDownButtonTheme.of(context)?.titleTheme;
 
+  /// The helper method to quickly resolve [PullDownMenuTitleTheme] from
+  /// [PullDownButtonTheme.titleTheme] or [PullDownMenuTitleTheme.defaults]
+  /// as well as from theme data from [PullDownMenuTitle].
+  @internal
+  static PullDownMenuTitleTheme resolve(
+    BuildContext context, {
+    required TextStyle? titleStyle,
+  }) {
+    final theme = PullDownMenuTitleTheme.of(context);
+    final defaults = PullDownMenuTitleTheme.defaults(context);
+
+    return PullDownMenuTitleTheme(
+      style: defaults.style!.merge(theme?.style).merge(titleStyle),
+    );
+  }
+
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   PullDownMenuTitleTheme copyWith({
@@ -45,10 +61,13 @@ class PullDownMenuTitleTheme {
     PullDownMenuTitleTheme? a,
     PullDownMenuTitleTheme? b,
     double t,
-  ) =>
-      PullDownMenuTitleTheme(
-        style: TextStyle.lerp(a?.style, b?.style, t),
-      );
+  ) {
+    if (identical(a, b) && a != null) return a;
+
+    return PullDownMenuTitleTheme(
+      style: TextStyle.lerp(a?.style, b?.style, t),
+    );
+  }
 
   @override
   int get hashCode => Object.hashAll([style]);

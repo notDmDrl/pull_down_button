@@ -40,6 +40,7 @@ class Example extends StatelessWidget {
           alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
           child: ExampleMenu(
             position: PullDownMenuPosition.automatic,
+            itemsOrder: PullDownMenuItemsOrder.automatic,
             applyOpacity: false,
             builder: (_, showMenu) => CupertinoButton(
               onPressed: showMenu,
@@ -60,12 +61,14 @@ class ExampleMenu extends StatelessWidget {
   const ExampleMenu({
     super.key,
     required this.position,
+    required this.itemsOrder,
     required this.builder,
     this.applyOpacity = true,
   });
 
   final PullDownMenuPosition position;
   final PullDownMenuButtonBuilder builder;
+  final PullDownMenuItemsOrder itemsOrder;
   final bool applyOpacity;
 
   @override
@@ -145,6 +148,7 @@ class ExampleMenu extends StatelessWidget {
             ],
           ),
         ],
+        itemsOrder: itemsOrder,
         applyOpacity: applyOpacity,
         position: position,
         buttonBuilder: builder,

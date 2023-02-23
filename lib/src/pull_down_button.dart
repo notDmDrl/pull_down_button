@@ -6,27 +6,110 @@ import '../pull_down_button.dart';
 import 'utils/constants.dart';
 import 'utils/route.dart';
 
-/// Used to configure how the [PullDownButton] positions its pull-down menu.
+/// Used to configure how the [PullDownButton] positions its pull-down menu and
+/// what type of movement (upwards or downwards) it will use for menu's appear
+/// animation.
 enum PullDownMenuPosition {
-  /// Menu is positioned over an anchor. Will attempt to fill as much space as
-  /// possible.
+  /// Menu is positioned over an anchor and is forced to be under an anchor
+  /// (downwards movement)
+  ///
+  /// If there is no available space to place menu over an anchor with
+  /// downwards movement, menu will be placed over an anchor with upwards
+  /// movement.
   over,
 
-  /// Menu is positioned under an anchor and is forced to be under an anchor.
+  /// Menu is positioned under an anchor and is forced to be under an anchor
+  /// (downwards movement).
   ///
   /// If there is no available space to place menu under an anchor, menu will
-  /// be placed above an anchor.
+  /// be placed above an anchor (upwards movement).
   under,
 
   /// Menu is positioned above an anchor and is forced to always be above an
-  /// anchor.
+  /// anchor (upwards movement).
   ///
   /// If there is no available space to place menu above an anchor, menu will
-  /// be placed under an anchor.
+  /// be placed under an anchor (downwards movement).
   above,
 
   /// Menu is positioned under or above an anchor depending on side that has
   /// more space available.
+  ///
+  /// If positioned under anchor - downwards movement will be used, if
+  /// positioned above - upwards movement will be used.
+  automatic,
+}
+
+/// Used to configure how the [PullDownButton.itemBuilder] orders it's items.
+enum PullDownMenuItemsOrder {
+  /// Items are always ordered from item `0` to item `N` in
+  /// [PullDownButton.itemBuilder] (from top to bottom).
+  ///
+  /// For example, list of items (1, 2, 3) will result in menu rendering them
+  /// like this:
+  ///
+  /// ```
+  /// -----
+  /// | 1 |
+  /// -----
+  /// | 2 |
+  /// -----
+  /// | 3 |
+  /// -----
+  /// ```
+  downwards,
+
+  /// Items are always ordered from item `N` to item `0` in
+  /// [PullDownButton.itemBuilder] (from bottom to top).
+  ///
+  /// For example, list of items (1, 2, 3) will result in menu rendering them
+  /// like this:
+  ///
+  /// ```
+  /// -----
+  /// | 3 |
+  /// -----
+  /// | 2 |
+  /// -----
+  /// | 1 |
+  /// -----
+  /// ```
+  upwards,
+
+  /// Items are ordered depending on menu's [PullDownMenuPosition] (and its
+  /// potential overflow). Based on SwiftUI *Menu* behavior.
+  ///
+  /// If the menu is being opened with downwards movement items will be ordered
+  /// from `0` to item `N` in [PullDownButton.itemBuilder] (from top to bottom).
+  ///
+  /// For example, list of items (1, 2, 3) will result in menu rendering them
+  /// like this:
+  ///
+  /// ```
+  /// -----
+  /// | 1 |
+  /// -----
+  /// | 2 |
+  /// -----
+  /// | 3 |
+  /// -----
+  /// ```
+  ///
+  /// If the menu is being opened with upwards movement items will be ordered
+  /// from `N` to item `0` in [PullDownButton.itemBuilder] (from bottom to top).
+  ///
+  /// For example, list of items (1, 2, 3) will result in menu rendering them
+  /// like this:
+  ///
+  /// ```
+  /// -----
+  /// | 3 |
+  /// -----
+  /// | 2 |
+  /// -----
+  /// | 1 |
+  /// -----
+  /// ```
   automatic,
 }
 
@@ -77,6 +160,7 @@ class PullDownButton extends StatefulWidget {
     this.onCanceled,
     this.offset = Offset.zero,
     this.position = PullDownMenuPosition.under,
+    this.itemsOrder = PullDownMenuItemsOrder.downwards,
     this.routeTheme,
     this.applyOpacity,
   });
@@ -94,7 +178,7 @@ class PullDownButton extends StatefulWidget {
   final PullDownMenuItemBuilder itemBuilder;
 
   /// Builder that provides [BuildContext] as well as `showMenu` function to
-  /// pass to any custom button widget;
+  /// pass to any custom button widget.
   final PullDownMenuButtonBuilder buttonBuilder;
 
   /// Called when the user dismisses the pull-down menu.
@@ -103,7 +187,7 @@ class PullDownButton extends StatefulWidget {
   /// The offset is applied relative to the initial position set by the
   /// [position].
   ///
-  /// When not set, the offset defaults to [Offset.zero].
+  /// Defaults to [Offset.zero].
   final Offset offset;
 
   /// Whether the popup menu is positioned above, over or under the popup menu
@@ -112,10 +196,15 @@ class PullDownButton extends StatefulWidget {
   /// [offset] is used to change the position of the popup menu relative to the
   /// position set by this parameter.
   ///
-  /// When not set, the position defaults to [PullDownMenuPosition.under] which
-  /// makes the popup menu appear directly under the button that was used to
-  /// create it.
+  /// Defaults to [PullDownMenuPosition.under] which makes the popup menu
+  /// appear directly under the button that was used to create it.
   final PullDownMenuPosition position;
+
+  /// Whether the popup menu orders its items from [itemBuilder] in downwards
+  /// or upwards way.
+  ///
+  /// Defaults to [PullDownMenuItemsOrder.downwards].
+  final PullDownMenuItemsOrder itemsOrder;
 
   /// Theme of route used to display pull-down menu launched from this
   /// [PullDownButton].
@@ -174,6 +263,7 @@ class _PullDownButtonState extends State<PullDownButton> {
         position: position,
         buttonSize: button.size,
         menuPosition: widget.position,
+        itemsOrder: widget.itemsOrder,
         routeTheme: widget.routeTheme,
         hasSelectable: hasSelectable,
       );
@@ -231,6 +321,10 @@ class _PullDownButtonState extends State<PullDownButton> {
 /// over or under the calculated menu's position. Defaults to
 /// [PullDownMenuPosition.under].
 ///
+/// [itemsOrder] is used to define how menu will order its [items] depending on
+/// calculated menu's position. Defaults to
+/// [PullDownMenuItemsOrder.downwards].
+///
 /// [onCanceled] is called when the user dismisses the pull-down menu.
 ///
 /// [routeTheme] is used to define theme of route used to display pull-down menu
@@ -247,6 +341,7 @@ Future<void> showPullDownMenu({
   required RelativeRect position,
   Size buttonSize = Size.zero,
   PullDownMenuPosition menuPosition = PullDownMenuPosition.under,
+  PullDownMenuItemsOrder itemsOrder = PullDownMenuItemsOrder.downwards,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
 }) async {
@@ -261,6 +356,7 @@ Future<void> showPullDownMenu({
       position: position,
       buttonSize: buttonSize,
       menuPosition: menuPosition,
+      itemsOrder: itemsOrder,
       routeTheme: routeTheme,
       hasSelectable: hasSelectable,
     );
@@ -284,6 +380,7 @@ Future<VoidCallback?> _showCupertinoMenu({
   required List<PullDownMenuEntry> items,
   required Size buttonSize,
   required PullDownMenuPosition menuPosition,
+  required PullDownMenuItemsOrder itemsOrder,
   required PullDownMenuRouteTheme? routeTheme,
   required bool hasSelectable,
 }) {
@@ -302,6 +399,7 @@ Future<VoidCallback?> _showCupertinoMenu({
         to: navigator.context,
       ),
       hasSelectable: hasSelectable,
+      itemsOrder: itemsOrder,
     ),
   );
 }

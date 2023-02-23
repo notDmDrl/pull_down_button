@@ -58,8 +58,8 @@ class ActionsRowSizeConfig extends InheritedWidget {
 }
 
 /// Is internally used by [PullDownButton] to provide whether the pull-down
-/// menu has any selectable [PullDownMenuItem]s to all descendant
-/// [PullDownMenuItem]s.
+/// menu has any [PullDownMenuItem]s with leading widget such as chevron to
+/// all descendant [PullDownMenuItem]s.
 @immutable
 @internal
 class MenuConfig extends InheritedWidget {
@@ -67,19 +67,20 @@ class MenuConfig extends InheritedWidget {
   const MenuConfig({
     super.key,
     required super.child,
-    required this.hasSelectable,
+    required this.hasLeading,
   });
 
-  /// Whether the pull-down menu has any selectable [PullDownMenuItem]s.
-  final bool hasSelectable;
+  /// Whether the pull-down menu has any [PullDownMenuItem]s with leading
+  /// widget such as chevron.
+  final bool hasLeading;
 
   /// The closest instance of this class that encloses the given
   /// context.
   @internal
   static bool of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<MenuConfig>()!.hasSelectable;
+      context.dependOnInheritedWidgetOfExactType<MenuConfig>()!.hasLeading;
 
   @override
   bool updateShouldNotify(MenuConfig oldWidget) =>
-      hasSelectable != oldWidget.hasSelectable;
+      hasLeading != oldWidget.hasLeading;
 }

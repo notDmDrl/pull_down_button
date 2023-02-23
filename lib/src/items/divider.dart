@@ -73,13 +73,10 @@ class PullDownMenuDivider extends StatelessWidget implements PullDownMenuEntry {
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuDividerTheme.of(context);
-    final defaults = PullDownMenuDividerTheme.defaults(context);
+    final theme = PullDownMenuDividerTheme.resolve(context);
 
-    final divider = color ??
-        (_isLarge
-            ? (theme ?? defaults).largeDividerColor
-            : (theme ?? defaults).dividerColor)!;
+    final divider =
+        color ?? (_isLarge ? theme.largeDividerColor : theme.dividerColor)!;
 
     return Divider(
       height: height,
@@ -152,10 +149,9 @@ class PullDownMenuVerticalDivider extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuDividerTheme.of(context);
-    final defaults = PullDownMenuDividerTheme.defaults(context);
+    final theme = PullDownMenuDividerTheme.resolve(context);
 
-    final divider = color ?? theme?.dividerColor ?? defaults.dividerColor!;
+    final divider = color ?? theme.dividerColor!;
 
     return SizedBox(
       height: height,

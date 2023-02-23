@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-/// Default menu gesture detector for applying on pressed color and / or on hover
-/// color, and providing builder method that exposes `isHovered` state to
+// ignore_for_file: avoid_positional_boolean_parameters
+
+/// Default menu gesture detector for applying on pressed color and / or on
+/// hover color, and providing builder method that exposes `isHovered` state to
 /// descendant widgets.
 @immutable
 @internal

@@ -77,7 +77,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme> {
     ThemeExtension<PullDownButtonTheme>? other,
     double t,
   ) {
-    if (other is! PullDownButtonTheme) return this;
+    if (other is! PullDownButtonTheme || identical(this, other)) return this;
 
     return PullDownButtonTheme(
       routeTheme: PullDownMenuRouteTheme.lerp(routeTheme, other.routeTheme, t),

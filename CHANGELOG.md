@@ -1,3 +1,25 @@
+## 0.6.0
+
+- Added `PullDownMenuItemsOrder` - an ordering logic for `PullDownButton` and `showPullDownMenu` items.
+
+Using new native compare tool following things were updated:
+
+- Updated padding values for `PullDownMenuItem`.
+- Updated open / close animation curves - open curve now includes "bouncy" effect native counterpart has [#13](https://github.com/notDmDrl/pull_down_button/issues/13).
+  - Note: new curves are still not 100% equal to native, but slightly more similar than before.
+- Apply additional small amount of padding for menu positioning if button is smaller than 44px.
+
+#### Theme updates
+
+- Updated text style, checkmark configuration in `PullDownMenuItemTheme` defaults.
+- Updated shadows for dark mode in `PullDownMenuRouteTheme` defaults.
+
+#### Various stuff
+
+- Updated README screenshots.
+- Theme resolvers.
+- Added native compare tool.
+
 ## 0.5.1
 
 - Fix `PullDownMenuItem.itemTheme.textStyle` being overridden by global `PullDownButtonTheme.itemTheme.textStyle` during text styles marge in `PullDownMenuItem` and `PullDownMenuTitle` if both are not null.

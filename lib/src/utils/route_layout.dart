@@ -234,6 +234,11 @@ abstract class _PositionUtils {
   ) {
     var y = wantedY;
 
+    // Native variant applies additional 5px of padding to menu if
+    // [buttonHeight] is smaller than 44px.
+    final additionalPadding =
+        buttonHeight < kMinInteractiveDimensionCupertino ? 5 : 0;
+
     switch (menuPosition) {
       case PullDownMenuPosition.over:
         if (y + childHeight > screen.bottom) {
@@ -242,16 +247,18 @@ abstract class _PositionUtils {
         break;
       case PullDownMenuPosition.under:
         y + buttonHeight + childHeight > screen.bottom - padding.bottom
-            ? y -= childHeight
-            : y += buttonHeight;
+            ? y -= childHeight + additionalPadding
+            : y += buttonHeight + additionalPadding;
         break;
       case PullDownMenuPosition.above:
         y - buttonHeight > screen.top + padding.top
-            ? y -= childHeight
-            : y += buttonHeight;
+            ? y -= childHeight + additionalPadding
+            : y += buttonHeight + additionalPadding;
         break;
       case PullDownMenuPosition.automatic:
-        y > screen.height / 2 ? y -= childHeight : y += buttonHeight;
+        y > screen.height / 2
+            ? y -= childHeight + additionalPadding
+            : y += buttonHeight + additionalPadding;
     }
 
     return y;

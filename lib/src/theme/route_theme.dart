@@ -55,6 +55,33 @@ class PullDownMenuRouteTheme {
   static PullDownMenuRouteTheme? of(BuildContext context) =>
       PullDownButtonTheme.of(context)?.routeTheme;
 
+  /// The helper method to quickly resolve [PullDownMenuRouteTheme] from
+  /// [PullDownButtonTheme.routeTheme] or [PullDownMenuRouteTheme.defaults]
+  /// as well as from theme data from [PullDownButton] or [showPullDownMenu].
+  @internal
+  static PullDownMenuRouteTheme resolve(
+    BuildContext context, {
+    required PullDownMenuRouteTheme? routeTheme,
+  }) {
+    final theme = PullDownMenuRouteTheme.of(context);
+    final defaults = PullDownMenuRouteTheme.defaults(context);
+
+    return PullDownMenuRouteTheme(
+      backgroundColor: routeTheme?.backgroundColor ??
+          theme?.backgroundColor ??
+          defaults.backgroundColor!,
+      borderRadius: routeTheme?.borderRadius ??
+          theme?.borderRadius ??
+          defaults.borderRadius!,
+      beginShadow: routeTheme?.beginShadow ??
+          theme?.beginShadow ??
+          defaults.beginShadow!,
+      endShadow:
+          routeTheme?.endShadow ?? theme?.endShadow ?? defaults.endShadow!,
+      width: routeTheme?.width ?? theme?.width ?? defaults.width!,
+    );
+  }
+
   /// Creates a copy of this object with the given fields replaced with the
   /// new values.
   PullDownMenuRouteTheme copyWith({
@@ -77,14 +104,17 @@ class PullDownMenuRouteTheme {
     PullDownMenuRouteTheme? a,
     PullDownMenuRouteTheme? b,
     double t,
-  ) =>
-      PullDownMenuRouteTheme(
-        backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
-        borderRadius: BorderRadius.lerp(a?.borderRadius, b?.borderRadius, t),
-        beginShadow: BoxShadow.lerp(a?.beginShadow, b?.beginShadow, t),
-        endShadow: BoxShadow.lerp(a?.endShadow, b?.endShadow, t),
-        width: ui.lerpDouble(a?.width, b?.width, t),
-      );
+  ) {
+    if (identical(a, b) && a != null) return a;
+
+    return PullDownMenuRouteTheme(
+      backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
+      borderRadius: BorderRadius.lerp(a?.borderRadius, b?.borderRadius, t),
+      beginShadow: BoxShadow.lerp(a?.beginShadow, b?.beginShadow, t),
+      endShadow: BoxShadow.lerp(a?.endShadow, b?.endShadow, t),
+      width: ui.lerpDouble(a?.width, b?.width, t),
+    );
+  }
 
   @override
   int get hashCode => Object.hash(
@@ -117,16 +147,20 @@ class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
   const _PullDownMenuRouteThemeDefaults(this.context)
       : super(
           borderRadius: const BorderRadius.all(Radius.circular(12)),
-          beginShadow: const BoxShadow(color: Color.fromRGBO(0, 0, 0, 0)),
-          endShadow: const BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.075),
-            blurRadius: 64,
-            spreadRadius: 64,
-          ),
           width: 250,
         );
 
   final BuildContext context;
+
+  static const kBeginShadowColor = CupertinoDynamicColor.withBrightness(
+    color: Color.fromRGBO(0, 0, 0, 0),
+    darkColor: Color.fromRGBO(0, 255, 0, 0),
+  );
+
+  static const kEndShadowColor = CupertinoDynamicColor.withBrightness(
+    color: Color.fromRGBO(0, 0, 0, 0.1),
+    darkColor: Color.fromRGBO(0, 255, 0, 0.015),
+  );
 
   static const kBackgroundColor = CupertinoDynamicColor.withBrightness(
     color: Color.fromRGBO(249, 249, 249, 0.78),
@@ -135,4 +169,16 @@ class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
 
   @override
   Color get backgroundColor => kBackgroundColor.resolveFrom(context);
+
+  @override
+  BoxShadow get beginShadow => BoxShadow(
+        color: kBeginShadowColor.resolveFrom(context),
+      );
+
+  @override
+  BoxShadow get endShadow => BoxShadow(
+        color: kEndShadowColor.resolveFrom(context),
+        blurRadius: 64,
+        spreadRadius: 64,
+      );
 }

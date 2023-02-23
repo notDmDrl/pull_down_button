@@ -73,6 +73,7 @@ PullDownButton(
 | onCanceled    | Called when the user dismisses the pull-down menu.                                                       |
 | offset        | The offset is applied relative to the initial position set by the `position`.                            |
 | position      | Whether the popup menu is positioned above, over or under the popup menu button.                         |
+| itemsOrder    | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way.                  |
 | routeTheme    | The theme of pull-down menu box.                                                                         |
 | applyOpacity  | Whether to apply opacity on `buttonBuilder` when menu is open.                                           |
 
@@ -264,7 +265,8 @@ onPressed: () async {
 | items        | List of `PullDownMenuEntry` widgets.                                                                 |
 | position     | The `RelativeRect` used to align top of the menu with top of the **position** rectangle.             |
 | buttonSize   | Used to let menu know about additional bottom offset to use while calculating final menu's position. |
-| menuPosition | Whether the popup menu is positioned above, over or under the calculated menu's position             |
+| menuPosition | Whether the popup menu is positioned above, over or under the calculated menu's position.            |
+| itemsOrder   | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way.              |
 | onCanceled   | Called when the user dismisses the pull-down menu.                                                   |
 | routeTheme   | The theme of pull-down menu box.                                                                     |
 
