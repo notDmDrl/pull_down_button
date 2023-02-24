@@ -1,3 +1,7 @@
+## 0.6.1
+
+- Fix `PullDownMenuActionsRow` items content not being centered;
+
 ## 0.6.0
 
 - Added `PullDownMenuItemsOrder` - an ordering logic for `PullDownButton` and `showPullDownMenu` items.

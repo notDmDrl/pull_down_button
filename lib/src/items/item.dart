@@ -13,6 +13,7 @@ const EdgeInsetsGeometry _kItemPadding =
     EdgeInsetsDirectional.only(start: 16, end: 18, top: 9.5, bottom: 12.5);
 const EdgeInsetsGeometry _kSelectableItemPadding =
     EdgeInsetsDirectional.only(start: 13, end: 18, top: 9.5, bottom: 12.5);
+const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(8);
 
 /// An item in a cupertino style pull-down menu.
 ///
@@ -172,7 +173,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     switch (size) {
       case ElementSize.small:
         child = Padding(
-          padding: _kItemPadding,
+          padding: _kIconActionPadding,
           child: Center(child: iconWidget ?? Icon(icon)),
         );
         break;
@@ -353,7 +354,7 @@ class _MediumItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: _kItemPadding,
+        padding: _kIconActionPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
