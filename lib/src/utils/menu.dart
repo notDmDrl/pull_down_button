@@ -55,9 +55,16 @@ class PullDownMenu extends StatelessWidget {
             borderRadius: theme.borderRadius!,
             child: FadeTransition(
               opacity: animation,
-              child: _MenuBody(
-                width: theme.width!,
-                children: items,
+              child: SizedBox(
+                width: theme.width,
+                child: SizeTransition(
+                  axisAlignment: -1,
+                  sizeFactor: animation,
+                  child: _MenuBody(
+                    width: theme.width!,
+                    children: items,
+                  ),
+                ),
               ),
             ),
           ),
