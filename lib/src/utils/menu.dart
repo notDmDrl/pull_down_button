@@ -55,9 +55,17 @@ class PullDownMenu extends StatelessWidget {
             borderRadius: theme.borderRadius!,
             child: FadeTransition(
               opacity: animation,
-              child: _MenuBody(
-                width: theme.width!,
-                children: items,
+              child: ConstrainedBox(
+                constraints: BoxConstraints.tightFor(
+                  width: theme.width,
+                ),
+                child: SizeTransition(
+                  axisAlignment: -1,
+                  sizeFactor: animation,
+                  child: _MenuBody(
+                    children: items,
+                  ),
+                ),
               ),
             ),
           ),
@@ -117,26 +125,19 @@ class _Decoration extends StatelessWidget {
 class _MenuBody extends StatelessWidget {
   const _MenuBody({
     required this.children,
-    required this.width,
   });
 
   final List<PullDownMenuEntry> children;
-  final double width;
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: BoxConstraints.tightFor(
-          width: width,
-        ),
-        child: Semantics(
-          scopesRoute: true,
-          namesRoute: true,
-          explicitChildNodes: true,
-          label: 'Pull-Down menu',
-          child: CupertinoScrollbar(
-            child: SingleChildScrollView(
-              child: ListBody(children: children),
-            ),
+  Widget build(BuildContext context) => Semantics(
+        scopesRoute: true,
+        namesRoute: true,
+        explicitChildNodes: true,
+        label: 'Pull-Down menu',
+        child: CupertinoScrollbar(
+          child: SingleChildScrollView(
+            child: ListBody(children: children),
           ),
         ),
       );
