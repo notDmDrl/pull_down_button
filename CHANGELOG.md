@@ -1,3 +1,8 @@
+## 0.6.2
+
+- Added menu height transition and updated open animation curve [#14](https://github.com/notDmDrl/pull_down_button/issues/14) and [#15](https://github.com/notDmDrl/pull_down_button/pull/15).
+  Thanks to [@iSa1vatore](https://github.com/iSa1vatore)
+
 ## 0.6.1
 
 - Fix `PullDownMenuActionsRow` items content not being centered;
