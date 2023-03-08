@@ -1,3 +1,8 @@
+## 0.6.3
+
+- Fix `PullDownMenuItemTheme.lerp` using incorrect text styles for lerping.
+- Added clamped animation for menu animations, updated shadow animation.
+
 ## 0.6.2
 
 - Added menu height transition and updated open animation curve [#14](https://github.com/notDmDrl/pull_down_button/issues/14) and [#15](https://github.com/notDmDrl/pull_down_button/pull/15).

@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
@@ -11,7 +12,7 @@ import '../../pull_down_button.dart';
 /// the pull-down menu will use iOS 16 defaults specified in
 /// [_PullDownMenuRouteThemeDefaults].
 @immutable
-class PullDownMenuRouteTheme {
+class PullDownMenuRouteTheme with Diagnosticable {
   /// Creates the set of properties used to configure [PullDownMenuRouteTheme].
   const PullDownMenuRouteTheme({
     this.backgroundColor,
@@ -136,6 +137,27 @@ class PullDownMenuRouteTheme {
         other.beginShadow == beginShadow &&
         other.endShadow == endShadow &&
         other.width == width;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+        ColorProperty('backgroundColor', backgroundColor, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('borderRadius', borderRadius, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('beginShadow', beginShadow, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('endShadow', endShadow, defaultValue: null),
+      )
+      ..add(
+        DoubleProperty('width', width, defaultValue: null),
+      );
   }
 }
 

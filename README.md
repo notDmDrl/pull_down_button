@@ -1,4 +1,4 @@
-# Pull-Down Button
+# Pull-Down Button from iOS 14 for Flutter
 
 [![Dart SDK Version](https://badgen.net/pub/sdk-version/pull_down_button)](https://pub.dev/packages/pull_down_button)
 [![Pub Version](https://badgen.net/pub/v/pull_down_button?icon=flutter)](https://pub.dev/packages/pull_down_button)

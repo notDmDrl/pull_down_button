@@ -1,18 +1,16 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
-
-// ignore_for_file: public_member_api_docs, comment_references
+import 'constants.dart';
+import 'route.dart';
 
 /// Pull-down menu background blur.
 const double _kBlurAmount = 50;
 
-/// Copy of [_PopupMenu] from [PopupMenuButton] implementation since it's
-/// private there.
+/// Pull-down menu displayed by [PullDownButton] or [showPullDownMenu].
 @immutable
 @internal
 class PullDownMenu extends StatelessWidget {
@@ -25,43 +23,57 @@ class PullDownMenu extends StatelessWidget {
     required this.animation,
   });
 
+  /// Items to show in the menu.
   final List<PullDownMenuEntry> items;
-  final PullDownMenuRouteTheme? routeTheme;
-  final Animation<double> animation;
-  final Alignment alignment;
 
-  static DecorationTween _decorationTween(BoxShadow begin, BoxShadow end) =>
-      DecorationTween(
-        begin: BoxDecoration(boxShadow: [begin]),
-        end: BoxDecoration(boxShadow: [end]),
-      );
+  /// A per menu custom theme.
+  ///
+  /// Final theme is resolved using [PullDownMenuRouteTheme.resolve].
+  final PullDownMenuRouteTheme? routeTheme;
+
+  /// An animation provided by [PullDownMenuRoute] for scale, fade and size
+  /// transitions.
+  final Animation<double> animation;
+
+  /// The point menu scales from.
+  final Alignment alignment;
 
   @override
   Widget build(BuildContext context) {
     final theme =
         PullDownMenuRouteTheme.resolve(context, routeTheme: routeTheme);
 
-    final shadowTween = _decorationTween(theme.beginShadow!, theme.endShadow!);
+    final shadowTween = DecorationTween(
+      begin: BoxDecoration(boxShadow: [theme.beginShadow!]),
+      end: BoxDecoration(boxShadow: [theme.endShadow!]),
+    );
+
+    // Since [kCurve] has an overshoot at the end and only [ScaleTransition]
+    // requires it, [_ClampedAnimation] is introduced for every other
+    // *Transition* widget.
+    final clampedAnimation = _ClampedAnimation(animation);
+
+    final shadow = CurveTween(curve: const Interval(1 / 3, 1));
 
     return ScaleTransition(
       scale: animation,
       alignment: alignment,
       child: DecoratedBoxTransition(
-        decoration: animation.drive(shadowTween),
+        decoration: shadow.animate(clampedAnimation).drive(shadowTween),
         child: FadeTransition(
-          opacity: animation,
+          opacity: clampedAnimation,
           child: _Decoration(
             backgroundColor: theme.backgroundColor!,
             borderRadius: theme.borderRadius!,
             child: FadeTransition(
-              opacity: animation,
+              opacity: clampedAnimation,
               child: ConstrainedBox(
                 constraints: BoxConstraints.tightFor(
                   width: theme.width,
                 ),
                 child: SizeTransition(
                   axisAlignment: -1,
-                  sizeFactor: animation,
+                  sizeFactor: clampedAnimation,
                   child: _MenuBody(
                     children: items,
                   ),
@@ -78,6 +90,7 @@ class PullDownMenu extends StatelessWidget {
 /// Menu container - shape, blur, color.
 @immutable
 class _Decoration extends StatelessWidget {
+  /// Creates [_Decoration].
   const _Decoration({
     required this.child,
     required this.backgroundColor,
@@ -120,14 +133,28 @@ class _Decoration extends StatelessWidget {
   }
 }
 
-/// Menu body - constrained width, scrollbar, list of [PullDownMenuEntry].
+/// Menu body - scrollbar, list of [PullDownMenuEntry].
 @immutable
-class _MenuBody extends StatelessWidget {
+class _MenuBody extends StatefulWidget {
+  /// Creates [_MenuBody].
   const _MenuBody({
     required this.children,
   });
 
   final List<PullDownMenuEntry> children;
+
+  @override
+  State<_MenuBody> createState() => _MenuBodyState();
+}
+
+class _MenuBodyState extends State<_MenuBody> {
+  final scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -136,9 +163,42 @@ class _MenuBody extends StatelessWidget {
         explicitChildNodes: true,
         label: 'Pull-Down menu',
         child: CupertinoScrollbar(
+          controller: scrollController,
           child: SingleChildScrollView(
-            child: ListBody(children: children),
+            primary: false,
+            controller: scrollController,
+            child: ListBody(children: widget.children),
           ),
         ),
       );
+}
+
+/// Since [kCurve] has an overshoot at the end and only [ScaleTransition]
+/// requires it, [_ClampedAnimation] is introduced for every other
+/// *Transition* widget.
+class _ClampedAnimation extends Animation<double> {
+  /// Creates [_ClampedAnimation].
+  _ClampedAnimation(this.parent);
+
+  final Animation<double> parent;
+
+  @override
+  void addListener(VoidCallback listener) => parent.addListener(listener);
+
+  @override
+  void addStatusListener(AnimationStatusListener listener) =>
+      parent.addStatusListener(listener);
+
+  @override
+  void removeListener(VoidCallback listener) => parent.removeListener(listener);
+
+  @override
+  void removeStatusListener(AnimationStatusListener listener) =>
+      parent.removeStatusListener(listener);
+
+  @override
+  AnimationStatus get status => parent.status;
+
+  @override
+  double get value => parent.value.clamp(0, 1);
 }

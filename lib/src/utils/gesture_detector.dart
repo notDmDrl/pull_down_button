@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -45,6 +46,8 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
   late final enabled = widget.onTap != null;
 
   Future<void> onTap() async {
+    if (!enabled) return;
+
     await widget.onTap!();
 
     if (mounted) {
@@ -55,18 +58,39 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
     }
   }
 
+  void onEnter(PointerEnterEvent _) {
+    if (enabled && !isHovered) setState(() => isHovered = true);
+  }
+
+  void onExit(PointerExitEvent _) {
+    if (enabled && isHovered) setState(() => isHovered = false);
+  }
+
+  void onTapDown(TapDownDetails _) {
+    if (enabled && !isPressed) setState(() => isPressed = true);
+  }
+
+  void onTapCancel() {
+    if (enabled && isPressed) setState(() => isPressed = false);
+  }
+
+  void onTapUp(TapUpDetails _) {
+    if (enabled && isPressed) setState(() => isPressed = false);
+  }
+
   @override
   Widget build(BuildContext context) => MouseRegion(
         cursor: enabled && kIsWeb //
             ? SystemMouseCursors.click
             : MouseCursor.defer,
-        onEnter: enabled ? (_) => setState(() => isHovered = true) : null,
-        onExit: enabled ? (_) => setState(() => isHovered = false) : null,
+        onEnter: onEnter,
+        onExit: onExit,
         hitTestBehavior: HitTestBehavior.opaque,
         child: GestureDetector(
-          onTap: enabled ? onTap : null,
-          onTapDown: enabled ? (_) => setState(() => isPressed = true) : null,
-          onTapCancel: enabled ? () => setState(() => isPressed = false) : null,
+          onTap: onTap,
+          onTapDown: onTapDown,
+          onTapCancel: onTapCancel,
+          onTapUp: onTapUp,
           behavior: HitTestBehavior.opaque,
           child: DecoratedBox(
             decoration: BoxDecoration(

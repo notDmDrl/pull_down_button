@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../pull_down_button.dart';
@@ -18,7 +19,8 @@ import '../../pull_down_button.dart';
 /// null, the pull-down menu will use iOS 16 defaults specified in each
 /// sub-theme.
 @immutable
-class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme> {
+class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
+    with Diagnosticable {
   /// Creates the set of properties used to configure [PullDownButtonTheme].
   const PullDownButtonTheme({
     this.routeTheme,
@@ -109,6 +111,27 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme> {
         other.dividerTheme == dividerTheme &&
         other.titleTheme == titleTheme &&
         other.applyOpacity == applyOpacity;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+        DiagnosticsProperty('routeTheme', routeTheme, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('itemTheme', itemTheme, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('dividerTheme', dividerTheme, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('titleTheme', titleTheme, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('applyOpacity', applyOpacity, defaultValue: null),
+      );
   }
 }
 

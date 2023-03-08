@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../pull_down_button.dart';
+import '../pull_down_button.dart';
 
 /// Used to limit types of children passed to [PullDownButton.itemBuilder].
 @immutable

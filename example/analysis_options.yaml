@@ -2,23 +2,12 @@ include: package:very_good_analysis/analysis_options.yaml
 
 linter:
   rules:
-    sort_pub_dependencies: false
-    avoid_classes_with_only_static_members: false
-    prefer_expression_function_bodies: true
-    prefer_initializing_formals: true
-    prefer_relative_imports: true
-    public_member_api_docs: false
     always_use_package_imports: false
     library_private_types_in_public_api: false
-    avoid_multiple_declarations_per_line: true
-    eol_at_end_of_file: true
-    noop_primitive_operations: true
-    prefer_constructors_over_static_methods: true
-    require_trailing_commas: true
-    use_if_null_to_convert_nulls_to_bools: true
-    use_decorated_box: true
-    sized_box_shrink_expand: true
-    avoid_final_parameters: true
-    conditional_uri_does_not_exist: true
-    unnecessary_late: true
-    use_super_parameters: true
+    sort_pub_dependencies: false
+    no_leading_underscores_for_local_identifiers: true
+    unnecessary_to_list_in_spreads: true
+    unnecessary_null_aware_operator_on_extension_on_nullable: true
+    prefer_constructors_over_static_methods: false
+    always_put_required_named_parameters_first: false
+    public_member_api_docs: false

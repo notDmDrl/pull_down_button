@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 
 import '../pull_down_button.dart';
 import 'utils/constants.dart';
+import 'utils/menu_config.dart';
 import 'utils/route.dart';
 
 /// Used to configure how the [PullDownButton] positions its pull-down menu and
@@ -250,33 +251,31 @@ class _PullDownButtonState extends State<PullDownButton> {
 
     final items = widget.itemBuilder(context);
 
-    if (items.isNotEmpty) {
-      final hasSelectable = items.whereType<PullDownMenuItem>().any(
-            (element) => element.selected != null,
-          );
+    if (items.isEmpty) return;
 
-      setState(() => isPressed = true);
+    final hasLeading = _hasLeading(items);
 
-      final action = await _showCupertinoMenu(
-        context: context,
-        items: items,
-        position: position,
-        buttonSize: button.size,
-        menuPosition: widget.position,
-        itemsOrder: widget.itemsOrder,
-        routeTheme: widget.routeTheme,
-        hasSelectable: hasSelectable,
-      );
+    setState(() => isPressed = true);
 
-      if (!mounted) return;
+    final action = await _showMenu<VoidCallback>(
+      context: context,
+      items: items,
+      position: position,
+      buttonSize: button.size,
+      menuPosition: widget.position,
+      itemsOrder: widget.itemsOrder,
+      routeTheme: widget.routeTheme,
+      hasLeading: hasLeading,
+    );
 
-      setState(() => isPressed = false);
+    if (!mounted) return;
 
-      if (action != null) {
-        action.call();
-      } else {
-        widget.onCanceled?.call();
-      }
+    setState(() => isPressed = false);
+
+    if (action != null) {
+      action.call();
+    } else {
+      widget.onCanceled?.call();
     }
   }
 
@@ -345,36 +344,44 @@ Future<void> showPullDownMenu({
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
 }) async {
-  if (items.isNotEmpty) {
-    final hasSelectable = items.whereType<PullDownMenuItem>().any(
-          (element) => element.selected != null,
-        );
+  if (items.isEmpty) return;
 
-    final action = await _showCupertinoMenu(
-      context: context,
-      items: items,
-      position: position,
-      buttonSize: buttonSize,
-      menuPosition: menuPosition,
-      itemsOrder: itemsOrder,
-      routeTheme: routeTheme,
-      hasSelectable: hasSelectable,
-    );
+  final hasLeading = _hasLeading(items);
 
-    // TODO(notDmDrl): this was not available at Flutter 3.0.0 release,
-    // uncomment after min dart version for package is 3.0?
-    // if (!context.mounted) return;
+  final action = await _showMenu<VoidCallback>(
+    context: context,
+    items: items,
+    position: position,
+    buttonSize: buttonSize,
+    menuPosition: menuPosition,
+    itemsOrder: itemsOrder,
+    routeTheme: routeTheme,
+    hasLeading: hasLeading,
+  );
 
-    if (action != null) {
-      action.call();
-    } else {
-      onCanceled?.call();
-    }
+  // TODO(notDmDrl): this was not available at Flutter 3.0.0 release,
+  // uncomment after min dart version for package is 3.0?
+  // if (!context.mounted) return;
+
+  if (action != null) {
+    action.call();
+  } else {
+    onCanceled?.call();
   }
 }
 
-/// Show menu.
-Future<VoidCallback?> _showCupertinoMenu({
+/// Is used internally by [PullDownButton] and [showPullDownMenu] to determine
+/// if menu's have any items with leading widget.
+///
+/// See [MenuConfig] for details.
+bool _hasLeading(List<PullDownMenuEntry> items) =>
+    items.whereType<PullDownMenuItem>().any(
+          (element) => element.selected != null,
+        );
+
+/// Is used internally by [PullDownButton] and [showPullDownMenu] to show
+/// pull-down menu.
+Future<VoidCallback?> _showMenu<VoidCallback>({
   required BuildContext context,
   required RelativeRect position,
   required List<PullDownMenuEntry> items,
@@ -382,7 +389,7 @@ Future<VoidCallback?> _showCupertinoMenu({
   required PullDownMenuPosition menuPosition,
   required PullDownMenuItemsOrder itemsOrder,
   required PullDownMenuRouteTheme? routeTheme,
-  required bool hasSelectable,
+  required bool hasLeading,
 }) {
   final navigator = Navigator.of(context);
 
@@ -398,7 +405,7 @@ Future<VoidCallback?> _showCupertinoMenu({
         from: context,
         to: navigator.context,
       ),
-      hasSelectable: hasSelectable,
+      hasLeading: hasLeading,
       itemsOrder: itemsOrder,
     ),
   );

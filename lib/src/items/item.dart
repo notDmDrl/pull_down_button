@@ -138,18 +138,12 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         switch (size) {
           case ElementSize.small:
           case ElementSize.medium:
-            if (icon != null || iconWidget != null) {
-              return true;
-            } else {
-              throw FlutterError(
-                'Either icon or iconWidget should be provided',
-              );
-            }
+            return icon != null || iconWidget != null;
           case ElementSize.large:
             return true;
         }
       }(),
-      '',
+      'Either icon or iconWidget should be provided',
     );
 
     return true;
@@ -223,6 +217,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
       child: Semantics(
         enabled: enabled,
         button: true,
+        selected: selected,
         child: MenuActionGestureDetector(
           onTap: enabled ? () => _handleTap(context) : null,
           pressedColor:
@@ -232,14 +227,12 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
             var textStyle = style;
 
             if (isHovered) {
-              if (size == ElementSize.large) {
-                textStyle = hoverTextStyle;
-              } else {
-                textStyle = hoverTextStyle.copyWith(
-                  fontSize: style.fontSize,
-                  height: style.height,
-                );
-              }
+              textStyle = size == ElementSize.large
+                  ? hoverTextStyle
+                  : hoverTextStyle.copyWith(
+                      fontSize: style.fontSize,
+                      height: style.height,
+                    );
             }
 
             return IconTheme(

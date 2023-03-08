@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
@@ -12,7 +13,7 @@ import '../../pull_down_button.dart';
 /// the pull-down menu will use iOS 16 defaults specified in
 /// [PullDownMenuDividerTheme.defaults].
 @immutable
-class PullDownMenuDividerTheme {
+class PullDownMenuDividerTheme with Diagnosticable {
   /// Creates the set of properties used to configure
   /// [PullDownMenuDividerTheme].
   const PullDownMenuDividerTheme({
@@ -85,6 +86,22 @@ class PullDownMenuDividerTheme {
     return other is PullDownMenuDividerTheme &&
         other.dividerColor == dividerColor &&
         other.largeDividerColor == largeDividerColor;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+        ColorProperty('dividerColor', dividerColor, defaultValue: null),
+      )
+      ..add(
+        ColorProperty(
+          'largeDividerColor',
+          largeDividerColor,
+          defaultValue: null,
+        ),
+      );
   }
 }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
@@ -10,12 +9,11 @@ import 'menu_config.dart';
 
 part 'route_layout.dart';
 
-// ignore_for_file: public_member_api_docs
-
-/// Copy of `_PopupMenuRoute` from [PopupMenuButton] implementation since it's
-/// private there.
+/// Route used by [PullDownButton] or [showPullDownMenu] to display
+/// [PullDownMenu].
 @internal
-class PullDownMenuRoute extends PopupRoute<VoidCallback> {
+class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
+  /// Creates [PullDownMenuRoute].
   PullDownMenuRoute({
     required this.position,
     required this.items,
@@ -24,17 +22,40 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
     required this.buttonSize,
     required this.menuPosition,
     required this.capturedThemes,
-    required this.hasSelectable,
+    required this.hasLeading,
     required this.itemsOrder,
-  });
+  }) : super(traversalEdgeBehavior: TraversalEdgeBehavior.closedLoop);
 
+  /// Items to show in the [PullDownMenu] created by this route.
   final List<PullDownMenuEntry> items;
+
+  /// Captured inherited themes, specifically [PullDownButtonInheritedTheme] to
+  /// pass to [PullDownMenu] and all its [items];
   final CapturedThemes capturedThemes;
+
+  /// The custom route theme to be used by [PullDownMenu].
   final PullDownMenuRouteTheme? routeTheme;
-  final bool hasSelectable;
+
+  /// Whether menu has any [PullDownMenuItem]s with leading widget such as
+  /// chevron.
+  final bool hasLeading;
+
+  /// Desired menu's on-screen position.
+  ///
+  /// Is used to calculate final menu's position.
   final RelativeRect position;
+
+  /// Size of a button used to open pull-down menu.
+  ///
+  /// Is used to calculate final menu's position.
   final Size buttonSize;
+
+  /// Is used to define whether the popup menu is positioned above, over or
+  /// under the calculated menu's position.
   final PullDownMenuPosition menuPosition;
+
+  /// Is used to define how menu will order its [items] depending on
+  /// calculated menu's position.
   final PullDownMenuItemsOrder itemsOrder;
 
   @override
@@ -63,7 +84,7 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
     Animation<double> secondaryAnimation,
   ) {
     final Widget menu = MenuConfig(
-      hasLeading: hasSelectable,
+      hasLeading: hasLeading,
       child: ValueListenableBuilder<Alignment>(
         valueListenable: _menuAlignmentNotifier,
         builder: (_, alignment, __) {
@@ -77,11 +98,7 @@ class PullDownMenuRoute extends PopupRoute<VoidCallback> {
               orderedItems = items.reversed;
               break;
             case PullDownMenuItemsOrder.automatic:
-              if (alignment.y == -1) {
-                orderedItems = items;
-              } else {
-                orderedItems = items.reversed;
-              }
+              orderedItems = alignment.y == -1 ? items : items.reversed;
               break;
           }
 
@@ -133,11 +150,7 @@ void _updateMenuAlignment(
   final Alignment alignment;
 
   if (isInRightHalf == null) {
-    if (isInBottomHalf) {
-      alignment = Alignment.bottomCenter;
-    } else {
-      alignment = Alignment.topCenter;
-    }
+    alignment = isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
   } else {
     if (isInRightHalf && !isInBottomHalf) {
       alignment = Alignment.topRight;

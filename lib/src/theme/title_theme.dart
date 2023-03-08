@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
@@ -11,7 +12,7 @@ import '../../pull_down_button.dart';
 /// the pull-down menu will use iOS 16 defaults specified in
 /// [_PullDownMenuTitleDefaults].
 @immutable
-class PullDownMenuTitleTheme {
+class PullDownMenuTitleTheme with Diagnosticable {
   /// Creates the set of properties used to configure [PullDownMenuTitleTheme].
   const PullDownMenuTitleTheme({
     this.style,
@@ -78,6 +79,14 @@ class PullDownMenuTitleTheme {
     if (other.runtimeType != runtimeType) return false;
 
     return other is PullDownMenuTitleTheme && other.style == style;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      DiagnosticsProperty('style', style, defaultValue: null),
+    );
   }
 }
 

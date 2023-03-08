@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -14,7 +15,7 @@ import '../../pull_down_button.dart';
 /// the pull-down menu will use iOS 16 defaults specified in
 /// [PullDownMenuItemTheme.defaults].
 @immutable
-class PullDownMenuItemTheme {
+class PullDownMenuItemTheme with Diagnosticable {
   /// Creates the set of properties used to configure [PullDownMenuItemTheme].
   const PullDownMenuItemTheme({
     this.destructiveColor,
@@ -190,7 +191,8 @@ class PullDownMenuItemTheme {
           FontWeight.lerp(a?.checkmarkWeight, b?.checkmarkWeight, t),
       checkmarkSize: ui.lerpDouble(a?.checkmarkSize, b?.checkmarkSize, t),
       textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
-      iconActionTextStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
+      iconActionTextStyle:
+          TextStyle.lerp(a?.iconActionTextStyle, b?.iconActionTextStyle, t),
       onHoverColor: Color.lerp(a?.onHoverColor, b?.onHoverColor, t),
       onHoverTextStyle:
           TextStyle.lerp(a?.onHoverTextStyle, b?.onHoverTextStyle, t),
@@ -225,6 +227,51 @@ class PullDownMenuItemTheme {
         other.iconActionTextStyle == iconActionTextStyle &&
         other.onHoverColor == onHoverColor &&
         other.onHoverTextStyle == onHoverTextStyle;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+        ColorProperty('destructiveColor', destructiveColor, defaultValue: null),
+      )
+      ..add(
+        DoubleProperty('iconSize', iconSize, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('checkmark', checkmark, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty(
+          'checkmarkWeight',
+          checkmarkWeight,
+          defaultValue: null,
+        ),
+      )
+      ..add(
+        DoubleProperty('checkmarkSize', checkmarkSize, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty('textStyle', textStyle, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty(
+          'iconActionTextStyle',
+          iconActionTextStyle,
+          defaultValue: null,
+        ),
+      )
+      ..add(
+        ColorProperty('onHoverColor', onHoverColor, defaultValue: null),
+      )
+      ..add(
+        DiagnosticsProperty(
+          'onHoverTextStyle',
+          onHoverTextStyle,
+          defaultValue: null,
+        ),
+      );
   }
 }
 

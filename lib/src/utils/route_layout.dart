@@ -6,6 +6,7 @@ const double _kMenuScreenPadding = 8;
 /// Positioning and size of the menu on the screen.
 @immutable
 class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
+  /// Creates [_PopupMenuRouteLayout].
   const _PopupMenuRouteLayout({
     required this.position,
     required this.textDirection,
