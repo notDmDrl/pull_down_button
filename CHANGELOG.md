@@ -1,4 +1,4 @@
-## 0.6.3
+## 0.6.3+1
 
 - Fix `PullDownMenuItemTheme.lerp` using incorrect text styles for lerping.
 - Added clamped animation for menu animations, updated shadow animation.

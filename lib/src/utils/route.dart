@@ -24,7 +24,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.capturedThemes,
     required this.hasLeading,
     required this.itemsOrder,
-  }) : super(traversalEdgeBehavior: TraversalEdgeBehavior.closedLoop);
+  });
 
   /// Items to show in the [PullDownMenu] created by this route.
   final List<PullDownMenuEntry> items;
