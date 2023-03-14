@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:pull_down_button/src/utils/glide_state.dart';
 
@@ -48,46 +49,44 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
 
   late final enabled = widget.onTap != null;
 
-  late final ValueNotifier<MenuGlideState> glideState;
+  late final ValueNotifier<MenuGlideState> glideStateNotifier;
 
   Offset get _currentPosition {
-    final box = context.findRenderObject() as RenderBox;
-
-    return box.localToGlobal(Offset.zero);
+    return (context.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
   }
 
   Size get _currentSize {
-    final box = context.findRenderObject() as RenderBox;
-
-    return box.size;
+    return (context.findRenderObject() as RenderBox).size;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    glideState = MenuConfig.of(context).glideState;
-    glideState.addListener(glideHandler);
+    glideStateNotifier = MenuConfig.of(context).glideStateNotifier;
+    glideStateNotifier.addListener(glideHandler);
   }
 
   void glideHandler() {
-    if (glideState.value is MenuGlideInProcessState) {
-      final dragState = glideState.value as MenuGlideInProcessState;
+    if (glideStateNotifier.value is MenuGlideInProcessState) {
+      final glideState = glideStateNotifier.value as MenuGlideInProcessState;
 
-      final isInsideDy = dragState.dy >= _currentPosition.dy &&
-          (_currentPosition.dy + _currentSize.height) > dragState.dy;
+      final isInsideDy = glideState.dy >= _currentPosition.dy &&
+          (_currentPosition.dy + _currentSize.height) > glideState.dy;
 
-      final isInsideDx = dragState.dx >= _currentPosition.dx &&
-          (_currentPosition.dx + _currentSize.width) > dragState.dx;
+      final isInsideDx = glideState.dx >= _currentPosition.dx &&
+          (_currentPosition.dx + _currentSize.width) > glideState.dx;
 
       if (isInsideDy && isInsideDx && enabled) {
+        if (!isPressed) HapticFeedback.selectionClick();
+
         setState(() => isPressed = true);
       } else {
         setState(() => isPressed = false);
       }
     }
 
-    if (glideState.value is MenuGlideCompleteState) {
+    if (glideStateNotifier.value is MenuGlideCompleteState) {
       if (isPressed) onTap();
     }
   }
