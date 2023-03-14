@@ -1,40 +1,34 @@
 import 'package:meta/meta.dart';
 
-///
-// TODO(salvatore): need doc
+/// Basic glide state class
 @immutable
 @internal
 abstract class MenuGlideState {}
 
-///
-// TODO(salvatore): need doc
+/// Initial glide state, the user has not yet initiated the movement
 @immutable
 @internal
 class MenuGlideInitState implements MenuGlideState {}
 
-///
-// TODO(salvatore): need doc
-@immutable
-@internal
-class MenuGlideCompleteState implements MenuGlideState {}
-
-///
-// TODO(salvatore): need doc
+/// The coordinates of the movement are transmitted,
+/// the user in the process of selecting the menu item
 @immutable
 @internal
 class MenuGlideInProcessState implements MenuGlideState {
-  ///
-  // TODO(salvatore): need doc
+  /// Creates [MenuGlideInProcessState].
   const MenuGlideInProcessState({
-    required this.dy,
     required this.dx,
+    required this.dy,
   });
 
-  ///
-  // TODO(salvatore): need doc
-  final double dy;
-
-  ///
-  // TODO(salvatore): need doc
+  /// The x component of the offset.
   final double dx;
+
+  /// The y component of the offset.
+  final double dy;
 }
+
+/// The state of the completed glide, the user has selected the item
+@immutable
+@internal
+class MenuGlideCompleteState implements MenuGlideState {}

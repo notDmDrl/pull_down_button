@@ -76,8 +76,7 @@ class MenuConfig extends InheritedWidget {
   /// widget such as chevron.
   final bool hasLeading;
 
-  ///
-  // TODO(salvatore): need doc
+  /// Current state of gliding by menu items
   final ValueNotifier<MenuGlideState> glideStateNotifier;
 
   /// The closest instance of this class that encloses the given
