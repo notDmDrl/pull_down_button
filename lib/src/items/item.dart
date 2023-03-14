@@ -15,6 +15,23 @@ const EdgeInsetsGeometry _kSelectableItemPadding =
     EdgeInsetsDirectional.only(start: 13, end: 18, top: 9.5, bottom: 12.5);
 const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(8);
 
+/// Signature used by [PullDownMenuItem] to resolve how [onTap] callback is
+/// used.
+///
+/// Default behaviour is to pop the menu and than call the [onTap].
+///
+/// Used by [PullDownMenuItem.tapHandler].
+///
+/// See also:
+///
+/// * [PullDownMenuItem.defaultTapHandler], a default tap handler.
+/// * [PullDownMenuItem.noPopTapHandler], a tap handler that immediately calls
+/// [onTap] without popping the menu.
+typedef PullDownMenuItemTapHandler = void Function(
+  BuildContext context,
+  VoidCallback onTap,
+);
+
 /// An item in a cupertino style pull-down menu.
 ///
 /// To show a pull-down menu and create a button that shows a pull-down menu
@@ -33,6 +50,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   const PullDownMenuItem({
     super.key,
     required this.onTap,
+    this.tapHandler = defaultTapHandler,
     this.enabled = true,
     required this.title,
     this.icon,
@@ -52,6 +70,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   const PullDownMenuItem.selectable({
     super.key,
     required this.onTap,
+    this.tapHandler = defaultTapHandler,
     this.enabled = true,
     required this.title,
     this.icon,
@@ -65,8 +84,20 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
           'Please provide either icon or iconWidget',
         );
 
-  /// Called when the menu item is tapped.
+  /// The action this item represents.
+  ///
+  /// To specify how this action is resolved, [tapHandler] is used.
+  ///
+  /// See also:
+  ///
+  /// * [defaultTapHandler], a default tap handler.
+  /// * [noPopTapHandler], a tap handler that immediately calls [onTap] without
+  /// popping the menu.
   final VoidCallback? onTap;
+
+  /// Handler that provides this item's [BuildContext] as well as [onTap] to
+  /// resolve how [onTap] callback is used.
+  final PullDownMenuItemTapHandler tapHandler;
 
   /// Whether the user is permitted to tap this item.
   ///
@@ -128,8 +159,17 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// are used.
   final bool? selected;
 
-  @protected
-  void _handleTap(BuildContext context) => Navigator.pop(context, onTap);
+  /// Default tap handler for [PullDownMenuItem].
+  ///
+  /// The behaviour is to pop the menu and than call the [onTap].
+  static void defaultTapHandler(BuildContext context, VoidCallback? onTap) =>
+      Navigator.pop(context, onTap);
+
+  /// An additional, pre-made tap handler for [PullDownMenuItem].
+  ///
+  /// The behaviour is to call the [onTap] without popping the menu.
+  static void noPopTapHandler(BuildContext _, VoidCallback? onTap) =>
+      onTap?.call();
 
   @protected
   bool _debugActionRowHasIcon(ElementSize size) {
@@ -219,7 +259,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         button: true,
         selected: selected,
         child: MenuActionGestureDetector(
-          onTap: enabled ? () => _handleTap(context) : null,
+          onTap: enabled ? () => tapHandler(context, onTap!) : null,
           pressedColor:
               PullDownMenuDividerTheme.resolve(context).largeDividerColor!,
           hoverColor: theme.onHoverColor!,

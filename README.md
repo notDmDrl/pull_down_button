@@ -110,7 +110,8 @@ PullDownMenuItem(
 
 | Properties    | Description                                      |
 | ------------- | ------------------------------------------------ |
-| onTap         | Called when the menu item is tapped.             |
+| onTap         | The action this item represents.                 |
+| tapHandler    | Handler to resolve how `onTap` callback is used. |
 | enabled       | Whether the user is permitted to tap this item.  |
 | title         | Title of this `PullDownMenuItem`.                |
 | icon          | Trailing icon of this `PullDownMenuItem`.        |

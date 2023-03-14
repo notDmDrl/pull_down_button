@@ -1,3 +1,9 @@
+## 0.6.4
+
+- Added `PullDownMenuItem.tapHandler` to allow customization of how
+  `PullDownMenuItem.onTap` is handled [#16](https://github.com/notDmDrl/pull_down_button/issues/16).
+- Added an example for `PullDownMenuItem.tapHandler`. See _Examples -> Advanced_ in example app.
+
 ## 0.6.3+1
 
 - Fix `PullDownMenuItemTheme.lerp` using incorrect text styles for lerping.

@@ -1,3 +1,4 @@
+import 'package:example/src/tap_handler.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:pull_down_button/pull_down_button.dart';
 
@@ -103,6 +104,10 @@ class ItemExamples extends StatelessWidget {
                     destination: ShowPullDownMenu(),
                     title: 'showPullDownMenu',
                   ),
+                  _Tile(
+                    title: 'PullDownMenuItem.tapHandler',
+                    destination: TapHandler(),
+                  )
                 ],
               ),
             ],
