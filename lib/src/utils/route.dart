@@ -25,7 +25,10 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.capturedThemes,
     required this.hasLeading,
     required this.itemsOrder,
-  });
+  })  : _glideStateNotifier = ValueNotifier<MenuGlideState>(
+          MenuGlideInitState(),
+        ),
+        _menuAlignmentNotifier = ValueNotifier(Alignment.topRight);
 
   /// Items to show in the [PullDownMenu] created by this route.
   final List<PullDownMenuEntry> items;
@@ -59,9 +62,9 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// calculated menu's position.
   final PullDownMenuItemsOrder itemsOrder;
 
-  ///
-  // TODO(salvatore): need doc & dispose
-  final glideState = ValueNotifier<MenuGlideState>(MenuGlideInitState());
+  final ValueNotifier<MenuGlideState> _glideStateNotifier;
+
+  final ValueNotifier<Alignment> _menuAlignmentNotifier;
 
   @override
   final String barrierLabel;
@@ -83,6 +86,14 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   Color? get barrierColor => null;
 
   @override
+  void dispose() {
+    _glideStateNotifier.dispose();
+    _menuAlignmentNotifier.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget buildPage(
     BuildContext context,
     Animation<double> animation,
@@ -90,17 +101,17 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   ) {
     final Widget menu = GestureDetector(
       onPanUpdate: (details) {
-        glideState.value = MenuGlideInProcessState(
+        _glideStateNotifier.value = MenuGlideInProcessState(
           dy: details.globalPosition.dy,
           dx: details.globalPosition.dx,
         );
       },
       onPanEnd: (_) {
-        glideState.value = MenuGlideCompleteState();
+        _glideStateNotifier.value = MenuGlideCompleteState();
       },
       child: MenuConfig(
         hasLeading: hasLeading,
-        glideState: glideState,
+        glideStateNotifier: _glideStateNotifier,
         child: ValueListenableBuilder<Alignment>(
           valueListenable: _menuAlignmentNotifier,
           builder: (_, alignment, __) {
@@ -146,6 +157,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
             avoidBounds: _avoidBounds(mediaQuery),
             buttonSize: buttonSize,
             menuPosition: menuPosition,
+            onChangeMenuAlignment: _onChangeMenuAlignment,
           ),
           child: capturedThemes.wrap(menu),
         ),
@@ -155,34 +167,31 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
   static Set<Rect> _avoidBounds(MediaQueryData mediaQuery) =>
       DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
-}
 
-// TODO(notDmDrl): replace with something less ugly
-final _menuAlignmentNotifier = ValueNotifier(Alignment.topRight);
+  void _onChangeMenuAlignment(
+    bool? isInRightHalf,
+    bool isInBottomHalf,
+  ) {
+    final Alignment alignment;
 
-void _updateMenuAlignment(
-  bool? isInRightHalf,
-  bool isInBottomHalf,
-) {
-  final Alignment alignment;
-
-  if (isInRightHalf == null) {
-    alignment = isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
-  } else {
-    if (isInRightHalf && !isInBottomHalf) {
-      alignment = Alignment.topRight;
-    } else if (!isInRightHalf && !isInBottomHalf) {
-      alignment = Alignment.topLeft;
-    } else if (isInRightHalf && isInBottomHalf) {
-      alignment = Alignment.bottomRight;
-    } else if (!isInRightHalf && isInBottomHalf) {
-      alignment = Alignment.bottomLeft;
+    if (isInRightHalf == null) {
+      alignment = isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
     } else {
-      alignment = Alignment.topCenter;
+      if (isInRightHalf && !isInBottomHalf) {
+        alignment = Alignment.topRight;
+      } else if (!isInRightHalf && !isInBottomHalf) {
+        alignment = Alignment.topLeft;
+      } else if (isInRightHalf && isInBottomHalf) {
+        alignment = Alignment.bottomRight;
+      } else if (!isInRightHalf && isInBottomHalf) {
+        alignment = Alignment.bottomLeft;
+      } else {
+        alignment = Alignment.topCenter;
+      }
     }
-  }
 
-  WidgetsBinding.instance.scheduleFrameCallback(
-    (_) => _menuAlignmentNotifier.value = alignment,
-  );
+    WidgetsBinding.instance.scheduleFrameCallback(
+      (_) => _menuAlignmentNotifier.value = alignment,
+    );
+  }
 }

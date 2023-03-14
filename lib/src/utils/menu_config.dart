@@ -69,7 +69,7 @@ class MenuConfig extends InheritedWidget {
     super.key,
     required super.child,
     required this.hasLeading,
-    required this.glideState,
+    required this.glideStateNotifier,
   });
 
   /// Whether the pull-down menu has any [PullDownMenuItem]s with leading
@@ -78,7 +78,7 @@ class MenuConfig extends InheritedWidget {
 
   ///
   // TODO(salvatore): need doc
-  final ValueNotifier<MenuGlideState> glideState;
+  final ValueNotifier<MenuGlideState> glideStateNotifier;
 
   /// The closest instance of this class that encloses the given
   /// context.
