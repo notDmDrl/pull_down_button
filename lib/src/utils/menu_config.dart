@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:pull_down_button/src/utils/glide_state.dart';
 
 import '../../pull_down_button.dart';
 
@@ -68,17 +69,22 @@ class MenuConfig extends InheritedWidget {
     super.key,
     required super.child,
     required this.hasLeading,
+    required this.glideState,
   });
 
   /// Whether the pull-down menu has any [PullDownMenuItem]s with leading
   /// widget such as chevron.
   final bool hasLeading;
 
+  ///
+  // TODO(salvatore): need doc
+  final ValueNotifier<MenuGlideState> glideState;
+
   /// The closest instance of this class that encloses the given
   /// context.
   @internal
-  static bool of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<MenuConfig>()!.hasLeading;
+  static MenuConfig of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<MenuConfig>()!;
 
   @override
   bool updateShouldNotify(MenuConfig oldWidget) =>

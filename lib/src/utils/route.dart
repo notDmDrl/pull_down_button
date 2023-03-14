@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
 import 'constants.dart';
+import 'glide_state.dart';
 import 'menu.dart';
 import 'menu_config.dart';
 
@@ -58,6 +59,10 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// calculated menu's position.
   final PullDownMenuItemsOrder itemsOrder;
 
+  ///
+  // TODO(salvatore): need doc & dispose
+  final glideState = ValueNotifier<MenuGlideState>(MenuGlideInitState());
+
   @override
   final String barrierLabel;
 
@@ -83,32 +88,44 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Widget menu = MenuConfig(
-      hasLeading: hasLeading,
-      child: ValueListenableBuilder<Alignment>(
-        valueListenable: _menuAlignmentNotifier,
-        builder: (_, alignment, __) {
-          final Iterable<PullDownMenuEntry> orderedItems;
+    final Widget menu = GestureDetector(
+      onPanUpdate: (details) {
+        glideState.value = MenuGlideInProcessState(
+          dy: details.globalPosition.dy,
+          dx: details.globalPosition.dx,
+        );
+      },
+      onPanEnd: (_) {
+        glideState.value = MenuGlideCompleteState();
+      },
+      child: MenuConfig(
+        hasLeading: hasLeading,
+        glideState: glideState,
+        child: ValueListenableBuilder<Alignment>(
+          valueListenable: _menuAlignmentNotifier,
+          builder: (_, alignment, __) {
+            final Iterable<PullDownMenuEntry> orderedItems;
 
-          switch (itemsOrder) {
-            case PullDownMenuItemsOrder.downwards:
-              orderedItems = items;
-              break;
-            case PullDownMenuItemsOrder.upwards:
-              orderedItems = items.reversed;
-              break;
-            case PullDownMenuItemsOrder.automatic:
-              orderedItems = alignment.y == -1 ? items : items.reversed;
-              break;
-          }
+            switch (itemsOrder) {
+              case PullDownMenuItemsOrder.downwards:
+                orderedItems = items;
+                break;
+              case PullDownMenuItemsOrder.upwards:
+                orderedItems = items.reversed;
+                break;
+              case PullDownMenuItemsOrder.automatic:
+                orderedItems = alignment.y == -1 ? items : items.reversed;
+                break;
+            }
 
-          return PullDownMenu(
-            items: orderedItems.toList(),
-            routeTheme: routeTheme,
-            animation: animation,
-            alignment: alignment,
-          );
-        },
+            return PullDownMenu(
+              items: orderedItems.toList(),
+              routeTheme: routeTheme,
+              animation: animation,
+              alignment: alignment,
+            );
+          },
+        ),
       ),
     );
 

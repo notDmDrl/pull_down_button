@@ -4,6 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:pull_down_button/src/utils/glide_state.dart';
+
+import 'menu_config.dart';
 
 // ignore_for_file: avoid_positional_boolean_parameters
 
@@ -44,6 +47,50 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
   bool isHovered = false;
 
   late final enabled = widget.onTap != null;
+
+  late final ValueNotifier<MenuGlideState> glideState;
+
+  Offset get _currentPosition {
+    final box = context.findRenderObject() as RenderBox;
+
+    return box.localToGlobal(Offset.zero);
+  }
+
+  Size get _currentSize {
+    final box = context.findRenderObject() as RenderBox;
+
+    return box.size;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    glideState = MenuConfig.of(context).glideState;
+    glideState.addListener(glideHandler);
+  }
+
+  void glideHandler() {
+    if (glideState.value is MenuGlideInProcessState) {
+      final dragState = glideState.value as MenuGlideInProcessState;
+
+      final isInsideDy = dragState.dy >= _currentPosition.dy &&
+          (_currentPosition.dy + _currentSize.height) > dragState.dy;
+
+      final isInsideDx = dragState.dx >= _currentPosition.dx &&
+          (_currentPosition.dx + _currentSize.width) > dragState.dx;
+
+      if (isInsideDy && isInsideDx && enabled) {
+        setState(() => isPressed = true);
+      } else {
+        setState(() => isPressed = false);
+      }
+    }
+
+    if (glideState.value is MenuGlideCompleteState) {
+      if (isPressed) onTap();
+    }
+  }
 
   Future<void> onTap() async {
     if (!enabled) return;
