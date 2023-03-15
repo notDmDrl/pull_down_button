@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
 import 'animation.dart';
+import 'continuous_swipe.dart';
 import 'menu.dart';
 import 'route.dart';
 
@@ -70,8 +71,10 @@ class RoutePullDownMenu extends StatelessWidget {
                 child: SizeTransition(
                   axisAlignment: -1,
                   sizeFactor: clampedAnimation,
-                  child: MenuBody(
-                    items: items,
+                  child: MenuContinuousSwipe(
+                    child: MenuBody(
+                      items: items,
+                    ),
                   ),
                 ),
               ),

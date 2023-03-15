@@ -14,6 +14,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     required this.avoidBounds,
     required this.buttonSize,
     required this.menuPosition,
+    required this.onChangeMenuAlignment,
   });
 
   final RelativeRect position;
@@ -22,6 +23,10 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   final Set<Rect> avoidBounds;
   final Size buttonSize;
   final PullDownMenuPosition menuPosition;
+  final void Function(
+    bool? isInRightHalf,
+    bool isInBottomHalf,
+  ) onChangeMenuAlignment;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
@@ -110,7 +115,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
 
     final isInBottomHalf = y > dy;
 
-    _updateMenuAlignment(isInRightHalf, isInBottomHalf);
+    onChangeMenuAlignment(isInRightHalf, isInBottomHalf);
 
     return offset;
   }

@@ -24,7 +24,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.capturedThemes,
     required this.hasLeading,
     required this.itemsOrder,
-  });
+  }) : _menuAlignmentNotifier = ValueNotifier(Alignment.topRight);
 
   /// Items to show in the [RoutePullDownMenu] created by this route.
   final List<PullDownMenuEntry> items;
@@ -76,6 +76,8 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
   @override
   Color? get barrierColor => null;
+
+  final ValueNotifier<Alignment> _menuAlignmentNotifier;
 
   @override
   Widget buildPage(
@@ -129,6 +131,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
             avoidBounds: _avoidBounds(mediaQuery),
             buttonSize: buttonSize,
             menuPosition: menuPosition,
+            onChangeMenuAlignment: _onChangeMenuAlignment,
           ),
           child: capturedThemes.wrap(menu),
         ),
@@ -138,34 +141,31 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
   static Set<Rect> _avoidBounds(MediaQueryData mediaQuery) =>
       DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
-}
 
-// TODO(notDmDrl): replace with something less ugly
-final _menuAlignmentNotifier = ValueNotifier(Alignment.topRight);
+  void _onChangeMenuAlignment(
+    bool? isInRightHalf,
+    bool isInBottomHalf,
+  ) {
+    final Alignment alignment;
 
-void _updateMenuAlignment(
-  bool? isInRightHalf,
-  bool isInBottomHalf,
-) {
-  final Alignment alignment;
-
-  if (isInRightHalf == null) {
-    alignment = isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
-  } else {
-    if (isInRightHalf && !isInBottomHalf) {
-      alignment = Alignment.topRight;
-    } else if (!isInRightHalf && !isInBottomHalf) {
-      alignment = Alignment.topLeft;
-    } else if (isInRightHalf && isInBottomHalf) {
-      alignment = Alignment.bottomRight;
-    } else if (!isInRightHalf && isInBottomHalf) {
-      alignment = Alignment.bottomLeft;
+    if (isInRightHalf == null) {
+      alignment = isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
     } else {
-      alignment = Alignment.topCenter;
+      if (isInRightHalf && !isInBottomHalf) {
+        alignment = Alignment.topRight;
+      } else if (!isInRightHalf && !isInBottomHalf) {
+        alignment = Alignment.topLeft;
+      } else if (isInRightHalf && isInBottomHalf) {
+        alignment = Alignment.bottomRight;
+      } else if (!isInRightHalf && isInBottomHalf) {
+        alignment = Alignment.bottomLeft;
+      } else {
+        alignment = Alignment.topCenter;
+      }
     }
-  }
 
-  WidgetsBinding.instance.scheduleFrameCallback(
-    (_) => _menuAlignmentNotifier.value = alignment,
-  );
+    WidgetsBinding.instance.scheduleFrameCallback(
+      (_) => _menuAlignmentNotifier.value = alignment,
+    );
+  }
 }

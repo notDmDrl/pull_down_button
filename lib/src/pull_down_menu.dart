@@ -3,6 +3,7 @@ import 'package:pull_down_button/src/_internals/menu.dart';
 import 'package:pull_down_button/src/_internals/menu_config.dart';
 
 import '../pull_down_button.dart';
+import '_internals/continuous_swipe.dart';
 
 /// Displays a pull-down menu as a simple widget, with no animations or adding
 /// routes to navigation stack.
@@ -77,7 +78,9 @@ class PullDownMenu extends StatelessWidget {
             constraints: BoxConstraints.tightFor(
               width: theme.width,
             ),
-            child: MenuBody(items: items),
+            child: MenuContinuousSwipe(
+              child: MenuBody(items: items),
+            ),
           ),
         ),
       ),

@@ -5,6 +5,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
+import 'continuous_swipe.dart';
+
 // ignore_for_file: avoid_positional_boolean_parameters
 
 /// Default menu gesture detector for applying on pressed color and / or on
@@ -44,6 +46,43 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
   bool isHovered = false;
 
   late final enabled = widget.onTap != null;
+
+  Offset get _currentPosition =>
+      (context.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
+
+  Size get _currentSize => (context.findRenderObject() as RenderBox).size;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final continuousSwipeState = MenuContinuousSwipeState.of(context);
+
+    if (continuousSwipeState != null) {
+      continuousSwipeState.addListener(() {
+        continuousSwipeStateListener(continuousSwipeState.value);
+      });
+    }
+  }
+
+  void continuousSwipeStateListener(ContinuousSwipeState state) {
+    if (state is ContinuousSwipeInProcessState && enabled) {
+      final currentPositionWithinMenuItem = state.currentPositionWithinMenuItem(
+        itemPosition: _currentPosition,
+        itemSize: _currentSize,
+      );
+
+      if (currentPositionWithinMenuItem) {
+        setState(() => isPressed = true);
+      } else {
+        setState(() => isPressed = false);
+      }
+    }
+
+    if (state is ContinuousSwipeCompleteState && isPressed) {
+      onTap();
+    }
+  }
 
   Future<void> onTap() async {
     if (!enabled) return;
