@@ -47,13 +47,10 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
 
   late final enabled = widget.onTap != null;
 
-  Offset get _currentPosition {
-    return (context.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
-  }
+  Offset get _currentPosition =>
+      (context.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
 
-  Size get _currentSize {
-    return (context.findRenderObject() as RenderBox).size;
-  }
+  Size get _currentSize => (context.findRenderObject() as RenderBox).size;
 
   @override
   void didChangeDependencies() {
