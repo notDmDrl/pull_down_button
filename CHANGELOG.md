@@ -1,3 +1,8 @@
+## 0.7.0
+
+- Added "continuous swipe" support to menus (see [demo](https://github.com/notDmDrl/pull_down_button/issues/19))  [#19](https://github.com/notDmDrl/pull_down_button/issues/19) and [#18](https://github.com/notDmDrl/pull_down_button/pull/18)
+  Thanks to [@iSa1vatore](https://github.com/iSa1vatore)
+- 
 ## 0.6.5
 
 - Added `PullDownMenu` - a pull-down menu as a simple widget, with no animations or adding routes to navigation stack [#17](https://github.com/notDmDrl/pull_down_button/issues/17).
