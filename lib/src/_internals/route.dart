@@ -3,14 +3,14 @@ import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
-import 'constants.dart';
-import 'menu.dart';
+import 'animation.dart';
 import 'menu_config.dart';
+import 'route_menu.dart';
 
 part 'route_layout.dart';
 
 /// Route used by [PullDownButton] or [showPullDownMenu] to display
-/// [PullDownMenu].
+/// [RoutePullDownMenu].
 @internal
 class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// Creates [PullDownMenuRoute].
@@ -26,14 +26,14 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.itemsOrder,
   });
 
-  /// Items to show in the [PullDownMenu] created by this route.
+  /// Items to show in the [RoutePullDownMenu] created by this route.
   final List<PullDownMenuEntry> items;
 
   /// Captured inherited themes, specifically [PullDownButtonInheritedTheme] to
-  /// pass to [PullDownMenu] and all its [items];
+  /// pass to [RoutePullDownMenu] and all its [items];
   final CapturedThemes capturedThemes;
 
-  /// The custom route theme to be used by [PullDownMenu].
+  /// The custom route theme to be used by [RoutePullDownMenu].
   final PullDownMenuRouteTheme? routeTheme;
 
   /// Whether menu has any [PullDownMenuItem]s with leading widget such as
@@ -102,7 +102,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
               break;
           }
 
-          return PullDownMenu(
+          return RoutePullDownMenu(
             items: orderedItems.toList(),
             routeTheme: routeTheme,
             animation: animation,

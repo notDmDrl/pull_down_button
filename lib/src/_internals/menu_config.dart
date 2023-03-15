@@ -57,9 +57,10 @@ class ActionsRowSizeConfig extends InheritedWidget {
       size != oldWidget.size;
 }
 
-/// Is internally used by [PullDownButton] to provide whether the pull-down
-/// menu has any [PullDownMenuItem]s with leading widget such as chevron to
-/// all descendant [PullDownMenuItem]s.
+/// Is internally used by [PullDownButton], [showPullDownMenu] or [PullDownMenu]
+/// to provide information whether the pull-down menu has any
+/// [PullDownMenuItem]s with leading widget such as chevron to all descendant
+/// [PullDownMenuItem]s.
 @immutable
 @internal
 class MenuConfig extends InheritedWidget {
@@ -73,6 +74,13 @@ class MenuConfig extends InheritedWidget {
   /// Whether the pull-down menu has any [PullDownMenuItem]s with leading
   /// widget such as chevron.
   final bool hasLeading;
+
+  /// Used to determine if menu's have any items with leading widget.
+  @internal
+  static bool menuHasLeading(List<PullDownMenuEntry> items) =>
+      items.whereType<PullDownMenuItem>().any(
+            (element) => element.selected != null,
+          );
 
   /// The closest instance of this class that encloses the given
   /// context.

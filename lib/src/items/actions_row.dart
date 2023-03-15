@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../pull_down_button.dart';
-import '../utils/menu_config.dart';
+import '../_internals/menu_config.dart';
 import 'divider.dart';
 
 /// Displays a number of actions in a more compact way (in a row, 3 or 4 items

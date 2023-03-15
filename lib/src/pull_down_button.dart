@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
 import '../pull_down_button.dart';
-import 'utils/constants.dart';
-import 'utils/menu_config.dart';
-import 'utils/route.dart';
+import '_internals/animation.dart';
+import '_internals/menu_config.dart';
+import '_internals/route.dart';
 
 /// Used to configure how the [PullDownButton] positions its pull-down menu and
 /// what type of movement (upwards or downwards) it will use for menu's appear
@@ -151,6 +150,7 @@ typedef PullDownMenuButtonBuilder = Widget Function(
 ///   menu entries for a simple action.
 /// * [PullDownButtonTheme], a pull-down button and menu theme configuration.
 /// * [showPullDownMenu], a alternative way of displaying a pull-down menu.
+/// * [PullDownMenu], a pull-down menu box without any route animations.
 @immutable
 class PullDownButton extends StatefulWidget {
   /// Creates a button that shows a pull-down menu.
@@ -253,7 +253,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 
     if (items.isEmpty) return;
 
-    final hasLeading = _hasLeading(items);
+    final hasLeading = MenuConfig.menuHasLeading(items);
 
     setState(() => isPressed = true);
 
@@ -333,7 +333,8 @@ class _PullDownButtonState extends State<PullDownButton> {
 ///
 /// * [PullDownButton], a default way of displaying a pull-down menu.
 /// * [showMenu], a material design alternative.
-@experimental
+/// * [PullDownMenu], an another alternative way of displaying a pull-down
+/// menu.
 Future<void> showPullDownMenu({
   required BuildContext context,
   required List<PullDownMenuEntry> items,
@@ -346,7 +347,7 @@ Future<void> showPullDownMenu({
 }) async {
   if (items.isEmpty) return;
 
-  final hasLeading = _hasLeading(items);
+  final hasLeading = MenuConfig.menuHasLeading(items);
 
   final action = await _showMenu<VoidCallback>(
     context: context,
@@ -369,15 +370,6 @@ Future<void> showPullDownMenu({
     onCanceled?.call();
   }
 }
-
-/// Is used internally by [PullDownButton] and [showPullDownMenu] to determine
-/// if menu's have any items with leading widget.
-///
-/// See [MenuConfig] for details.
-bool _hasLeading(List<PullDownMenuEntry> items) =>
-    items.whereType<PullDownMenuItem>().any(
-          (element) => element.selected != null,
-        );
 
 /// Is used internally by [PullDownButton] and [showPullDownMenu] to show
 /// pull-down menu.

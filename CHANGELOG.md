@@ -1,3 +1,12 @@
+## 0.6.5
+
+- Added `PullDownMenu` - a pull-down menu as a simple widget, with no animations or adding routes to navigation stack [#17](https://github.com/notDmDrl/pull_down_button/issues/17).
+- Updated `PullDownMenuItem.defaultTapHandler` to work with `PullDownMenu`.
+
+#### Various stuff
+
+- Cleaned up internals.
+
 ## 0.6.4
 
 - Added `PullDownMenuItem.tapHandler` to allow customization of how

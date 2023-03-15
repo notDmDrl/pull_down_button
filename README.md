@@ -28,6 +28,7 @@ Since this package uses new Flutter feature `ThemeExtension` for theming, minimu
   - [PullDownMenuDivider](#pulldownmenudivider)
   - [PullDownMenuTitle](#pulldownmenutitle)
 - [showPullDownMenu](#showpulldownmenu)
+- [PullDownMenu](#pulldownmenu)
 - [Theming](#theming)
   - [PullDownButtonTheme](#pulldownbuttontheme)
 - [Contributions](#contributions)
@@ -132,10 +133,10 @@ PullDownMenuItem(
 
 ```dart
 PullDownMenuItem.selectable(
-  title: 'Order by size',
+  title: 'Grid',
   selected: true,
   onTap: () {},
-  icon: CupertinoIcons.chevron_down,
+  icon: CupertinoIcons.square_grid_2x2,
 ),
 ```
 
@@ -213,12 +214,15 @@ There is also convenience method to wrap multiple menu items with small dividers
 ```dart
 ...PullDownMenuDivider.wrapWithDivider([
   PullDownMenuItem(
-    title: 'Menu item',
+    enabled: false,
+    title: 'Select',
     onTap: () {},
+    icon: CupertinoIcons.checkmark_circle,
   ),
   PullDownMenuItem(
-    title: 'Menu item 2',
+    title: 'Connect to remote server',
     onTap: () {},
+    icon: CupertinoIcons.cloud_upload,
   ),
 ]),
 ```
@@ -232,7 +236,7 @@ There is also convenience method to wrap multiple menu items with small dividers
 `PullDownMenuTitle` is a widget used to create cupertino style pull-down menu title (usually at the top of menu).
 
 ```dart
-const PullDownMenuTitle(title: Text('Pull-down menu')),
+const PullDownMenuTitle(title: Text('Menu title')),
 ```
 
 | Properties | Description              |
@@ -271,7 +275,36 @@ onPressed: () async {
 | onCanceled   | Called when the user dismisses the pull-down menu.                                                   |
 | routeTheme   | The theme of pull-down menu box.                                                                     |
 
- </details>
+</details>
+
+### PullDownMenu
+
+An another alternative way of displaying pull-down menu as a simple widget, with no animations or adding routes to navigation stack.
+
+```dart
+PullDownMenu(
+  items: [
+    PullDownMenuItem(
+      title: 'Menu item',
+      onTap: () {},
+    ),
+    const PullDownMenuDivider(),
+    PullDownMenuItem(
+      title: 'Menu item 2',
+      onTap: () {},
+    ),
+  ]
+)
+```
+
+<details><summary>Properties table</summary>
+
+| Properties | Description                          |
+| ---------- | ------------------------------------ |
+| items      | List of `PullDownMenuEntry` widgets. |
+| routeTheme | The theme of pull-down menu box.     |
+
+</details>
 
 ---
 

@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:pull_down_button/src/_internals/route.dart';
 
 import '../../pull_down_button.dart';
-import '../utils/gesture_detector.dart';
-import '../utils/menu_config.dart';
+import '../_internals/gesture_detector.dart';
+import '../_internals/menu_config.dart';
 
 // Note:
 // I am not entirely sure why top and bottom padding values are that much
@@ -162,8 +163,15 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// Default tap handler for [PullDownMenuItem].
   ///
   /// The behaviour is to pop the menu and than call the [onTap].
-  static void defaultTapHandler(BuildContext context, VoidCallback? onTap) =>
+  static void defaultTapHandler(BuildContext context, VoidCallback? onTap) {
+    // If menu was opened from [PullDownButton] or [showPullDownMenu] then pop
+    // route.
+    if (ModalRoute.of(context) is PullDownMenuRoute) {
       Navigator.pop(context, onTap);
+    } else {
+      noPopTapHandler(context, onTap);
+    }
+  }
 
   /// An additional, pre-made tap handler for [PullDownMenuItem].
   ///
