@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
-import 'package:pull_down_button/src/utils/glide_state.dart';
 
-import 'menu_config.dart';
+import 'continuous_swipe.dart';
 
 // ignore_for_file: avoid_positional_boolean_parameters
 
@@ -49,8 +47,6 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
 
   late final enabled = widget.onTap != null;
 
-  late final ValueNotifier<MenuGlideState> glideStateNotifier;
-
   Offset get _currentPosition {
     return (context.findRenderObject() as RenderBox).localToGlobal(Offset.zero);
   }
@@ -63,31 +59,31 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    glideStateNotifier = MenuConfig.of(context).glideStateNotifier;
-    glideStateNotifier.addListener(glideHandler);
+    final continuousSwipeState = MenuContinuousSwipeState.of(context);
+
+    if (continuousSwipeState != null) {
+      continuousSwipeState.addListener(() {
+        continuousSwipeStateListener(continuousSwipeState.value);
+      });
+    }
   }
 
-  void glideHandler() {
-    if (glideStateNotifier.value is MenuGlideInProcessState) {
-      final glideState = glideStateNotifier.value as MenuGlideInProcessState;
+  void continuousSwipeStateListener(ContinuousSwipeState state) {
+    if (state is ContinuousSwipeInProcessState && enabled) {
+      final currentPositionWithinMenuItem = state.currentPositionWithinMenuItem(
+        itemPosition: _currentPosition,
+        itemSize: _currentSize,
+      );
 
-      final isInsideDy = glideState.dy >= _currentPosition.dy &&
-          (_currentPosition.dy + _currentSize.height) > glideState.dy;
-
-      final isInsideDx = glideState.dx >= _currentPosition.dx &&
-          (_currentPosition.dx + _currentSize.width) > glideState.dx;
-
-      if (isInsideDy && isInsideDx && enabled) {
-        if (!isPressed) HapticFeedback.selectionClick();
-
+      if (currentPositionWithinMenuItem) {
         setState(() => isPressed = true);
       } else {
         setState(() => isPressed = false);
       }
     }
 
-    if (glideStateNotifier.value is MenuGlideCompleteState) {
-      if (isPressed) onTap();
+    if (state is ContinuousSwipeCompleteState && isPressed) {
+      onTap();
     }
   }
 

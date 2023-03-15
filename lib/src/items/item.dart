@@ -228,8 +228,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
       case ElementSize.large:
         // don't do unnecessary checks from inherited widget if [selected] is
         // not null.
-        final viewAsSelectable =
-            selected != null || MenuConfig.of(context).hasLeading;
+        final viewAsSelectable = selected != null || MenuConfig.of(context);
 
         child = viewAsSelectable
             ? _SelectableLargeItem(
