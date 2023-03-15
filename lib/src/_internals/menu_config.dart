@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:pull_down_button/src/utils/glide_state.dart';
 
 import '../../pull_down_button.dart';
 
@@ -57,10 +58,9 @@ class ActionsRowSizeConfig extends InheritedWidget {
       size != oldWidget.size;
 }
 
-/// Is internally used by [PullDownButton], [showPullDownMenu] or [PullDownMenu]
-/// to provide information whether the pull-down menu has any
-/// [PullDownMenuItem]s with leading widget such as chevron to all descendant
-/// [PullDownMenuItem]s.
+/// Is internally used by [PullDownButton] to provide whether the pull-down
+/// menu has any [PullDownMenuItem]s with leading widget such as chevron to
+/// all descendant [PullDownMenuItem]s.
 @immutable
 @internal
 class MenuConfig extends InheritedWidget {
@@ -69,24 +69,21 @@ class MenuConfig extends InheritedWidget {
     super.key,
     required super.child,
     required this.hasLeading,
+    required this.glideStateNotifier,
   });
 
   /// Whether the pull-down menu has any [PullDownMenuItem]s with leading
   /// widget such as chevron.
   final bool hasLeading;
 
-  /// Used to determine if menu's have any items with leading widget.
-  @internal
-  static bool menuHasLeading(List<PullDownMenuEntry> items) =>
-      items.whereType<PullDownMenuItem>().any(
-            (element) => element.selected != null,
-          );
+  /// Current state of gliding by menu items
+  final ValueNotifier<MenuGlideState> glideStateNotifier;
 
   /// The closest instance of this class that encloses the given
   /// context.
   @internal
-  static bool of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<MenuConfig>()!.hasLeading;
+  static MenuConfig of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<MenuConfig>()!;
 
   @override
   bool updateShouldNotify(MenuConfig oldWidget) =>
