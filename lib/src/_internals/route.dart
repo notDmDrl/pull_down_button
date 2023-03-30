@@ -161,8 +161,11 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// paintBounds in global coordinates.
   static Rect getRect(BuildContext context) {
     final renderBoxContainer = context.currentRenderBox;
+    final queryData = MediaQuery.of(context);
+    final size = queryData.size;
+    final padding = queryData.padding;
 
-    return Rect.fromPoints(
+    final rect = Rect.fromPoints(
       renderBoxContainer.localToGlobal(
         renderBoxContainer.paintBounds.topLeft,
       ),
@@ -170,6 +173,51 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
         renderBoxContainer.paintBounds.bottomRight,
       ),
     );
+
+    if (rect.size.height > size.height) {
+      return _normalizeLargeRect(rect, size, padding);
+    }
+
+    return rect;
+  }
+
+  static Rect _normalizeLargeRect(
+    Rect rect,
+    Size size,
+    EdgeInsets padding,
+  ) {
+    if (rect.top.isNegative && rect.bottom > size.height) {
+      return Rect.fromLTRB(
+        rect.left,
+        size.height * 0.65,
+        rect.right,
+        size.height * 0.75,
+      );
+    } else if (rect.top.isNegative && rect.bottom < size.height) {
+      final diff = size.height - rect.bottom - padding.bottom;
+
+      if (diff < kMinInteractiveDimensionCupertino * 2) {
+        return Rect.fromLTRB(
+          rect.left,
+          rect.bottom,
+          rect.right,
+          size.height - padding.bottom,
+        );
+      }
+    } else {
+      final diff = rect.top - padding.top;
+
+      if (diff < kMinInteractiveDimensionCupertino * 2) {
+        return Rect.fromLTRB(
+          rect.left,
+          padding.top,
+          rect.right,
+          rect.top,
+        );
+      }
+    }
+
+    return rect;
   }
 }
 

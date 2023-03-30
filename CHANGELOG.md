@@ -1,3 +1,9 @@
+## 0.8.1
+
+- Added precautions to menu position calculations for cases when `PullDownButton.buttonBuilder`'s height is bigger than screen height.
+
+  Consider using `showPullDownMenu` if the end position calculated using those precautions is not what was desired.
+
 ## 0.8.0
 
 ### BREAKING CHANGES

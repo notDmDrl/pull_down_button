@@ -78,14 +78,11 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final subScreen = _PositionUtils.closestScreen(subScreens, originCenter);
 
     final dx = _PositionUtils.fitX(x, subScreen, childWidth, padding);
-
-    final y = buttonRect.top;
     final dy = _PositionUtils.fitY(
-      y,
+      buttonRect,
       subScreen,
       childSize.height,
       padding,
-      buttonRect.height,
       menuPosition,
     );
 
@@ -117,14 +114,14 @@ abstract class _PositionUtils {
   }
 
   static double fitY(
-    double wantedY,
+    Rect buttonRect,
     Rect screen,
     double childHeight,
     EdgeInsets padding,
-    double buttonHeight,
     PullDownMenuPosition menuPosition,
   ) {
-    var y = wantedY;
+    var y = buttonRect.top;
+    final buttonHeight = buttonRect.height;
 
     final isInBottomHalf = y + buttonHeight / 2 >= screen.height / 2;
 

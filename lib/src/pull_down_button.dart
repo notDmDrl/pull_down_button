@@ -10,11 +10,11 @@ import '_internals/route.dart';
 
 /// Used to configure how the [PullDownButton] positions its pull-down menu.
 ///
-/// If the size of a button widget (which is used to open the menu) is
-/// bigger than the size of device screen, consider using
-/// [PullDownMenuPosition.over] or [showPullDownMenu] (with desired position)
-/// since [PullDownMenuPosition.automatic] forces menu to be above or under a
-/// button widget which might result in layout exceptions.
+/// If the size of a button widget (which is used to open the menu via
+/// [PullDownButton.buttonBuilder]) is bigger than the size of device screen,
+/// [PullDownButton] will attempt to fit menu inside the screen.
+///
+/// If end position is not what was desired, consider using [showPullDownMenu].
 enum PullDownMenuPosition {
   /// Menu is positioned under or above an anchor depending on side that has
   /// more space available.
