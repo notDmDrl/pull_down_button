@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import 'continuous_swipe.dart';
+import 'extensions.dart';
 
 // ignore_for_file: avoid_positional_boolean_parameters
 
@@ -25,7 +24,7 @@ class MenuActionGestureDetector extends StatefulWidget {
   });
 
   /// Called when the menu item is tapped.
-  final FutureOr<void> Function()? onTap;
+  final GestureTapCallback? onTap;
 
   /// Color of container during press event.
   final Color pressedColor;
@@ -48,9 +47,9 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
   late final enabled = widget.onTap != null;
 
   Offset get _currentPosition =>
-      (context.findRenderObject()! as RenderBox).localToGlobal(Offset.zero);
+      context.currentRenderBox.localToGlobal(Offset.zero);
 
-  Size get _currentSize => (context.findRenderObject()! as RenderBox).size;
+  Size get _currentSize => context.currentRenderBox.size;
 
   @override
   void didChangeDependencies() {
@@ -58,11 +57,9 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
 
     final continuousSwipeState = MenuContinuousSwipeState.of(context);
 
-    if (continuousSwipeState != null) {
-      continuousSwipeState.addListener(() {
-        continuousSwipeStateListener(continuousSwipeState.value);
-      });
-    }
+    continuousSwipeState?.addListener(
+      () => continuousSwipeStateListener(continuousSwipeState.value),
+    );
   }
 
   void continuousSwipeStateListener(ContinuousSwipeState state) {
@@ -84,10 +81,10 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
     }
   }
 
-  Future<void> onTap() async {
+  void onTap() {
     if (!enabled) return;
 
-    await widget.onTap!();
+    widget.onTap!();
 
     if (mounted) {
       setState(() {

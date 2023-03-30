@@ -20,6 +20,15 @@ class TapHandler extends StatelessWidget {
               title: 'Pop menu and call [onTap]',
             ),
             PullDownMenuItem(
+              onTap: () => print(
+                'This action is called after menu is popped '
+                'and animation ended',
+              ),
+              // A delayed behaviour
+              tapHandler: PullDownMenuItem.delayedTapHandler,
+              title: 'Pop, wait for animation to end and call [onTap]',
+            ),
+            PullDownMenuItem(
               onTap: () =>
                   print('This action is called without menu being popped'),
               // A no pop behaviour

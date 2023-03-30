@@ -50,13 +50,13 @@ class RoutePullDownMenu extends StatelessWidget {
     // *Transition* widget.
     final clampedAnimation = ClampedAnimation(animation);
 
-    final shadow = CurveTween(curve: const Interval(1 / 3, 1));
-
     return ScaleTransition(
       scale: animation,
       alignment: alignment,
       child: DecoratedBoxTransition(
-        decoration: shadow.animate(clampedAnimation).drive(shadowTween),
+        decoration: AnimationUtils.shadowTween
+            .animate(clampedAnimation)
+            .drive(shadowTween),
         child: FadeTransition(
           opacity: clampedAnimation,
           child: MenuDecoration(

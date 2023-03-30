@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -6,38 +8,28 @@ import '_internals/animation.dart';
 import '_internals/menu_config.dart';
 import '_internals/route.dart';
 
-/// Used to configure how the [PullDownButton] positions its pull-down menu and
-/// what type of movement (upwards or downwards) it will use for menu's appear
-/// animation.
+/// Used to configure how the [PullDownButton] positions its pull-down menu.
+///
+/// If the size of a button widget (which is used to open the menu) is
+/// bigger than the size of device screen, consider using
+/// [PullDownMenuPosition.over] or [showPullDownMenu] (with desired position)
+/// since [PullDownMenuPosition.automatic] forces menu to be above or under a
+/// button widget which might result in layout exceptions.
 enum PullDownMenuPosition {
-  /// Menu is positioned over an anchor and is forced to be under an anchor
-  /// (downwards movement)
-  ///
-  /// If there is no available space to place menu over an anchor with
-  /// downwards movement, menu will be placed over an anchor with upwards
-  /// movement.
-  over,
-
-  /// Menu is positioned under an anchor and is forced to be under an anchor
-  /// (downwards movement).
-  ///
-  /// If there is no available space to place menu under an anchor, menu will
-  /// be placed above an anchor (upwards movement).
-  under,
-
-  /// Menu is positioned above an anchor and is forced to always be above an
-  /// anchor (upwards movement).
-  ///
-  /// If there is no available space to place menu above an anchor, menu will
-  /// be placed under an anchor (downwards movement).
-  above,
-
   /// Menu is positioned under or above an anchor depending on side that has
   /// more space available.
   ///
   /// If positioned under anchor - downwards movement will be used, if
   /// positioned above - upwards movement will be used.
   automatic,
+
+  /// Menu is positioned under or above an anchor depending on side that has
+  /// more space available but also covers the button used to open the menu.
+  ///
+  /// If there is no available space to place menu over an anchor with
+  /// downwards movement, menu will be placed over an anchor with upwards
+  /// movement.
+  over,
 }
 
 /// Used to configure how the [PullDownButton.itemBuilder] orders it's items.
@@ -135,6 +127,31 @@ typedef PullDownMenuButtonBuilder = Widget Function(
   Future<void> Function() showMenu,
 );
 
+/// Used to provide information about menu animation state in
+/// [PullDownButton.animationBuilder].
+///
+/// Used by [PullDownButtonAnimationBuilder].
+enum PullDownButtonAnimationState {
+  /// Menu is closed.
+  closed,
+
+  /// Menu is opened by calling [showMenu] using
+  /// [PullDownButton.buttonBuilder]'s button widget.
+  opened,
+}
+
+/// Signature used by [PullDownButton] to create animation for
+/// [PullDownButton.buttonBuilder] when pull-down menu is opened.
+///
+/// [child] is a button created with [PullDownButton.buttonBuilder].
+///
+/// Used by [PullDownButton.animationBuilder].
+typedef PullDownButtonAnimationBuilder = Widget Function(
+  BuildContext context,
+  PullDownButtonAnimationState state,
+  Widget child,
+);
+
 /// Displays a pull-down menu and animates button to lower opacity when pressed.
 ///
 /// See also:
@@ -159,11 +176,10 @@ class PullDownButton extends StatefulWidget {
     required this.itemBuilder,
     required this.buttonBuilder,
     this.onCanceled,
-    this.offset = Offset.zero,
-    this.position = PullDownMenuPosition.under,
+    this.position = PullDownMenuPosition.automatic,
     this.itemsOrder = PullDownMenuItemsOrder.downwards,
+    this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
-    this.applyOpacity,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -185,20 +201,12 @@ class PullDownButton extends StatefulWidget {
   /// Called when the user dismisses the pull-down menu.
   final PullDownMenuCanceled? onCanceled;
 
-  /// The offset is applied relative to the initial position set by the
-  /// [position].
-  ///
-  /// Defaults to [Offset.zero].
-  final Offset offset;
-
   /// Whether the popup menu is positioned above, over or under the popup menu
   /// button.
   ///
-  /// [offset] is used to change the position of the popup menu relative to the
-  /// position set by this parameter.
-  ///
-  /// Defaults to [PullDownMenuPosition.under] which makes the popup menu
-  /// appear directly under the button that was used to create it.
+  /// Defaults to [PullDownMenuPosition.automatic] which makes the popup menu
+  /// appear directly under or above the button that was used to create it
+  /// (based on side that has more space available).
   final PullDownMenuPosition position;
 
   /// Whether the popup menu orders its items from [itemBuilder] in downwards
@@ -216,38 +224,48 @@ class PullDownButton extends StatefulWidget {
   /// If that's null then [PullDownMenuRouteTheme.defaults] is used.
   final PullDownMenuRouteTheme? routeTheme;
 
-  /// Whether to apply opacity on [buttonBuilder] as it is in iOS
-  /// or not.
+  /// Custom animation for [buttonBuilder] when pull-down menu is opening or
+  /// closing.
   ///
-  /// If this property is null then [PullDownButtonTheme.applyOpacity]
-  /// from [PullDownButtonTheme] theme extension is used.
+  /// Defaults to [defaultAnimationBuilder] which applies opacity on
+  /// [buttonBuilder] as it is in iOS.
   ///
-  /// If that's null then [applyOpacity] will be set to `true`.
-  final bool? applyOpacity;
+  /// If this property is null then no animation will be used.
+  final PullDownButtonAnimationBuilder? animationBuilder;
+
+  /// Default animation builder for [animationBuilder].
+  ///
+  /// If [state] is [PullDownButtonAnimationState.opened], applies opacity
+  /// on [child] as it is in iOS.
+  static Widget defaultAnimationBuilder(
+    BuildContext context,
+    PullDownButtonAnimationState state,
+    Widget child,
+  ) {
+    final isPressed = state == PullDownButtonAnimationState.opened;
+
+    // All of the values where eyeballed using iOS 16 Simulator.
+    return AnimatedOpacity(
+      opacity: isPressed ? 0.4 : 1,
+      duration: Duration(milliseconds: isPressed ? 100 : 200),
+      curve: isPressed
+          ? Curves.fastLinearToSlowEaseIn
+          : AnimationUtils.kCurveReverse,
+      child: child,
+    );
+  }
 
   @override
   State<PullDownButton> createState() => _PullDownButtonState();
 }
 
 class _PullDownButtonState extends State<PullDownButton> {
-  bool isPressed = false;
+  PullDownButtonAnimationState state = PullDownButtonAnimationState.closed;
 
   Future<void> showButtonMenu() async {
-    final button = context.findRenderObject()! as RenderBox;
-    final overlay =
-        Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
-    final offset = widget.offset;
-
-    final position = RelativeRect.fromRect(
-      Rect.fromPoints(
-        button.localToGlobal(offset, ancestor: overlay),
-        button.localToGlobal(
-          button.size.bottomRight(Offset.zero) + offset,
-          ancestor: overlay,
-        ),
-      ),
-      Offset.zero & overlay.size,
-    );
+    final button = PullDownMenuRoute.getRect(context);
+    final animationAlignment =
+        PullDownMenuRoute.predictedAnimationAlignment(context, button);
 
     final items = widget.itemBuilder(context);
 
@@ -255,22 +273,22 @@ class _PullDownButtonState extends State<PullDownButton> {
 
     final hasLeading = MenuConfig.menuHasLeading(items);
 
-    setState(() => isPressed = true);
+    setState(() => state = PullDownButtonAnimationState.opened);
 
     final action = await _showMenu<VoidCallback>(
       context: context,
       items: items,
-      position: position,
-      buttonSize: button.size,
+      buttonRect: button,
       menuPosition: widget.position,
       itemsOrder: widget.itemsOrder,
       routeTheme: widget.routeTheme,
       hasLeading: hasLeading,
+      animationAlignment: animationAlignment,
     );
 
     if (!mounted) return;
 
-    setState(() => isPressed = false);
+    setState(() => state = PullDownButtonAnimationState.closed);
 
     if (action != null) {
       action.call();
@@ -281,20 +299,10 @@ class _PullDownButtonState extends State<PullDownButton> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownButtonTheme.of(context);
-
-    final apply = widget.applyOpacity ?? theme?.applyOpacity ?? true;
-
     final buttonBuilder = widget.buttonBuilder(context, showButtonMenu);
 
-    if (!apply) return buttonBuilder;
-
-    return AnimatedOpacity(
-      opacity: isPressed ? 0.4 : 1,
-      duration: kMenuDuration,
-      curve: kCurve,
-      child: buttonBuilder,
-    );
+    return widget.animationBuilder?.call(context, state, buttonBuilder) ??
+        buttonBuilder;
   }
 }
 
@@ -312,13 +320,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 /// to "selectable" view.
 ///
 /// Desired [position] is used to align top of the menu with top of the
-/// [position] rectangle. [buttonSize] can be additionally used to let menu
-/// know about additional bottom offsets it needs to consider while calculating
-/// final menu's position.
-///
-/// [menuPosition] is used to define whether the popup menu is positioned above,
-/// over or under the calculated menu's position. Defaults to
-/// [PullDownMenuPosition.under].
+/// [position] rectangle.
 ///
 /// [itemsOrder] is used to define how menu will order its [items] depending on
 /// calculated menu's position. Defaults to
@@ -338,9 +340,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 Future<void> showPullDownMenu({
   required BuildContext context,
   required List<PullDownMenuEntry> items,
-  required RelativeRect position,
-  Size buttonSize = Size.zero,
-  PullDownMenuPosition menuPosition = PullDownMenuPosition.under,
+  required Rect position,
   PullDownMenuItemsOrder itemsOrder = PullDownMenuItemsOrder.downwards,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
@@ -352,12 +352,13 @@ Future<void> showPullDownMenu({
   final action = await _showMenu<VoidCallback>(
     context: context,
     items: items,
-    position: position,
-    buttonSize: buttonSize,
-    menuPosition: menuPosition,
+    buttonRect: position,
+    menuPosition: PullDownMenuPosition.automatic,
     itemsOrder: itemsOrder,
     routeTheme: routeTheme,
     hasLeading: hasLeading,
+    animationAlignment:
+        PullDownMenuRoute.predictedAnimationAlignment(context, position),
   );
 
   // TODO(notDmDrl): this was not available at Flutter 3.0.0 release,
@@ -375,23 +376,22 @@ Future<void> showPullDownMenu({
 /// pull-down menu.
 Future<VoidCallback?> _showMenu<VoidCallback>({
   required BuildContext context,
-  required RelativeRect position,
+  required Rect buttonRect,
   required List<PullDownMenuEntry> items,
-  required Size buttonSize,
   required PullDownMenuPosition menuPosition,
   required PullDownMenuItemsOrder itemsOrder,
   required PullDownMenuRouteTheme? routeTheme,
   required bool hasLeading,
+  required Alignment animationAlignment,
 }) {
   final navigator = Navigator.of(context);
 
   return navigator.push<VoidCallback>(
     PullDownMenuRoute(
-      position: position,
+      buttonRect: buttonRect,
       items: items,
       barrierLabel: _barrierLabel(context),
       routeTheme: routeTheme,
-      buttonSize: buttonSize,
       menuPosition: menuPosition,
       capturedThemes: InheritedTheme.capture(
         from: context,
@@ -399,6 +399,7 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
       ),
       hasLeading: hasLeading,
       itemsOrder: itemsOrder,
+      alignment: animationAlignment,
     ),
   );
 }

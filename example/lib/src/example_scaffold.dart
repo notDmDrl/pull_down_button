@@ -91,28 +91,11 @@ class ExampleScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          middle: Text(
-            title,
-            style: TextStyle(
-              color: CupertinoDynamicColor.resolve(
-                CupertinoColors.label,
-                context,
-              ),
-            ),
-          ),
-          previousPageTitle: 'Back',
-          padding: const EdgeInsetsDirectional.only(end: 8),
-          trailing: const CupertinoButton(
-            onPressed: onThemeModeChange,
-            padding: EdgeInsets.zero,
-            child: Icon(CupertinoIcons.sun_max_fill),
-          ),
-        ),
+        navigationBar: ExampleScaffoldNavigationBar(title: title),
         child: SafeArea(
           child: Row(
             children: [
-              for (final alignment in [
+              for (final alignment in const [
                 AlignmentDirectional.centerStart,
                 AlignmentDirectional.center,
                 AlignmentDirectional.centerEnd
@@ -134,6 +117,33 @@ class ExampleScaffold extends StatelessWidget {
           ),
         ),
       );
+}
+
+@immutable
+class ExampleScaffoldNavigationBar extends CupertinoNavigationBar {
+  ExampleScaffoldNavigationBar({
+    super.key,
+    required String title,
+  }) : super(
+          middle: Builder(
+            builder: (context) => Text(
+              title,
+              style: TextStyle(
+                color: CupertinoDynamicColor.resolve(
+                  CupertinoColors.label,
+                  context,
+                ),
+              ),
+            ),
+          ),
+          previousPageTitle: 'Back',
+          padding: const EdgeInsetsDirectional.only(end: 8),
+          trailing: const CupertinoButton(
+            onPressed: onThemeModeChange,
+            padding: EdgeInsets.zero,
+            child: Icon(CupertinoIcons.sun_max_fill),
+          ),
+        );
 }
 
 @immutable

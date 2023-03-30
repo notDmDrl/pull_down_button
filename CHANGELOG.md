@@ -1,8 +1,30 @@
+## 0.8.0
+
+### BREAKING CHANGES
+
+- Removed `PullDownMenuPosition.under` and `PullDownMenuPosition.above`. `PullDownMenuPosition.automatic` should be used instead (new default).
+- `showPullDownMenu` _position_ now requires `Rect` instead of `RelativeRect`, _buttonSize_ and _menuPosition_ were removed.
+- Removed `PullDownButton.applyOpacity` and `PullDownButtonTheme.applyOpacity`. To remove opacity animation from `PullDownButton.buttonBuilder` set `PullDownButton.animationBuilder` to **_null_**.
+- Removed `PullDownButton.offset`.
+
+#### General updates
+
+- Reworked the way pull-down menu calculates its position on screen:
+  - Updated menu's scale transition alignment calculation to closely match native.
+  - If opened from left or right side of screen (but not directly near the edge), additionally move menu to the left or right by certain amount of pixels (based on native compare tool).
+- Added `PullDownMenuItem.delayedTapHandler`.
+- Added `PullDownButton.animationBuilder` to allow customization of animation for `PullDownButton.buttonBuilder` when pull-down menu is opening or closing.
+
+#### Various stuff
+
+- Cleaned up internals.
+- Added an example for `PullDownButton.animationBuilder`. See _Examples -> Advanced_ in example app.
+
 ## 0.7.0
 
-- Added "continuous swipe" support to menus (see [demo](https://github.com/notDmDrl/pull_down_button/issues/19))  [#19](https://github.com/notDmDrl/pull_down_button/issues/19) and [#18](https://github.com/notDmDrl/pull_down_button/pull/18)
+- Added "continuous swipe" support to menus (see [demo](https://github.com/notDmDrl/pull_down_button/issues/19)) [#19](https://github.com/notDmDrl/pull_down_button/issues/19) and [#18](https://github.com/notDmDrl/pull_down_button/pull/18)
   Thanks to [@iSa1vatore](https://github.com/iSa1vatore)
-- 
+
 ## 0.6.5
 
 - Added `PullDownMenu` - a pull-down menu as a simple widget, with no animations or adding routes to navigation stack [#17](https://github.com/notDmDrl/pull_down_button/issues/17).
@@ -69,7 +91,7 @@ Using new native compare tool following things were updated:
   - `PullDownMenuItem` text style and icon color opacity when `PullDownMenuItem.enabled` is **false**.
 - `PullDownMenuItem` and `PullDownMenuTitle` - merge default text styles with provided ones (via theme or widget parameters).
 
-**BREAKING CHANGES**:
+### BREAKING CHANGES
 
 - `PullDownMenuEntry` no longer provides fields to override due to their redundancy.
 - `PullDownMenuEntry` no longer extends `StatelessWidget`, it now extends `Widget`. This was done to allow `StatefulWidget`s to be used as `PullDownMenuEntry` [#11](https://github.com/notDmDrl/pull_down_button/issues/11).
@@ -95,7 +117,7 @@ Using new native compare tool following things were updated:
 
 ## 0.4.0
 
-**BREAKING CHANGES**:
+### BREAKING CHANGES
 
 #### Menu items
 

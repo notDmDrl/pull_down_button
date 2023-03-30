@@ -4,6 +4,7 @@ import 'package:pull_down_button/pull_down_button.dart';
 
 import 'setup.dart';
 import 'src/actions_row.dart';
+import 'src/animation_builder.dart';
 import 'src/divider.dart';
 import 'src/item.dart';
 import 'src/position.dart';
@@ -112,6 +113,10 @@ class ItemExamples extends StatelessWidget {
                   _Tile(
                     title: 'PullDownMenu',
                     destination: PullDownMenuBox(),
+                  ),
+                  _Tile(
+                    title: 'PullDownButton.animationBuilder',
+                    destination: AnimationBuilder(),
                   )
                 ],
               ),

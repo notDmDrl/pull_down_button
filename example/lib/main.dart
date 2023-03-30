@@ -41,10 +41,10 @@ class Example extends StatelessWidget {
           child: ExampleMenu(
             position: PullDownMenuPosition.automatic,
             itemsOrder: PullDownMenuItemsOrder.automatic,
-            applyOpacity: false,
             builder: (_, showMenu) => CupertinoButton(
               onPressed: showMenu,
               padding: EdgeInsets.zero,
+              pressedOpacity: 1,
               child: _MessageExample(isSender: isSender),
             ),
           ),
@@ -63,13 +63,11 @@ class ExampleMenu extends StatelessWidget {
     required this.position,
     required this.itemsOrder,
     required this.builder,
-    this.applyOpacity = true,
   });
 
   final PullDownMenuPosition position;
   final PullDownMenuButtonBuilder builder;
   final PullDownMenuItemsOrder itemsOrder;
-  final bool applyOpacity;
 
   @override
   Widget build(BuildContext context) => PullDownButton(
@@ -148,8 +146,8 @@ class ExampleMenu extends StatelessWidget {
             ],
           ),
         ],
+        animationBuilder: null,
         itemsOrder: itemsOrder,
-        applyOpacity: applyOpacity,
         position: position,
         buttonBuilder: builder,
       );

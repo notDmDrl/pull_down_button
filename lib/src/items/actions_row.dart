@@ -10,7 +10,7 @@ import 'divider.dart';
 /// To show a pull-down menu and create a button that shows a pull-down menu
 /// use [PullDownButton.buttonBuilder].
 ///
-/// Default height of [PullDownMenuActionsRow] depends on size:
+/// Default height of [PullDownMenuActionsRow] depends on size.
 ///
 /// * For [PullDownMenuActionsRow.small] it is 44 pixels
 /// ([kMinInteractiveDimensionCupertino]).
@@ -18,6 +18,7 @@ import 'divider.dart';
 /// [kMinInteractiveDimensionCupertino]).
 ///
 /// See also:
+///
 /// * [PullDownMenuItem], for a classic, full width pull-down menu entry for a
 ///   simple action.
 /// * preferredElementSize:
@@ -87,8 +88,9 @@ class PullDownMenuActionsRow extends StatelessWidget
             kMinInteractiveDimensionCupertino / 2;
       case ElementSize.large:
         throw UnsupportedError(
-            '[PullDownMenuActionsRow] only supports `ElementSize.small` '
-            'and `ElementSize.medium`');
+          '[PullDownMenuActionsRow] only supports `ElementSize.small` '
+          'and `ElementSize.medium`',
+        );
     }
   }
 

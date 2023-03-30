@@ -4,12 +4,11 @@ import 'package:meta/meta.dart';
 import '../../pull_down_button.dart';
 
 /// Used to configure how the [PullDownMenuActionsRow] show its
-/// [PullDownMenuItem]'s and their maximum count;
+/// [PullDownMenuItem]'s and their maximum count.
 ///
 /// See also:
 ///
-/// * preferredElementSize:
-///   https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize
+/// * preferredElementSize: https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize
 @internal
 enum ElementSize {
   /// Compact, icon only representation.

@@ -27,7 +27,6 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     this.itemTheme,
     this.dividerTheme,
     this.titleTheme,
-    this.applyOpacity,
   });
 
   /// Sub-theme for visual properties of the routes used to display pull-down
@@ -42,10 +41,6 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
 
   /// Sub-theme for visual properties of the titles in pull-down menus.
   final PullDownMenuTitleTheme? titleTheme;
-
-  /// Whether to apply opacity on [PullDownButton.buttonBuilder] as it is in iOS
-  /// or not.
-  final bool? applyOpacity;
 
   /// Get [PullDownButtonTheme] from [PullDownButtonInheritedTheme].
   ///
@@ -63,14 +58,12 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
     PullDownMenuItemTheme? itemTheme,
     PullDownMenuDividerTheme? dividerTheme,
     PullDownMenuTitleTheme? titleTheme,
-    bool? applyOpacity,
   }) =>
       PullDownButtonTheme(
         routeTheme: routeTheme ?? this.routeTheme,
         itemTheme: itemTheme ?? this.itemTheme,
         dividerTheme: dividerTheme ?? this.dividerTheme,
         titleTheme: titleTheme ?? this.titleTheme,
-        applyOpacity: applyOpacity ?? this.applyOpacity,
       );
 
   /// Linearly interpolate between two themes.
@@ -87,7 +80,6 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
       dividerTheme:
           PullDownMenuDividerTheme.lerp(dividerTheme, other.dividerTheme, t),
       titleTheme: PullDownMenuTitleTheme.lerp(titleTheme, other.titleTheme, t),
-      applyOpacity: _lerpBool(applyOpacity, other.applyOpacity, t),
     );
   }
 
@@ -97,7 +89,6 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         itemTheme,
         dividerTheme,
         titleTheme,
-        applyOpacity,
       );
 
   @override
@@ -109,8 +100,7 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
         other.routeTheme == routeTheme &&
         other.itemTheme == itemTheme &&
         other.dividerTheme == dividerTheme &&
-        other.titleTheme == titleTheme &&
-        other.applyOpacity == applyOpacity;
+        other.titleTheme == titleTheme;
   }
 
   @override
@@ -128,15 +118,9 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
       )
       ..add(
         DiagnosticsProperty('titleTheme', titleTheme, defaultValue: null),
-      )
-      ..add(
-        DiagnosticsProperty('applyOpacity', applyOpacity, defaultValue: null),
       );
   }
 }
-
-/// Taken from [ScrollbarThemeData.lerp].
-bool? _lerpBool(bool? a, bool? b, double t) => t < 0.5 ? a : b;
 
 /// Alternative way of defining [PullDownButtonTheme].
 ///

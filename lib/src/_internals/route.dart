@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
 import 'animation.dart';
+import 'extensions.dart';
 import 'menu_config.dart';
 import 'route_menu.dart';
 
@@ -15,22 +16,22 @@ part 'route_layout.dart';
 class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// Creates [PullDownMenuRoute].
   PullDownMenuRoute({
-    required this.position,
     required this.items,
     required this.barrierLabel,
     required this.routeTheme,
-    required this.buttonSize,
+    required this.buttonRect,
     required this.menuPosition,
     required this.capturedThemes,
     required this.hasLeading,
     required this.itemsOrder,
-  }) : _menuAlignmentNotifier = ValueNotifier(Alignment.topRight);
+    required this.alignment,
+  });
 
   /// Items to show in the [RoutePullDownMenu] created by this route.
   final List<PullDownMenuEntry> items;
 
   /// Captured inherited themes, specifically [PullDownButtonInheritedTheme] to
-  /// pass to [RoutePullDownMenu] and all its [items];
+  /// pass to [RoutePullDownMenu] and all its [items].
   final CapturedThemes capturedThemes;
 
   /// The custom route theme to be used by [RoutePullDownMenu].
@@ -40,15 +41,10 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// chevron.
   final bool hasLeading;
 
-  /// Desired menu's on-screen position.
+  /// Rect of a button used to open pull-down menu.
   ///
   /// Is used to calculate final menu's position.
-  final RelativeRect position;
-
-  /// Size of a button used to open pull-down menu.
-  ///
-  /// Is used to calculate final menu's position.
-  final Size buttonSize;
+  final Rect buttonRect;
 
   /// Is used to define whether the popup menu is positioned above, over or
   /// under the calculated menu's position.
@@ -58,18 +54,22 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// calculated menu's position.
   final PullDownMenuItemsOrder itemsOrder;
 
+  /// The point menu scales from. Generated with
+  /// [PullDownMenuRoute.predictedAnimationAlignment] before creating the route.
+  final Alignment alignment;
+
   @override
   final String barrierLabel;
 
   @override
   Animation<double> createAnimation() => CurvedAnimation(
         parent: super.createAnimation(),
-        curve: kCurve,
-        reverseCurve: kCurveReverse,
+        curve: AnimationUtils.kCurve,
+        reverseCurve: AnimationUtils.kCurveReverse,
       );
 
   @override
-  Duration get transitionDuration => kMenuDuration;
+  Duration get transitionDuration => AnimationUtils.kMenuDuration;
 
   @override
   bool get barrierDismissible => true;
@@ -77,44 +77,39 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   @override
   Color? get barrierColor => null;
 
-  final ValueNotifier<Alignment> _menuAlignmentNotifier;
-
   @override
   Widget buildPage(
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
+    final Iterable<PullDownMenuEntry> orderedItems;
+
+    switch (itemsOrder) {
+      case PullDownMenuItemsOrder.downwards:
+        orderedItems = items;
+        break;
+      case PullDownMenuItemsOrder.upwards:
+        orderedItems = items.reversed;
+        break;
+      case PullDownMenuItemsOrder.automatic:
+        orderedItems = alignment.y == -1 ? items : items.reversed;
+        break;
+    }
+
     final Widget menu = MenuConfig(
       hasLeading: hasLeading,
-      child: ValueListenableBuilder<Alignment>(
-        valueListenable: _menuAlignmentNotifier,
-        builder: (_, alignment, __) {
-          final Iterable<PullDownMenuEntry> orderedItems;
-
-          switch (itemsOrder) {
-            case PullDownMenuItemsOrder.downwards:
-              orderedItems = items;
-              break;
-            case PullDownMenuItemsOrder.upwards:
-              orderedItems = items.reversed;
-              break;
-            case PullDownMenuItemsOrder.automatic:
-              orderedItems = alignment.y == -1 ? items : items.reversed;
-              break;
-          }
-
-          return RoutePullDownMenu(
-            items: orderedItems.toList(),
-            routeTheme: routeTheme,
-            animation: animation,
-            alignment: alignment,
-          );
-        },
+      child: RoutePullDownMenu(
+        items: orderedItems.toList(),
+        routeTheme: routeTheme,
+        animation: animation,
+        alignment: alignment,
       ),
     );
 
     final mediaQuery = MediaQuery.of(context);
+
+    final avoidBounds = DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
 
     return MediaQuery.removePadding(
       context: context,
@@ -125,13 +120,10 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
       child: Builder(
         builder: (context) => CustomSingleChildLayout(
           delegate: _PopupMenuRouteLayout(
-            position: position,
-            textDirection: Directionality.of(context),
+            buttonRect: buttonRect,
             padding: mediaQuery.padding,
-            avoidBounds: _avoidBounds(mediaQuery),
-            buttonSize: buttonSize,
+            avoidBounds: avoidBounds,
             menuPosition: menuPosition,
-            onChangeMenuAlignment: _onChangeMenuAlignment,
           ),
           child: capturedThemes.wrap(menu),
         ),
@@ -139,33 +131,79 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     );
   }
 
-  static Set<Rect> _avoidBounds(MediaQueryData mediaQuery) =>
-      DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
-
-  void _onChangeMenuAlignment(
-    bool? isInRightHalf,
-    bool isInBottomHalf,
+  /// Attempt to predict an animation alignment for [RoutePullDownMenu] using
+  /// a button's position.
+  static Alignment predictedAnimationAlignment(
+    BuildContext context,
+    Rect buttonRect,
   ) {
-    final Alignment alignment;
+    final buttonCenter = buttonRect.center;
 
-    if (isInRightHalf == null) {
-      alignment = isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
-    } else {
-      if (isInRightHalf && !isInBottomHalf) {
-        alignment = Alignment.topRight;
-      } else if (!isInRightHalf && !isInBottomHalf) {
-        alignment = Alignment.topLeft;
-      } else if (isInRightHalf && isInBottomHalf) {
-        alignment = Alignment.bottomRight;
-      } else if (!isInRightHalf && isInBottomHalf) {
-        alignment = Alignment.bottomLeft;
-      } else {
-        alignment = Alignment.topCenter;
-      }
+    final size = MediaQuery.of(context).size;
+
+    final heightCenter = size.height / 2;
+
+    final isInBottomHalf = buttonCenter.dy >= heightCenter;
+
+    final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
+
+    switch (horizontalPosition) {
+      case _MenuHorizontalPosition.right:
+        return isInBottomHalf ? Alignment.bottomRight : Alignment.topRight;
+      case _MenuHorizontalPosition.left:
+        return isInBottomHalf ? Alignment.bottomLeft : Alignment.topLeft;
+      case _MenuHorizontalPosition.center:
+        return isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
     }
+  }
 
-    WidgetsBinding.instance.scheduleFrameCallback(
-      (_) => _menuAlignmentNotifier.value = alignment,
+  /// Given a [BuildContext], return the Rect of the corresponding [RenderBox]'s
+  /// paintBounds in global coordinates.
+  static Rect getRect(BuildContext context) {
+    final renderBoxContainer = context.currentRenderBox;
+
+    return Rect.fromPoints(
+      renderBoxContainer.localToGlobal(
+        renderBoxContainer.paintBounds.topLeft,
+      ),
+      renderBoxContainer.localToGlobal(
+        renderBoxContainer.paintBounds.bottomRight,
+      ),
     );
+  }
+}
+
+enum _MenuHorizontalPosition {
+  left,
+  right,
+  center;
+
+  static _MenuHorizontalPosition get(
+    Size size,
+    Rect buttonRect,
+  ) {
+    final leftPosition = buttonRect.left;
+    final rightPosition = buttonRect.right;
+
+    final width = size.width;
+    final widthCenter = width / 2;
+
+    // Allowed threshold of screen side (left / right) for menu to be opened
+    // using "centered" alignment.
+    // Based on native compare with iOS 16 Simulator.
+    const threshold = 0.2744;
+
+    final leftCenteredThreshold = widthCenter * (1 - threshold);
+    final rightCenteredThreshold = widthCenter * threshold + widthCenter;
+
+    if (buttonRect.center.dx == widthCenter ||
+        (leftPosition >= leftCenteredThreshold &&
+            rightPosition <= rightCenteredThreshold)) {
+      return _MenuHorizontalPosition.center;
+    } else if (leftPosition < width - rightPosition) {
+      return _MenuHorizontalPosition.left;
+    } else {
+      return _MenuHorizontalPosition.right;
+    }
   }
 }

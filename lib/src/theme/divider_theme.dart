@@ -6,8 +6,8 @@ import '../../pull_down_button.dart';
 
 /// Defines the visual properties of the dividers in pull-down menus.
 ///
-/// Is used by [PullDownMenuDivider] and vertical dividers in
-/// [PullDownMenuActionsRow].
+/// Is used by [PullDownMenuDivider], [PullDownMenuDivider.large] and vertical
+/// dividers in [PullDownMenuActionsRow].
 ///
 /// All [PullDownMenuDividerTheme] properties are `null` by default. When null,
 /// the pull-down menu will use iOS 16 defaults specified in

@@ -4,14 +4,12 @@
 [![Pub Version](https://badgen.net/pub/v/pull_down_button?icon=flutter)](https://pub.dev/packages/pull_down_button)
 [![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 
-**pull_down_button** is a rework of Flutter's `PopupMenuButton` to be styled like
+**pull_down_button** is an attempt to bring
 [Pop-Up](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pop-up-buttons) and
 [Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons)
-Buttons from iOS 14+ with some additional customisation options.
+Buttons from iOS 14+ to Flutter with some additional customisation options.
 
----
-
-This package only tries to visually replicate native counterpart, some parts might be somewhat different.
+##### This package only tries to visually replicate native counterpart, some parts might be somewhat different.
 
 #### Flutter availability:
 
@@ -39,7 +37,7 @@ Since this package uses new Flutter feature `ThemeExtension` for theming, minimu
 
 ![PullDownButton example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/usage.png)
 
-`PullDownButton` is a widget used to show pull-down menu. Unlike `PopupMenuButton`, `PullDownButton` allows better customization of button that will be used to show pull-down menu via `buttonBuilder` builder function.
+`PullDownButton` is a widget used to show pull-down menu.
 
 While pull-down menu is opened, button from where this menu was called will have lower opacity.
 
@@ -67,16 +65,15 @@ PullDownButton(
 
 <details><summary>Properties table</summary>
 
-| Properties    | Description                                                                                              |
-| ------------- | -------------------------------------------------------------------------------------------------------- |
-| itemBuilder   | Called when the button is pressed to create the items to show in the menu.                               |
-| buttonBuilder | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
-| onCanceled    | Called when the user dismisses the pull-down menu.                                                       |
-| offset        | The offset is applied relative to the initial position set by the `position`.                            |
-| position      | Whether the popup menu is positioned above, over or under the popup menu button.                         |
-| itemsOrder    | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way.                  |
-| routeTheme    | The theme of pull-down menu box.                                                                         |
-| applyOpacity  | Whether to apply opacity on `buttonBuilder` when menu is open.                                           |
+| Properties       | Description                                                                                              |
+| ---------------- | -------------------------------------------------------------------------------------------------------- |
+| itemBuilder      | Called when the button is pressed to create the items to show in the menu.                               |
+| buttonBuilder    | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
+| onCanceled       | Called when the user dismisses the pull-down menu.                                                       |
+| animationBuilder | Custom animation for `buttonBuilder` when pull-down menu is opening or closing                           |
+| position         | Whether the popup menu is positioned above, over or under the popup menu button.                         |
+| itemsOrder       | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way.                  |
+| routeTheme       | The theme of pull-down menu box.                                                                         |
 
 </details>
 
@@ -86,10 +83,8 @@ The way `PullDownButton` positions its pull-down menu.
 
 Available options:
 
-- `over` - menu is positioned over an anchor. Will attempt to fill as much space as possible;
-- `under` - menu is positioned under an anchor and is forced to be under an anchor;
-- `above` - menu is positioned above an anchor and is forced to always be above an anchor;
 - `automatic` - menu is positioned under or above an anchor depending on side that has more space available.
+- `over` - menu is positioned under or above an anchor depending on side that has more space available. Also covers the button used to open the menu.
 
 ---
 
@@ -264,16 +259,14 @@ onPressed: () async {
 
 <details><summary>Properties table</summary>
 
-| Properties   | Description                                                                                          |
-| ------------ | ---------------------------------------------------------------------------------------------------- |
-| context      | For looking up `Navigator` for menu.                                                                 |
-| items        | List of `PullDownMenuEntry` widgets.                                                                 |
-| position     | The `RelativeRect` used to align top of the menu with top of the **position** rectangle.             |
-| buttonSize   | Used to let menu know about additional bottom offset to use while calculating final menu's position. |
-| menuPosition | Whether the popup menu is positioned above, over or under the calculated menu's position.            |
-| itemsOrder   | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way.              |
-| onCanceled   | Called when the user dismisses the pull-down menu.                                                   |
-| routeTheme   | The theme of pull-down menu box.                                                                     |
+| Properties | Description                                                                             |
+| ---------- | --------------------------------------------------------------------------------------- |
+| context    | For looking up `Navigator` for menu.                                                    |
+| items      | List of `PullDownMenuEntry` widgets.                                                    |
+| position   | The `Rect` used to align top of the menu with top of the **position** rectangle.        |
+| itemsOrder | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way. |
+| onCanceled | Called when the user dismisses the pull-down menu.                                      |
+| routeTheme | The theme of pull-down menu box.                                                        |
 
 </details>
 
@@ -345,13 +338,12 @@ ThemeData(
 
 <details><summary>PullDownButtonTheme</summary>
 
-| Properties   | Description                                                                   |
-| ------------ | ----------------------------------------------------------------------------- |
-| routeTheme   | Menu container theme (`PullDownMenuRouteTheme`).                              |
-| itemTheme    | `PullDownMenuItem` theme (`PullDownMenuItemTheme`).                           |
-| dividerTheme | `PullDownMenuDivider` theme (`PullDownMenuDividerTheme`).                     |
-| titleTheme   | `PullDownMenuTitle` theme (`PullDownMenuTitleTheme`).                         |
-| applyOpacity | Whether to apply opacity on `PullDownButton.buttonBuilder` when menu is open. |
+| Properties   | Description                                               |
+| ------------ | --------------------------------------------------------- |
+| routeTheme   | Menu container theme (`PullDownMenuRouteTheme`).          |
+| itemTheme    | `PullDownMenuItem` theme (`PullDownMenuItemTheme`).       |
+| dividerTheme | `PullDownMenuDivider` theme (`PullDownMenuDividerTheme`). |
+| titleTheme   | `PullDownMenuTitle` theme (`PullDownMenuTitleTheme`).     |
 
 </details>
 

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:pull_down_button/src/_internals/animation.dart';
 import 'package:pull_down_button/src/_internals/route.dart';
 
 import '../../pull_down_button.dart';
@@ -131,7 +132,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   ///
   /// If not provided `textStyle.color` from [itemTheme] will be used.
   ///
-  /// If [PullDownMenuItem] `isDestructive` then [iconColor] will be ignored;
+  /// If [PullDownMenuItem] `isDestructive` then [iconColor] will be ignored.
   final Color? iconColor;
 
   /// Custom icon widget of this [PullDownMenuItem].
@@ -168,6 +169,34 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     // route.
     if (ModalRoute.of(context) is PullDownMenuRoute) {
       Navigator.pop(context, onTap);
+    } else {
+      noPopTapHandler(context, onTap);
+    }
+  }
+
+  /// An additional, pre-made tap handler for [PullDownMenuItem].
+  ///
+  /// The behaviour is to pop the menu, wait until animation ends and than call
+  /// the [onTap].
+  ///
+  /// This might be useful if [onTap] results in action involved with changing
+  /// navigation stack (like opening new screen or showing dialog) so there is
+  /// a smoother transition between pull-down menu and said navigation stack
+  /// changing action.
+  static void delayedTapHandler(
+    BuildContext context,
+    VoidCallback? onTap,
+  ) {
+    // If menu was opened from [PullDownButton] or [showPullDownMenu] then pop
+    // route.
+    if (ModalRoute.of(context) is PullDownMenuRoute) {
+      Future<void> future() async {
+        await Future<void>.delayed(AnimationUtils.kMenuDuration);
+
+        onTap?.call();
+      }
+
+      Navigator.pop(context, future);
     } else {
       noPopTapHandler(context, onTap);
     }
@@ -334,7 +363,7 @@ class _LargeItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 8),
                 child: iconWidget ?? Icon(icon),
-              )
+              ),
           ],
         ),
       );
@@ -377,7 +406,7 @@ class _SelectableLargeItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 8),
                 child: iconWidget ?? Icon(icon),
-              )
+              ),
           ],
         ),
       );
@@ -410,7 +439,7 @@ class _MediumItem extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
               ),
-            )
+            ),
           ],
         ),
       );

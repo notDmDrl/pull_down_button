@@ -32,9 +32,9 @@ class MenuDecoration extends StatelessWidget {
       child: child,
     );
 
-    if (useBackdropFilter(backgroundColor)) {
+    if (BlurUtils.useBackdropFilter(backgroundColor)) {
       box = BackdropFilter(
-        filter: kPullDownMenuBlur,
+        filter: BlurUtils.pullDownMenuBlur,
         child: box,
       );
     }
@@ -46,7 +46,7 @@ class MenuDecoration extends StatelessWidget {
   }
 }
 
-/// Menu body - scrollbar, list of [PullDownMenuEntry].
+/// The menu body - scrollbar, list of [PullDownMenuEntry].
 @immutable
 @internal
 class MenuBody extends StatefulWidget {

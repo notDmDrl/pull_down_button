@@ -58,7 +58,6 @@ Widget body(CompareTest controlName) {
 
   return PullDownButton(
     itemBuilder: (_) => controlName.entries,
-    position: PullDownMenuPosition.automatic,
     buttonBuilder: ExampleButton.builder,
   );
 }
