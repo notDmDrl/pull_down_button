@@ -1,6 +1,13 @@
+## 0.8.2
+
+- Added `PullDownButton.buttonAnchor` to allow "anchoring" menu to specific button side [#22](https://github.com/notDmDrl/pull_down_button/issues/22).
+- Added an example for `PullDownButton.buttonAnchor`. See _Examples -> Advanced_ in the example app.
+- Renamed all nullable `of(context)` methods to `maybeOf(context)` to follow Flutter repo style.
+- Added haptic feedback when sliding between items (as seen in iOS).
+
 ## 0.8.1
 
-- Added precautions to menu position calculations for cases when `PullDownButton.buttonBuilder`'s height is bigger than screen height.
+- Added precautions to menu position calculations for cases when `PullDownButton.buttonBuilder`'s height is bigger than the screen height [#21](https://github.com/notDmDrl/pull_down_button/issues/21).
 
   Consider using `showPullDownMenu` if the end position calculated using those precautions is not what was desired.
 
@@ -9,31 +16,32 @@
 ### BREAKING CHANGES
 
 - Removed `PullDownMenuPosition.under` and `PullDownMenuPosition.above`. `PullDownMenuPosition.automatic` should be used instead (new default).
-- `showPullDownMenu` _position_ now requires `Rect` instead of `RelativeRect`, _buttonSize_ and _menuPosition_ were removed.
+- `showPullDownMenu` _position_ now requires `Rect` instead of `RelativeRect`; _buttonSize_ and _menuPosition_ were removed.
 - Removed `PullDownButton.applyOpacity` and `PullDownButtonTheme.applyOpacity`. To remove opacity animation from `PullDownButton.buttonBuilder` set `PullDownButton.animationBuilder` to **_null_**.
 - Removed `PullDownButton.offset`.
 
 #### General updates
 
-- Reworked the way pull-down menu calculates its position on screen:
+- Reworked the way the pull-down menu calculates its position on the screen:
   - Updated menu's scale transition alignment calculation to closely match native.
-  - If opened from left or right side of screen (but not directly near the edge), additionally move menu to the left or right by certain amount of pixels (based on native compare tool).
+  - If opened from the left or right side of the screen (but not directly near the edge), additionally move the menu to the left or right by a certain amount of pixels (based on the native compare tool).
 - Added `PullDownMenuItem.delayedTapHandler`.
-- Added `PullDownButton.animationBuilder` to allow customization of animation for `PullDownButton.buttonBuilder` when pull-down menu is opening or closing.
+- Added `PullDownButton.animationBuilder` to allow customization of animation for `PullDownButton.buttonBuilder` when the pull-down menu is opening or closing.
 
 #### Various stuff
 
 - Cleaned up internals.
-- Added an example for `PullDownButton.animationBuilder`. See _Examples -> Advanced_ in example app.
+- Added an example for `PullDownButton.animationBuilder`. See _Examples -> Advanced_ in the example app.
 
 ## 0.7.0
 
-- Added "continuous swipe" support to menus (see [demo](https://github.com/notDmDrl/pull_down_button/issues/19)) [#19](https://github.com/notDmDrl/pull_down_button/issues/19) and [#18](https://github.com/notDmDrl/pull_down_button/pull/18)
-  Thanks to [@iSa1vatore](https://github.com/iSa1vatore)
+- Added "continuous swipe" support to menus (see [demo](https://github.com/notDmDrl/pull_down_button/issues/19)) [#19](https://github.com/notDmDrl/pull_down_button/issues/19) and [#18](https://github.com/notDmDrl/pull_down_button/pull/18).
+
+  Thanks to [@iSa1vatore](https://github.com/iSa1vatore).
 
 ## 0.6.5
 
-- Added `PullDownMenu` - a pull-down menu as a simple widget, with no animations or adding routes to navigation stack [#17](https://github.com/notDmDrl/pull_down_button/issues/17).
+- Added `PullDownMenu` - a pull-down menu as a simple widget, with no animations or adding routes to the navigation stack [#17](https://github.com/notDmDrl/pull_down_button/issues/17).
 - Updated `PullDownMenuItem.defaultTapHandler` to work with `PullDownMenu`.
 
 #### Various stuff
@@ -44,7 +52,7 @@
 
 - Added `PullDownMenuItem.tapHandler` to allow customization of how
   `PullDownMenuItem.onTap` is handled [#16](https://github.com/notDmDrl/pull_down_button/issues/16).
-- Added an example for `PullDownMenuItem.tapHandler`. See _Examples -> Advanced_ in example app.
+- Added an example for `PullDownMenuItem.tapHandler`. See _Examples -> Advanced_ in the example app.
 
 ## 0.6.3+1
 
@@ -54,22 +62,23 @@
 ## 0.6.2
 
 - Added menu height transition and updated open animation curve [#14](https://github.com/notDmDrl/pull_down_button/issues/14) and [#15](https://github.com/notDmDrl/pull_down_button/pull/15).
-  Thanks to [@iSa1vatore](https://github.com/iSa1vatore)
+
+  Thanks to [@iSa1vatore](https://github.com/iSa1vatore).
 
 ## 0.6.1
 
-- Fix `PullDownMenuActionsRow` items content not being centered;
+- Fix the `PullDownMenuActionsRow` items content not being centered.
 
 ## 0.6.0
 
 - Added `PullDownMenuItemsOrder` - an ordering logic for `PullDownButton` and `showPullDownMenu` items.
 
-Using new native compare tool following things were updated:
+Using the new native compare tool following things were updated:
 
 - Updated padding values for `PullDownMenuItem`.
-- Updated open / close animation curves - open curve now includes "bouncy" effect native counterpart has [#13](https://github.com/notDmDrl/pull_down_button/issues/13).
+- Updated open/close animation curves - open curve now includes "bouncy" effect native counterpart has [#13](https://github.com/notDmDrl/pull_down_button/issues/13).
   - Note: new curves are still not 100% equal to native, but slightly more similar than before.
-- Apply additional small amount of padding for menu positioning if button is smaller than 44px.
+- Apply an additional small amount of padding for menu positioning if the button is smaller than 44px.
 
 #### Theme updates
 

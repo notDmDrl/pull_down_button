@@ -4,31 +4,31 @@ import '../../pull_down_button.dart';
 import '../_internals/menu_config.dart';
 import 'divider.dart';
 
-/// Displays a number of actions in a more compact way (in a row, 3 or 4 items
-/// depending on desired size).
+/// Displays several actions in a more compact way (in a row, 3 or 4 items
+/// depending on the desired size).
 ///
 /// To show a pull-down menu and create a button that shows a pull-down menu
 /// use [PullDownButton.buttonBuilder].
 ///
-/// Default height of [PullDownMenuActionsRow] depends on size.
+/// Default height of [PullDownMenuActionsRow] depends on the size.
 ///
-/// * For [PullDownMenuActionsRow.small] it is 44 pixels
+/// * For [PullDownMenuActionsRow.small] - it is 44 pixels
 /// ([kMinInteractiveDimensionCupertino]).
-/// * For [PullDownMenuActionsRow.medium] it is 66 pixels (150% of
+/// * For [PullDownMenuActionsRow.medium] - it is 66 pixels (150% of
 /// [kMinInteractiveDimensionCupertino]).
 ///
 /// See also:
 ///
-/// * [PullDownMenuItem], for a classic, full width pull-down menu entry for a
+/// * [PullDownMenuItem], for a classic, full-width pull-down menu entry for a
 ///   simple action.
 /// * preferredElementSize:
 ///   https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize
 @immutable
 class PullDownMenuActionsRow extends StatelessWidget
     implements PullDownMenuEntry {
-  /// Creates a row of maximum 4 actions, icon only.
+  /// Creates a row of 4 actions at max; icon only.
   ///
-  /// Actions have height of 44 logical pixels.
+  /// Actions have a height of 44 logical pixels.
   const PullDownMenuActionsRow.small({
     super.key,
     required this.items,
@@ -39,9 +39,9 @@ class PullDownMenuActionsRow extends StatelessWidget
           'Amount of [items] should not be more than 4',
         );
 
-  /// Creates a row of maximum 3 actions, icon and short (one worded) title.
+  /// Creates a row of 3 actions at max; icon and short (one-worded) title.
   ///
-  /// Actions have height of 66 logical pixels.
+  /// Actions have a height of 66 logical pixels.
   const PullDownMenuActionsRow.medium({
     super.key,
     required this.items,
@@ -65,27 +65,22 @@ class PullDownMenuActionsRow extends StatelessWidget
   /// [ActionsRowSizeConfig].
   final List<PullDownMenuItem> items;
 
-  /// The color of vertical divider used to split actions.
+  /// The color of the vertical divider used to split actions.
   ///
-  /// If this property is null then
+  /// If this property is null, then
   /// [PullDownMenuDividerTheme.dividerColor] from
   /// [PullDownButtonTheme.dividerTheme] is used.
   ///
-  /// If that's null then defaults from [PullDownMenuDividerTheme.defaults] are
+  /// If that's null, then defaults from [PullDownMenuDividerTheme.defaults] are
   /// used.
   final Color? dividerColor;
 
-  /// The height of descendant [PullDownMenuItem]s.
-  ///
-  /// Can be 44 pixels ([ElementSize.small]) or 66 pixels
-  /// ([ElementSize.medium]).
   double get _height {
     switch (_size) {
       case ElementSize.small:
         return kMinInteractiveDimensionCupertino;
       case ElementSize.medium:
-        return kMinInteractiveDimensionCupertino +
-            kMinInteractiveDimensionCupertino / 2;
+        return kMinInteractiveDimensionCupertino * 1.5;
       case ElementSize.large:
         throw UnsupportedError(
           '[PullDownMenuActionsRow] only supports `ElementSize.small` '

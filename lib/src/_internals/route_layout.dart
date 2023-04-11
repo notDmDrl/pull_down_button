@@ -1,13 +1,12 @@
 part of 'route.dart';
 
-/// Minimum space from horizontal screen edges for pull-down menu to be
+/// Minimum space from horizontal screen edges for the pull-down menu to be
 /// rendered from.
 const double _kMenuScreenPadding = 8;
 
 /// Positioning and size of the menu on the screen.
 @immutable
 class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
-  /// Creates [_PopupMenuRouteLayout].
   const _PopupMenuRouteLayout({
     required this.padding,
     required this.avoidBounds,
@@ -51,9 +50,9 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   Offset getPositionForChild(Size size, Size childSize) {
     final childWidth = childSize.width;
 
-    // Moves additional desired `x` by 16px left or right if menu's alignment
+    // Additionally moves desired `x` by 16px left or right if menu's alignment
     // is not considered "centered".
-    // Based on native compare with iOS 16 Simulator.
+    // Based on native comparison with iOS 16 Simulator.
     const additionalX = 16;
 
     final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);

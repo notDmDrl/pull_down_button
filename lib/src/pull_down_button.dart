@@ -4,41 +4,42 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../pull_down_button.dart';
-import '_internals/animation.dart';
+import '_internals/extensions.dart';
 import '_internals/menu_config.dart';
 import '_internals/route.dart';
 
 /// Used to configure how the [PullDownButton] positions its pull-down menu.
 ///
 /// If the size of a button widget (which is used to open the menu via
-/// [PullDownButton.buttonBuilder]) is bigger than the size of device screen,
-/// [PullDownButton] will attempt to fit menu inside the screen.
+/// [PullDownButton.buttonBuilder]) is bigger than the size of the device
+/// screen, [PullDownButton] will attempt to fit the menu inside the screen.
 ///
-/// If end position is not what was desired, consider using [showPullDownMenu].
+/// If the end position is not what was desired, consider using
+/// [showPullDownMenu].
 enum PullDownMenuPosition {
-  /// Menu is positioned under or above an anchor depending on side that has
-  /// more space available.
+  /// Menu is positioned under or above an anchor depending on the side that
+  /// has more space available.
   ///
-  /// If positioned under anchor - downwards movement will be used, if
-  /// positioned above - upwards movement will be used.
+  /// If positioned under anchor - downward movement will be used,
+  /// if positioned above - upwards movement will be used.
   automatic,
 
-  /// Menu is positioned under or above an anchor depending on side that has
-  /// more space available but also covers the button used to open the menu.
+  /// Menu is positioned under or above an anchor depending on the side that
+  /// has more space available but also covers the button used to open the menu.
   ///
-  /// If there is no available space to place menu over an anchor with
-  /// downwards movement, menu will be placed over an anchor with upwards
+  /// If there is no available space to place the menu over an anchor with a
+  /// downward movement, the menu will be placed over an anchor with an upwards
   /// movement.
   over,
 }
 
-/// Used to configure how the [PullDownButton.itemBuilder] orders it's items.
+/// Used to configure how the [PullDownButton.itemBuilder] orders its items.
 enum PullDownMenuItemsOrder {
   /// Items are always ordered from item `0` to item `N` in
   /// [PullDownButton.itemBuilder] (from top to bottom).
   ///
-  /// For example, list of items (1, 2, 3) will result in menu rendering them
-  /// like this:
+  /// For example, a list of items (1, 2, 3) will result in the menu rendering
+  /// them like this:
   ///
   /// ```
   /// -----
@@ -54,8 +55,8 @@ enum PullDownMenuItemsOrder {
   /// Items are always ordered from item `N` to item `0` in
   /// [PullDownButton.itemBuilder] (from bottom to top).
   ///
-  /// For example, list of items (1, 2, 3) will result in menu rendering them
-  /// like this:
+  /// For example, a list of items (1, 2, 3) will result in the menu rendering
+  /// them like this:
   ///
   /// ```
   /// -----
@@ -68,14 +69,14 @@ enum PullDownMenuItemsOrder {
   /// ```
   upwards,
 
-  /// Items are ordered depending on menu's [PullDownMenuPosition] (and its
+  /// Items are ordered depending on the menu's [PullDownMenuPosition] (and its
   /// potential overflow). Based on SwiftUI *Menu* behavior.
   ///
-  /// If the menu is being opened with downwards movement items will be ordered
+  /// If the menu is being opened with downward movement items will be ordered
   /// from `0` to item `N` in [PullDownButton.itemBuilder] (from top to bottom).
   ///
-  /// For example, list of items (1, 2, 3) will result in menu rendering them
-  /// like this:
+  /// For example, a list of items (1, 2, 3) will result in the menu rendering
+  /// them like this:
   ///
   /// ```
   /// -----
@@ -90,8 +91,8 @@ enum PullDownMenuItemsOrder {
   /// If the menu is being opened with upwards movement items will be ordered
   /// from `N` to item `0` in [PullDownButton.itemBuilder] (from bottom to top).
   ///
-  /// For example, list of items (1, 2, 3) will result in menu rendering them
-  /// like this:
+  /// For example, a list of items (1, 2, 3) will result in the menu rendering
+  /// them like this:
   ///
   /// ```
   /// -----
@@ -103,6 +104,41 @@ enum PullDownMenuItemsOrder {
   /// -----
   /// ```
   automatic,
+}
+
+/// Used to provide information about menu animation state in
+/// [PullDownButton.animationBuilder].
+///
+/// Used by [PullDownButtonAnimationBuilder].
+enum PullDownButtonAnimationState {
+  /// The menu is closed.
+  closed,
+
+  /// The menu is opened by calling [showMenu] using
+  /// [PullDownButton.buttonBuilder]'s button widget.
+  opened,
+}
+
+/// Used to configure what horizontal part of the
+/// [PullDownButton.buttonBuilder] will be considered as an anchor to open
+/// the menu from.
+enum PullDownMenuAnchor {
+  /// The menu will be "opened" from the [PullDownButton.buttonBuilder]
+  /// start edge.
+  ///
+  /// A [TextDirection] must be available to determine if the start is the left
+  /// or the right.
+  start,
+
+  /// The menu will be "opened" from the [PullDownButton.buttonBuilder] center.
+  center,
+
+  /// The menu will be "opened" from the [PullDownButton.buttonBuilder]
+  /// end edge.
+  ///
+  /// A [TextDirection] must be available to determine if the start is the left
+  /// or the right.
+  end,
 }
 
 /// Signature for the callback invoked when a [PullDownButton] is dismissed
@@ -127,21 +163,8 @@ typedef PullDownMenuButtonBuilder = Widget Function(
   Future<void> Function() showMenu,
 );
 
-/// Used to provide information about menu animation state in
-/// [PullDownButton.animationBuilder].
-///
-/// Used by [PullDownButtonAnimationBuilder].
-enum PullDownButtonAnimationState {
-  /// Menu is closed.
-  closed,
-
-  /// Menu is opened by calling [showMenu] using
-  /// [PullDownButton.buttonBuilder]'s button widget.
-  opened,
-}
-
 /// Signature used by [PullDownButton] to create animation for
-/// [PullDownButton.buttonBuilder] when pull-down menu is opened.
+/// [PullDownButton.buttonBuilder] when the pull-down menu is opened.
 ///
 /// [child] is a button created with [PullDownButton.buttonBuilder].
 ///
@@ -166,7 +189,7 @@ typedef PullDownButtonAnimationBuilder = Widget Function(
 /// * [PullDownMenuActionsRow], a more compact way to show multiple pull-down
 ///   menu entries for a simple action.
 /// * [PullDownButtonTheme], a pull-down button and menu theme configuration.
-/// * [showPullDownMenu], a alternative way of displaying a pull-down menu.
+/// * [showPullDownMenu], an alternative way of displaying a pull-down menu.
 /// * [PullDownMenu], a pull-down menu box without any route animations.
 @immutable
 class PullDownButton extends StatefulWidget {
@@ -178,64 +201,73 @@ class PullDownButton extends StatefulWidget {
     this.onCanceled,
     this.position = PullDownMenuPosition.automatic,
     this.itemsOrder = PullDownMenuItemsOrder.downwards,
+    this.buttonAnchor,
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
   ///
-  /// If items contains at least one tappable menu item of type
+  /// If items contain at least one tappable menu item of type
   /// [PullDownMenuItem.selectable] all of [PullDownMenuItem]s should also be of
   /// type [PullDownMenuItem.selectable].
   ///
   /// See https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
   ///
   /// In order to achieve it all [PullDownMenuItem]s will automatically switch
-  /// to "selectable" view.
+  /// to the "selectable" view.
   final PullDownMenuItemBuilder itemBuilder;
 
-  /// Builder that provides [BuildContext] as well as `showMenu` function to
+  /// Builder that provides [BuildContext] as well as the `showMenu` function to
   /// pass to any custom button widget.
   final PullDownMenuButtonBuilder buttonBuilder;
 
   /// Called when the user dismisses the pull-down menu.
   final PullDownMenuCanceled? onCanceled;
 
-  /// Whether the popup menu is positioned above, over or under the popup menu
-  /// button.
+  /// Whether the pull-down menu is positioned above, over, or under the
+  /// [buttonBuilder].
   ///
-  /// Defaults to [PullDownMenuPosition.automatic] which makes the popup menu
-  /// appear directly under or above the button that was used to create it
-  /// (based on side that has more space available).
+  /// Defaults to [PullDownMenuPosition.automatic] which makes the
+  /// pull-down menu appear directly under or above the button that was used to
+  /// create it (based on the side that has more space available).
   final PullDownMenuPosition position;
 
-  /// Whether the popup menu orders its items from [itemBuilder] in downwards
-  /// or upwards way.
+  /// Whether the pull-down menu orders its items from [itemBuilder] in a
+  /// downward or upwards way.
   ///
   /// Defaults to [PullDownMenuItemsOrder.downwards].
   final PullDownMenuItemsOrder itemsOrder;
 
-  /// Theme of route used to display pull-down menu launched from this
+  /// Whether the pull-down menu is anchored to the center, left, or right side
+  /// of the [buttonBuilder].
+  ///
+  /// If `null` no anchoring will be involved.
+  ///
+  /// Defaults to `null`.
+  final PullDownMenuAnchor? buttonAnchor;
+
+  /// Theme of the route used to display pull-down menu launched from this
   /// [PullDownButton].
   ///
-  /// If this property is null then [PullDownMenuRouteTheme] from
+  /// If this property is null, then [PullDownMenuRouteTheme] from
   /// [PullDownButtonTheme.routeTheme] is used.
   ///
-  /// If that's null then [PullDownMenuRouteTheme.defaults] is used.
+  /// If that's null, then [PullDownMenuRouteTheme.defaults] is used.
   final PullDownMenuRouteTheme? routeTheme;
 
-  /// Custom animation for [buttonBuilder] when pull-down menu is opening or
+  /// Custom animation for [buttonBuilder] when the pull-down menu is opening or
   /// closing.
   ///
   /// Defaults to [defaultAnimationBuilder] which applies opacity on
   /// [buttonBuilder] as it is in iOS.
   ///
-  /// If this property is null then no animation will be used.
+  /// If this property is null, then no animation will be used.
   final PullDownButtonAnimationBuilder? animationBuilder;
 
   /// Default animation builder for [animationBuilder].
   ///
-  /// If [state] is [PullDownButtonAnimationState.opened], applies opacity
+  /// If [state] is [PullDownButtonAnimationState.opened], apply opacity
   /// on [child] as it is in iOS.
   static Widget defaultAnimationBuilder(
     BuildContext context,
@@ -244,13 +276,11 @@ class PullDownButton extends StatefulWidget {
   ) {
     final isPressed = state == PullDownButtonAnimationState.opened;
 
-    // All of the values where eyeballed using iOS 16 Simulator.
+    // All of the values where eyeballed using the iOS 16 Simulator.
     return AnimatedOpacity(
       opacity: isPressed ? 0.4 : 1,
       duration: Duration(milliseconds: isPressed ? 100 : 200),
-      curve: isPressed
-          ? Curves.fastLinearToSlowEaseIn
-          : AnimationUtils.kCurveReverse,
+      curve: isPressed ? Curves.fastLinearToSlowEaseIn : Curves.easeIn,
       child: child,
     );
   }
@@ -263,9 +293,12 @@ class _PullDownButtonState extends State<PullDownButton> {
   PullDownButtonAnimationState state = PullDownButtonAnimationState.closed;
 
   Future<void> showButtonMenu() async {
-    final button = PullDownMenuRoute.getRect(context);
+    var button = context.getRect;
+    if (widget.buttonAnchor != null) {
+      button = _anchorToButtonPart(context, button, widget.buttonAnchor!);
+    }
     final animationAlignment =
-        PullDownMenuRoute.predictedAnimationAlignment(context, button);
+        PullDownMenuRoute.animationAlignment(context, button);
 
     final items = widget.itemBuilder(context);
 
@@ -308,35 +341,45 @@ class _PullDownButtonState extends State<PullDownButton> {
 
 /// Displays a pull-down menu with [items] at [position].
 ///
-/// [items] should be not empty for menu to be shown.
+/// [items] should be not empty for the menu to be shown.
 ///
-/// If [items] contains at least one tappable menu item of type
+/// If [items] contain at least one tappable menu item of type
 /// [PullDownMenuItem.selectable] all of [PullDownMenuItem]s should also be of
 /// type [PullDownMenuItem.selectable].
 ///
 /// See https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
 ///
 /// In order to achieve it all [PullDownMenuItem]s will automatically switch
-/// to "selectable" view.
+/// to the "selectable" view.
 ///
-/// Desired [position] is used to align top of the menu with top of the
+/// Desired [position] is used to align the top of the menu with the top of the
 /// [position] rectangle.
 ///
-/// [itemsOrder] is used to define how menu will order its [items] depending on
-/// calculated menu's position. Defaults to
+/// [itemsOrder] is used to define how the menu will order its [items] depending
+/// on the calculated menu's position. Defaults to
 /// [PullDownMenuItemsOrder.downwards].
 ///
 /// [onCanceled] is called when the user dismisses the pull-down menu.
 ///
-/// [routeTheme] is used to define theme of route used to display pull-down menu
-/// launched from this function.
+/// [routeTheme] is used to define the theme of the route used to display
+/// the pull-down menu launched from this function.
 ///
 /// See also:
 ///
+/// * [PullDownMenuItem], a pull-down menu entry for a simple action.
+/// * [PullDownMenuItem.selectable], a pull-down menu entry for a selection
+///   action.
+/// * [PullDownMenuDivider], a pull-down menu entry for a divider.
+/// * [PullDownMenuDivider.large], a pull-down menu entry that is a large
+///   divider.
+/// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
+/// * [PullDownMenuActionsRow], a more compact way to show multiple pull-down
+///   menu entries for a simple action.
+/// * [PullDownButtonTheme], a pull-down button and menu theme configuration.
 /// * [PullDownButton], a default way of displaying a pull-down menu.
 /// * [showMenu], a material design alternative.
-/// * [PullDownMenu], an another alternative way of displaying a pull-down
-/// menu.
+/// * [PullDownMenu], another alternative way of displaying a pull-down
+///   menu.
 Future<void> showPullDownMenu({
   required BuildContext context,
   required List<PullDownMenuEntry> items,
@@ -357,12 +400,11 @@ Future<void> showPullDownMenu({
     itemsOrder: itemsOrder,
     routeTheme: routeTheme,
     hasLeading: hasLeading,
-    animationAlignment:
-        PullDownMenuRoute.predictedAnimationAlignment(context, position),
+    animationAlignment: PullDownMenuRoute.animationAlignment(context, position),
   );
 
   // TODO(notDmDrl): this was not available at Flutter 3.0.0 release,
-  // uncomment after min dart version for package is 3.0?
+  // uncomment after min dart version for a package is 3.0?
   // if (!context.mounted) return;
 
   if (action != null) {
@@ -373,7 +415,7 @@ Future<void> showPullDownMenu({
 }
 
 /// Is used internally by [PullDownButton] and [showPullDownMenu] to show
-/// pull-down menu.
+/// the pull-down menu.
 Future<VoidCallback?> _showMenu<VoidCallback>({
   required BuildContext context,
   required Rect buttonRect,
@@ -401,6 +443,38 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
       itemsOrder: itemsOrder,
       alignment: animationAlignment,
     ),
+  );
+}
+
+Rect _anchorToButtonPart(
+  BuildContext context,
+  Rect buttonRect,
+  PullDownMenuAnchor anchor,
+) {
+  final textDirection = Directionality.of(context);
+
+  final double side;
+
+  switch (anchor) {
+    case PullDownMenuAnchor.start:
+      side = textDirection == TextDirection.ltr
+          ? buttonRect.left
+          : buttonRect.right;
+      break;
+    case PullDownMenuAnchor.center:
+      side = buttonRect.center.dx;
+      break;
+    case PullDownMenuAnchor.end:
+      side = textDirection == TextDirection.ltr
+          ? buttonRect.right
+          : buttonRect.left;
+  }
+
+  return Rect.fromLTRB(
+    side,
+    buttonRect.top,
+    side,
+    buttonRect.bottom,
   );
 }
 

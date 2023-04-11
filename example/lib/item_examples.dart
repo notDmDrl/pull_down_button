@@ -1,9 +1,9 @@
-import 'package:example/src/tap_handler.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:pull_down_button/pull_down_button.dart';
 
 import 'setup.dart';
 import 'src/actions_row.dart';
+import 'src/anchor.dart';
 import 'src/animation_builder.dart';
 import 'src/divider.dart';
 import 'src/item.dart';
@@ -11,6 +11,7 @@ import 'src/position.dart';
 import 'src/pull_down_menu.dart';
 import 'src/selectable_item.dart';
 import 'src/show_menu.dart';
+import 'src/tap_handler.dart';
 import 'src/theming_custom.dart';
 import 'src/theming_default.dart';
 import 'src/title.dart';
@@ -117,6 +118,10 @@ class ItemExamples extends StatelessWidget {
                   _Tile(
                     title: 'PullDownButton.animationBuilder',
                     destination: AnimationBuilder(),
+                  ),
+                  _Tile(
+                    title: 'PullDownMenuAnchor',
+                    destination: Anchor(),
                   )
                 ],
               ),

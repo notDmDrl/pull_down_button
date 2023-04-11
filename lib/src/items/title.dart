@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../pull_down_button.dart';
 
 /// The (optional) title of the pull-down menu that is usually displayed at the
-/// top of pull-down menu.
+/// top of the pull-down menu.
 ///
 /// [title] is typically a [Text] widget.
 @immutable
@@ -19,16 +19,16 @@ class PullDownMenuTitle extends StatelessWidget implements PullDownMenuEntry {
   /// [Text.textAlign] set to [TextAlign.center].
   final Widget title;
 
-  /// The text style of title.
+  /// The text style of the title.
   ///
-  /// If this property is null then [PullDownButtonTheme.titleTheme] from
+  /// If this property is null, then [PullDownButtonTheme.titleTheme] from
   /// [PullDownButtonTheme] theme extension is used.
   ///
-  /// If that's null then defaults from [PullDownMenuTitleTheme.defaults] are
+  /// If that's null, then defaults from [PullDownMenuTitleTheme.defaults] are
   /// used.
   final TextStyle? titleStyle;
 
-  /// Eyeballed from iOS 16.
+  /// Eyeballed from iOS 16 Simulator.
   static const double kPullDownMenuTitleHeight = 30;
 
   @override

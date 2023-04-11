@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 import '../../pull_down_button.dart';
 import 'blur.dart';
 
-/// Menu container - shape, blur, color.
+/// A widget used to create pull-down menu container.
 @immutable
 @internal
 class MenuDecoration extends StatelessWidget {
@@ -46,7 +46,7 @@ class MenuDecoration extends StatelessWidget {
   }
 }
 
-/// The menu body - scrollbar, list of [PullDownMenuEntry].
+/// A widget used to create a scrollable body for pull-down menu items.
 @immutable
 @internal
 class MenuBody extends StatefulWidget {

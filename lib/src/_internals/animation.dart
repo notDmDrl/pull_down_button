@@ -4,20 +4,25 @@ import 'package:meta/meta.dart';
 import '../../pull_down_button.dart';
 
 /// A set of animation utils.
+///
+/// All of the values were eyeballed using the iOS 16 Simulator.
 @internal
 abstract class AnimationUtils {
-  // TODO(notDmdrl): if it ever be decided to bump minimum dart version to 3.0
-  // migrate to class modifiers
+  // TODO(notDmdrl): if it ever is decided to bump the minimum dart version to
+  // 3.0 migrate to class modifiers
   // `abstract final class AnimationUtils` and remove this constructor.
   const AnimationUtils._();
 
   /// Pull-down menu animation duration.
   static const Duration kMenuDuration = Duration(milliseconds: 300);
 
-  /// Pull-down menu animation curve.
+  /// Pull-down menu animation curve used on menu open.
+  ///
+  /// A cubic animation curve that starts slowly and ends with an overshoot of
+  /// its bounds before reaching its end.
   static const Curve kCurve = Cubic(0.075, 0.82, 0.4, 1.065);
 
-  /// Pull-down menu reverse animation curve.
+  /// Pull-down menu animation curve used on menu close.
   static const Curve kCurveReverse = Curves.easeIn;
 
   /// A shadow tween for [PullDownMenuRouteTheme.beginShadow] and
@@ -36,7 +41,6 @@ class ClampedAnimation extends Animation<double>
   /// Creates [ClampedAnimation].
   ClampedAnimation(this.parent);
 
-  /// The curve to clamp.
   @override
   final Animation<double> parent;
 

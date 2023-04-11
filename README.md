@@ -9,11 +9,11 @@
 [Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons)
 Buttons from iOS 14+ to Flutter with some additional customisation options.
 
-##### This package only tries to visually replicate native counterpart, some parts might be somewhat different.
+##### This package only tries to visually replicate the native counterpart, some parts might be somewhat different.
 
 #### Flutter availability:
 
-Since this package uses new Flutter feature `ThemeExtension` for theming, minimum supported version is stable **3.0.0**.
+Since this package uses the new Flutter feature `ThemeExtension` for theming, the minimum supported version is stable **3.0.0**.
 
 ---
 
@@ -37,9 +37,9 @@ Since this package uses new Flutter feature `ThemeExtension` for theming, minimu
 
 ![PullDownButton example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/usage.png)
 
-`PullDownButton` is a widget used to show pull-down menu.
+`PullDownButton` is a widget used to show the pull-down menu.
 
-While pull-down menu is opened, button from where this menu was called will have lower opacity.
+While the pull-down menu is opened, the button from where this menu was called will have lower opacity.
 
 ```dart
 PullDownButton(
@@ -70,10 +70,11 @@ PullDownButton(
 | itemBuilder      | Called when the button is pressed to create the items to show in the menu.                               |
 | buttonBuilder    | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
 | onCanceled       | Called when the user dismisses the pull-down menu.                                                       |
-| animationBuilder | Custom animation for `buttonBuilder` when pull-down menu is opening or closing                           |
-| position         | Whether the popup menu is positioned above, over or under the popup menu button.                         |
-| itemsOrder       | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way.                  |
-| routeTheme       | The theme of pull-down menu box.                                                                         |
+| animationBuilder | Custom animation for `buttonBuilder` when the pull-down menu is opening or closing                       |
+| position         | Whether the pull-down menu is positioned above, over, or under the pull-down menu button.                |
+| itemsOrder       | Whether the pull-down menu orders its items from `itemBuilder` in downward or upwards way.               |
+| buttonAnchor     | Whether the pull-down menu is anchored to the center, left, or right side of `buttonBuilder`             |
+| routeTheme       | The theme of the pull-down menu box.                                                                     |
 
 </details>
 
@@ -83,8 +84,8 @@ The way `PullDownButton` positions its pull-down menu.
 
 Available options:
 
-- `automatic` - menu is positioned under or above an anchor depending on side that has more space available.
-- `over` - menu is positioned under or above an anchor depending on side that has more space available. Also covers the button used to open the menu.
+- `automatic` - menu is positioned under or above an anchor depending on the side that has more space available.
+- `over` - menu is positioned under or above an anchor depending on the side that has more space available. Also covers the button used to open the menu.
 
 ---
 
@@ -92,7 +93,7 @@ Available options:
 
 ![PullDownMenuItem example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/item.png)
 
-`PullDownMenuItem` is a widget used to create cupertino style pull-down menu item.
+`PullDownMenuItem` is a widget used to create cupertino-style pull-down menu item.
 
 ```dart
 PullDownMenuItem(
@@ -114,7 +115,7 @@ PullDownMenuItem(
 | iconColor     | Trailing icon's color.                           |
 | iconWidget    | Custom trailing widget.                          |
 | isDestructive | Whether this item represents destructive action. |
-| itemTheme     | The theme of menu item.                          |
+| itemTheme     | The theme of the menu item.                      |
 
  </details>
 
@@ -124,7 +125,7 @@ PullDownMenuItem(
 
 ![PullDownMenuItem.selectable example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/selectable_item.png)
 
-`PullDownMenuItem.selectable` is a widget used to create cupertino style pull-down menu item with selection state.
+`PullDownMenuItem.selectable` is a widget used to create cupertino-style pull-down menu item with selection state.
 
 ```dart
 PullDownMenuItem.selectable(
@@ -137,11 +138,11 @@ PullDownMenuItem.selectable(
 
 ##### Note:
 
-Based on [guidelines](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons), if menu items contains at least one tappable menu item of type `PullDownMenuItem.selectable` all of `PullDownMenuItem`s should also be of type `PullDownMenuItem.selectable` (to insert additional padding so all items have same). Although, manual change of all `PullDownMenuItem`s is not needed, it is done automatically.
+Based on [guidelines](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons), if menu items contain at least one tappable menu item of type `PullDownMenuItem.selectable` all of `PullDownMenuItem`s should also be of type `PullDownMenuItem.selectable` (to insert additional padding so all items have same). Although the manual change of all `PullDownMenuItem`s is not needed, it is done automatically.
 
 <details><summary>Properties table</summary>
 
-`PullDownMenuItem.selectable` uses all of `PullDownMenuItem` properties as well as a boolean value `selected`, to indicate whether menu item is selected or not.
+`PullDownMenuItem.selectable` uses all of `PullDownMenuItem` properties as well as a boolean value `selected`, to indicate whether the menu item is selected or not.
 
 </details>
 
@@ -151,7 +152,7 @@ Based on [guidelines](https://developer.apple.com/design/human-interface-guideli
 
 ![PullDownMenuActionsRow example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/actions_row.png)
 
-`PullDownMenuActionsRow` is a widget used to create cupertino style pull-down menu row of actions
+`PullDownMenuActionsRow` is a widget used to create cupertino-style pull-down menu row of actions
 ([small or medium size](https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize)).
 
 ```dart
@@ -179,12 +180,12 @@ PullDownMenuActionsRow.medium(
 ```
 
 `PullDownMenuItem` is used to populate `PullDownMenuActionsRow.items`.
-Depending on `PullDownMenuActionsRow` size might be either icon only or icon and title in vertical array
+Depending on `PullDownMenuActionsRow`s size, `PullDownMenuItem` might be either icon only or icon and title in a vertical array.
 
-| Properties   | Description                                      |
-| ------------ | ------------------------------------------------ |
-| items        | List of `PullDownMenuItem`.                      |
-| dividerColor | Color of vertical dividers used to split `item`. |
+| Properties   | Description                                       |
+| ------------ | ------------------------------------------------- |
+| items        | List of `PullDownMenuItem`.                       |
+| dividerColor | Color of vertical dividers used to split `items`. |
 
 ---
 
@@ -192,7 +193,7 @@ Depending on `PullDownMenuActionsRow` size might be either icon only or icon and
 
 ![PullDownMenuDivider example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/dividers.png)
 
-`PullDownMenuDivider` is a widget used to create cupertino style pull-down menu divider (small or large).
+`PullDownMenuDivider` is a widget used to create cupertino-style pull-down menu divider (small or large).
 
 ```dart
 const PullDownMenuDivider(),
@@ -204,7 +205,7 @@ or to create large divider:
 const PullDownMenuDivider.large(),
 ```
 
-There is also convenience method to wrap multiple menu items with small dividers:
+There is also convenient method to wrap multiple menu items with small dividers:
 
 ```dart
 ...PullDownMenuDivider.wrapWithDivider([
@@ -228,7 +229,7 @@ There is also convenience method to wrap multiple menu items with small dividers
 
 ![PullDownMenuTitle example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title.png)
 
-`PullDownMenuTitle` is a widget used to create cupertino style pull-down menu title (usually at the top of menu).
+`PullDownMenuTitle` is a widget used to create cupertino-style pull-down menu title (usually at the top of menu).
 
 ```dart
 const PullDownMenuTitle(title: Text('Menu title')),
@@ -259,20 +260,20 @@ onPressed: () async {
 
 <details><summary>Properties table</summary>
 
-| Properties | Description                                                                             |
-| ---------- | --------------------------------------------------------------------------------------- |
-| context    | For looking up `Navigator` for menu.                                                    |
-| items      | List of `PullDownMenuEntry` widgets.                                                    |
-| position   | The `Rect` used to align top of the menu with top of the **position** rectangle.        |
-| itemsOrder | Whether the popup menu orders its items from `itemBuilder` in downwards or upwards way. |
-| onCanceled | Called when the user dismisses the pull-down menu.                                      |
-| routeTheme | The theme of pull-down menu box.                                                        |
+| Properties | Description                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------- |
+| context    | For looking up `Navigator` for the menu.                                                    |
+| items      | List of `PullDownMenuEntry` widgets.                                                        |
+| position   | The `Rect` is used to align the top of the menu with the top of the **position** rectangle. |
+| itemsOrder | Whether the popup menu orders its items from `itemBuilder` in a downward or upwards way.    |
+| onCanceled | Called when the user dismisses the pull-down menu.                                          |
+| routeTheme | The theme of the pull-down menu box.                                                        |
 
 </details>
 
 ### PullDownMenu
 
-An another alternative way of displaying pull-down menu as a simple widget, with no animations or adding routes to navigation stack.
+Another alternative way of displaying the pull-down menu as a simple widget, with no animations or adding routes to the navigation stack.
 
 ```dart
 PullDownMenu(
@@ -303,9 +304,7 @@ PullDownMenu(
 
 ## Theming
 
-This package also provides additional customisation. By default, iOS16 theme is used, but it is also possible to override defaults with widget properties (see above) or with `PullDownButtonTheme` theme extension.
-
-#### Default theme
+This package also provides additional customization. By default, the iOS 16 theme is used, but it is also possible to override defaults with widget properties (see above) or with `PullDownButtonTheme` theme extension.
 
 | Light Theme                                                                                                               | Dark Theme                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -334,7 +333,7 @@ ThemeData(
 ),
 ```
 
-`PullDownButtonTheme` uses a set of sub-themes (for items, dividers, menu itself etc.) to define needed theme. See below for every property each sub-theme provides.
+`PullDownButtonTheme` uses a set of sub-themes (for items, dividers, the menu itself, etc.) to define the needed theme. See below for every property each sub-theme provides.
 
 <details><summary>PullDownButtonTheme</summary>
 
@@ -349,16 +348,16 @@ ThemeData(
 
 <details><summary>PullDownMenuRouteTheme</summary>
 
-| Properties      | Description                                                         |
-| --------------- | ------------------------------------------------------------------- |
-| backgroundColor | The background color of pull-down menu.                             |
-| borderRadius    | The border radius of the pull-down menu.                            |
-| beginShadow     | The pull-down menu shadow at the moment of menu being opened.       |
-| endShadow       | The pull-down menu shadow at the moment of menu being fully opened. |
-| width           | Pull-down menu width.                                               |
+| Properties      | Description                                                       |
+| --------------- | ----------------------------------------------------------------- |
+| backgroundColor | The background color of the pull-down menu.                       |
+| borderRadius    | The border radius of the pull-down menu.                          |
+| beginShadow     | The pull-down menu shadow at the moment of the menu being opened. |
+| endShadow       | The pull-down menu shadow at the moment the menu is fully opened. |
+| width           | Pull-down menu width.                                             |
 
-`backgroundColor` usually has opacity in range of **0.7-0.8** so that menu has blur effect.
-If `backgroundColor`'s is fully opaque (opacity set to **1**), no blur effect will be applied.
+`backgroundColor` usually has opacity in the range of **0.7-0.8** so that menu has a blur effect.
+If `backgroundColor` is fully opaque (opacity set to **1**), no blur effect will be applied.
 
 </details>
 
@@ -399,7 +398,7 @@ If `backgroundColor`'s is fully opaque (opacity set to **1**), no blur effect wi
 
 #### PullDownButtonInheritedTheme
 
-If defining `PullDownButtonTheme` in `ThemeData` is not possible, for example if you are using `CupertinoApp`, you can use `PullDownButtonInheritedTheme`:
+If defining `PullDownButtonTheme` in `ThemeData` is not possible, for example, if you are using `CupertinoApp`, you can use `PullDownButtonInheritedTheme`:
 
 ```dart
 CupertinoApp(

@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-/// Adds continuous swipe support to menus.
+import 'gesture_detector.dart';
+
+/// A widget that tracks an [SwipeState] of current global "pan" offset.
+///
+/// [SwipeRegion] is used to track and provide said [SwipeState] to all
+/// descendants in [child] widget.
+///
+/// To provide [SwipeState] updates to descendants an [InheritedNotifier] is
+/// used.
+///
+/// Descendants listen to [SwipeState] changes using [SwipeState.maybeOf].
 @immutable
 @internal
-class MenuContinuousSwipe extends StatefulWidget {
-  /// Creates [MenuContinuousSwipe] to support continuous swipe for menus.
-  const MenuContinuousSwipe({
+class SwipeRegion extends StatefulWidget {
+  /// Creates [SwipeRegion].
+  const SwipeRegion({
     super.key,
     required this.child,
   });
 
-  /// Menu widget that requires a continuous swipe.
+  /// The widget below this widget in the tree.
   final Widget child;
 
   @override
-  State<MenuContinuousSwipe> createState() => MenuContinuousSwipeState();
+  State<SwipeRegion> createState() => _SwipeRegionState();
 }
 
-/// The [State] for a [MenuContinuousSwipe].
-///
-/// Controls the state of the continuous swipe and passes it down the widget
-/// tree.
-@internal
-class MenuContinuousSwipeState extends State<MenuContinuousSwipe> {
-  late final _state = ValueNotifier<ContinuousSwipeState>(
-    const ContinuousSwipeInitState._(),
-  );
+class _SwipeRegionState extends State<SwipeRegion> {
+  late final _state = ValueNotifier<SwipeState>(const SwipeInitState._());
 
   @override
   void dispose() {
@@ -35,60 +38,79 @@ class MenuContinuousSwipeState extends State<MenuContinuousSwipe> {
   }
 
   void _onPanUpdate(DragUpdateDetails details) =>
-      _state.value = ContinuousSwipeInProcessState._(
+      _state.value = SwipeInProcessState._(
         offset: details.globalPosition,
       );
 
   void _onPanEnd(DragEndDetails _) =>
-      _state.value = const ContinuousSwipeCompleteState._();
-
-  /// The closest instance of this class that encloses the given
-  /// context.
-  static ValueNotifier<ContinuousSwipeState>? of(BuildContext context) =>
-      context.findAncestorStateOfType<MenuContinuousSwipeState>()?._state;
+      _state.value = const SwipeCompleteState._();
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onPanUpdate: _onPanUpdate,
         onPanEnd: _onPanEnd,
-        child: widget.child,
+        child: _SwipeState(
+          notifier: _state,
+          child: widget.child,
+        ),
       );
+}
+
+/// Is internally used to provide [SwipeState] to
+/// [MenuActionGestureDetector] of each "button" action item in the pull-down
+/// menu.
+@immutable
+class _SwipeState extends InheritedNotifier<ValueNotifier<SwipeState>> {
+  const _SwipeState({
+    required super.notifier,
+    required super.child,
+  });
+
+  /// The closest nullable instance of this class that encloses the given
+  /// context.
+  static SwipeState? maybeOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_SwipeState>()
+      ?.notifier
+      ?.value;
 }
 
 /// Basic continuous swipe state class.
 @immutable
 @internal
 @sealed
-abstract class ContinuousSwipeState {
+abstract class SwipeState {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
-  const ContinuousSwipeState._();
+  const SwipeState._();
+
+  /// The closest nullable instance of this class that encloses the given
+  /// context.
+  static SwipeState? maybeOf(BuildContext context) =>
+      _SwipeState.maybeOf(context);
 }
 
 /// Initial continuous swipe state, the user has not yet initiated the movement.
 @immutable
 @internal
-class ContinuousSwipeInitState implements ContinuousSwipeState {
-  /// Creates [ContinuousSwipeInitState].
-  const ContinuousSwipeInitState._();
+class SwipeInitState implements SwipeState {
+  const SwipeInitState._();
 }
 
 /// The coordinates of the movement are transmitted, the user in the process of
 /// selecting the menu item.
 @immutable
 @internal
-class ContinuousSwipeInProcessState implements ContinuousSwipeState {
-  /// Creates [ContinuousSwipeInProcessState].
-  const ContinuousSwipeInProcessState._({
+class SwipeInProcessState implements SwipeState {
+  const SwipeInProcessState._({
     required this.offset,
   });
 
-  /// The offset of current continuous swipe.
+  /// The offset of the current global "pan".
   final Offset offset;
 
   /// Determines whether a menu item is selected based on the current finger
   /// position ([offset]), menu [itemSize] and [itemPosition].
-  bool currentPositionWithinMenuItem({
+  bool isWithinMenuItem({
     required Offset itemPosition,
     required Size itemSize,
   }) {
@@ -106,7 +128,6 @@ class ContinuousSwipeInProcessState implements ContinuousSwipeState {
 /// The state of the completed continuous swipe, the user has selected the item.
 @immutable
 @internal
-class ContinuousSwipeCompleteState implements ContinuousSwipeState {
-  /// Creates [ContinuousSwipeCompleteState].
-  const ContinuousSwipeCompleteState._();
+class SwipeCompleteState implements SwipeState {
+  const SwipeCompleteState._();
 }

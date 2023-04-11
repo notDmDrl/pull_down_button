@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
+import 'package:pull_down_button/src/_internals/continuous_swipe.dart';
 
 import '../../pull_down_button.dart';
 import 'animation.dart';
-import 'extensions.dart';
 import 'menu_config.dart';
 import 'route_menu.dart';
 
@@ -30,32 +30,32 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// Items to show in the [RoutePullDownMenu] created by this route.
   final List<PullDownMenuEntry> items;
 
-  /// Captured inherited themes, specifically [PullDownButtonInheritedTheme] to
-  /// pass to [RoutePullDownMenu] and all its [items].
+  /// Captured inherited themes, specifically [PullDownButtonInheritedTheme],
+  /// to pass to [RoutePullDownMenu] and all its [items].
   final CapturedThemes capturedThemes;
 
   /// The custom route theme to be used by [RoutePullDownMenu].
   final PullDownMenuRouteTheme? routeTheme;
 
-  /// Whether menu has any [PullDownMenuItem]s with leading widget such as
-  /// chevron.
+  /// Whether the pull-down menu has any [PullDownMenuItem]s with leading
+  /// widget such as chevron.
   final bool hasLeading;
 
-  /// Rect of a button used to open pull-down menu.
+  /// Rect of a button used to open the pull-down menu.
   ///
-  /// Is used to calculate final menu's position.
+  /// Is used to calculate the final menu's position.
   final Rect buttonRect;
 
   /// Is used to define whether the popup menu is positioned above, over or
   /// under the calculated menu's position.
   final PullDownMenuPosition menuPosition;
 
-  /// Is used to define how menu will order its [items] depending on
+  /// Is used to define how the menu will order its [items] depending on
   /// calculated menu's position.
   final PullDownMenuItemsOrder itemsOrder;
 
   /// The point menu scales from. Generated with
-  /// [PullDownMenuRoute.predictedAnimationAlignment] before creating the route.
+  /// [PullDownMenuRoute.animationAlignment] before creating the route.
   final Alignment alignment;
 
   @override
@@ -97,7 +97,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
         break;
     }
 
-    final Widget menu = MenuConfig(
+    return MenuConfig(
       hasLeading: hasLeading,
       child: RoutePullDownMenu(
         items: orderedItems.toList(),
@@ -106,26 +106,36 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
         alignment: alignment,
       ),
     );
+  }
 
+  @override
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     final mediaQuery = MediaQuery.of(context);
 
     final avoidBounds = DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
 
-    return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      removeBottom: true,
-      removeLeft: true,
-      removeRight: true,
-      child: Builder(
-        builder: (context) => CustomSingleChildLayout(
-          delegate: _PopupMenuRouteLayout(
-            buttonRect: buttonRect,
-            padding: mediaQuery.padding,
-            avoidBounds: avoidBounds,
-            menuPosition: menuPosition,
+    return SwipeRegion(
+      child: MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        removeBottom: true,
+        removeLeft: true,
+        removeRight: true,
+        child: Builder(
+          builder: (context) => CustomSingleChildLayout(
+            delegate: _PopupMenuRouteLayout(
+              buttonRect: buttonRect,
+              padding: mediaQuery.padding,
+              avoidBounds: avoidBounds,
+              menuPosition: menuPosition,
+            ),
+            child: capturedThemes.wrap(child),
           ),
-          child: capturedThemes.wrap(menu),
         ),
       ),
     );
@@ -133,7 +143,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
   /// Attempt to predict an animation alignment for [RoutePullDownMenu] using
   /// a button's position.
-  static Alignment predictedAnimationAlignment(
+  static Alignment animationAlignment(
     BuildContext context,
     Rect buttonRect,
   ) {
@@ -156,69 +166,6 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
         return isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
     }
   }
-
-  /// Given a [BuildContext], return the Rect of the corresponding [RenderBox]'s
-  /// paintBounds in global coordinates.
-  static Rect getRect(BuildContext context) {
-    final renderBoxContainer = context.currentRenderBox;
-    final queryData = MediaQuery.of(context);
-    final size = queryData.size;
-    final padding = queryData.padding;
-
-    final rect = Rect.fromPoints(
-      renderBoxContainer.localToGlobal(
-        renderBoxContainer.paintBounds.topLeft,
-      ),
-      renderBoxContainer.localToGlobal(
-        renderBoxContainer.paintBounds.bottomRight,
-      ),
-    );
-
-    if (rect.size.height > size.height) {
-      return _normalizeLargeRect(rect, size, padding);
-    }
-
-    return rect;
-  }
-
-  static Rect _normalizeLargeRect(
-    Rect rect,
-    Size size,
-    EdgeInsets padding,
-  ) {
-    if (rect.top.isNegative && rect.bottom > size.height) {
-      return Rect.fromLTRB(
-        rect.left,
-        size.height * 0.65,
-        rect.right,
-        size.height * 0.75,
-      );
-    } else if (rect.top.isNegative && rect.bottom < size.height) {
-      final diff = size.height - rect.bottom - padding.bottom;
-
-      if (diff < kMinInteractiveDimensionCupertino * 2) {
-        return Rect.fromLTRB(
-          rect.left,
-          rect.bottom,
-          rect.right,
-          size.height - padding.bottom,
-        );
-      }
-    } else {
-      final diff = rect.top - padding.top;
-
-      if (diff < kMinInteractiveDimensionCupertino * 2) {
-        return Rect.fromLTRB(
-          rect.left,
-          padding.top,
-          rect.right,
-          rect.top,
-        );
-      }
-    }
-
-    return rect;
-  }
 }
 
 enum _MenuHorizontalPosition {
@@ -236,9 +183,9 @@ enum _MenuHorizontalPosition {
     final width = size.width;
     final widthCenter = width / 2;
 
-    // Allowed threshold of screen side (left / right) for menu to be opened
+    // Allowed threshold of screen side (left / right) for the menu to be opened
     // using "centered" alignment.
-    // Based on native compare with iOS 16 Simulator.
+    // Based on native comparison with iOS 16 Simulator.
     const threshold = 0.2744;
 
     final leftCenteredThreshold = widthCenter * (1 - threshold);

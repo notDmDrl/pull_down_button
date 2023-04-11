@@ -8,8 +8,8 @@
 ///
 /// See also:
 ///
-/// * https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
-///   for Apple guidelines for Pull-Down buttons.
+/// * Apple guidelines for Pull-Down buttons:
+///   https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
 library pull_down_button;
 
 export 'src/items/actions_row.dart';

@@ -10,7 +10,7 @@ import '../../pull_down_button.dart';
 ///
 /// All [PullDownMenuTitleTheme] properties are `null` by default. When null,
 /// the pull-down menu will use iOS 16 defaults specified in
-/// [_PullDownMenuTitleDefaults].
+/// [PullDownMenuTitleTheme.defaults].
 @immutable
 class PullDownMenuTitleTheme with Diagnosticable {
   /// Creates the set of properties used to configure [PullDownMenuTitleTheme].
@@ -29,8 +29,8 @@ class PullDownMenuTitleTheme with Diagnosticable {
 
   /// The [PullDownButtonTheme.titleTheme] property of the ambient
   /// [PullDownButtonTheme].
-  static PullDownMenuTitleTheme? of(BuildContext context) =>
-      PullDownButtonTheme.of(context)?.titleTheme;
+  static PullDownMenuTitleTheme? maybeOf(BuildContext context) =>
+      PullDownButtonTheme.maybeOf(context)?.titleTheme;
 
   /// The helper method to quickly resolve [PullDownMenuTitleTheme] from
   /// [PullDownButtonTheme.titleTheme] or [PullDownMenuTitleTheme.defaults]
@@ -40,7 +40,7 @@ class PullDownMenuTitleTheme with Diagnosticable {
     BuildContext context, {
     required TextStyle? titleStyle,
   }) {
-    final theme = PullDownMenuTitleTheme.of(context);
+    final theme = PullDownMenuTitleTheme.maybeOf(context);
     final defaults = PullDownMenuTitleTheme.defaults(context);
 
     return PullDownMenuTitleTheme(

@@ -41,18 +41,18 @@ class PullDownMenuItemTheme with Diagnosticable {
   /// The size of trailing icons of items in the pull-down menu.
   final double? iconSize;
 
-  /// The selection icon for selected [PullDownMenuItem.selectable]s.
+  /// The selection icon for selected [PullDownMenuItem.selectable].
   ///
   /// These value is ignored for [PullDownMenuItem].
   final IconData? checkmark;
 
   /// The font weight of selection icon for selected
-  /// [PullDownMenuItem.selectable]s.
+  /// [PullDownMenuItem.selectable].
   ///
   /// These value is ignored for [PullDownMenuItem].
   final FontWeight? checkmarkWeight;
 
-  /// The size of chevron icons of items in the pull-down menu.
+  /// The size of selection icon for selected [PullDownMenuItem.selectable].
   ///
   /// These value is ignored for [PullDownMenuItem].
   final double? checkmarkSize;
@@ -78,8 +78,8 @@ class PullDownMenuItemTheme with Diagnosticable {
 
   /// The [PullDownButtonTheme.itemTheme] property of the ambient
   /// [PullDownButtonTheme].
-  static PullDownMenuItemTheme? of(BuildContext context) =>
-      PullDownButtonTheme.of(context)?.itemTheme;
+  static PullDownMenuItemTheme? maybeOf(BuildContext context) =>
+      PullDownButtonTheme.maybeOf(context)?.itemTheme;
 
   /// The helper method to quickly resolve [PullDownMenuItemTheme] from
   /// [PullDownButtonTheme.itemTheme] or [PullDownMenuItemTheme.defaults]
@@ -91,7 +91,7 @@ class PullDownMenuItemTheme with Diagnosticable {
     required bool enabled,
     required bool isDestructive,
   }) {
-    final theme = PullDownMenuItemTheme.of(context);
+    final theme = PullDownMenuItemTheme.maybeOf(context);
     final defaults = PullDownMenuItemTheme.defaults(context);
 
     var resolved = PullDownMenuItemTheme(
@@ -296,7 +296,7 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
     darkColor: Color.fromRGBO(46, 45, 46, 1),
   );
 
-  // Opacity values were based on direct pixel to pixel comparison with
+  // Opacity values were based on a direct pixel-to-pixel comparison with the
   // native variant.
   static double _disabledOpacity(BuildContext context) {
     final brightness = Theme.of(context).brightness;

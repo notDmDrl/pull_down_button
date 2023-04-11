@@ -17,58 +17,56 @@ class AnimationBuilder extends StatelessWidget {
       ];
 
   @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: ExampleScaffoldNavigationBar(
-        title: 'PullDownButton.animationBuilder',
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              PullDownButton(
-                itemBuilder: _itemBuilder,
-                animationBuilder: PullDownButton.defaultAnimationBuilder,
-                buttonBuilder: (context, showMenu) => CupertinoButton.filled(
-                  onPressed: showMenu,
-                  pressedOpacity: 1,
-                  child: const Text('Opacity animation'),
+  Widget build(BuildContext context) => CupertinoPageScaffold(
+        navigationBar: ExampleScaffoldNavigationBar(
+          title: 'PullDownButton.animationBuilder',
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                PullDownButton(
+                  itemBuilder: _itemBuilder,
+                  animationBuilder: PullDownButton.defaultAnimationBuilder,
+                  buttonBuilder: (context, showMenu) => CupertinoButton.filled(
+                    onPressed: showMenu,
+                    pressedOpacity: 1,
+                    child: const Text('Opacity animation'),
+                  ),
                 ),
-              ),
-              PullDownButton(
-                itemBuilder: _itemBuilder,
-                animationBuilder: null,
-                buttonBuilder: (context, showMenu) => CupertinoButton.filled(
-                  onPressed: showMenu,
-                  pressedOpacity: 1,
-                  child: const Text('No opacity animation'),
+                PullDownButton(
+                  itemBuilder: _itemBuilder,
+                  animationBuilder: null,
+                  buttonBuilder: (context, showMenu) => CupertinoButton.filled(
+                    onPressed: showMenu,
+                    pressedOpacity: 1,
+                    child: const Text('No opacity animation'),
+                  ),
                 ),
-              ),
-              PullDownButton(
-                itemBuilder: _itemBuilder,
-                animationBuilder: (context, state, child) {
-                  final isPressed =
-                      state == PullDownButtonAnimationState.opened;
+                PullDownButton(
+                  itemBuilder: _itemBuilder,
+                  animationBuilder: (context, state, child) {
+                    final isPressed =
+                        state == PullDownButtonAnimationState.opened;
 
-                  return AnimatedScale(
-                    scale: isPressed ? 0.5 : 1,
-                    duration: const Duration(milliseconds: 300),
-                    child: child,
-                  );
-                },
-                buttonBuilder: (context, showMenu) => CupertinoButton.filled(
-                  onPressed: showMenu,
-                  pressedOpacity: 1,
-                  child: const Text('Scale animation'),
+                    return AnimatedScale(
+                      scale: isPressed ? 0.5 : 1,
+                      duration: const Duration(milliseconds: 300),
+                      child: child,
+                    );
+                  },
+                  buttonBuilder: (context, showMenu) => CupertinoButton.filled(
+                    onPressed: showMenu,
+                    pressedOpacity: 1,
+                    child: const Text('Scale animation'),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }

@@ -8,9 +8,9 @@ import '../_internals/menu_config.dart';
 
 // Note:
 // I am not entirely sure why top and bottom padding values are that much
-// different but only using those values it was possible to closely match with
+// different, but only using those values was possible to closely match with
 // native counterpart when we have a `PullDownMenuItem.title` long enough to
-// overflow to second row
+// overflow to the second row.
 const EdgeInsetsGeometry _kItemPadding =
     EdgeInsetsDirectional.only(start: 16, end: 18, top: 9.5, bottom: 12.5);
 const EdgeInsetsGeometry _kSelectableItemPadding =
@@ -20,7 +20,7 @@ const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(8);
 /// Signature used by [PullDownMenuItem] to resolve how [onTap] callback is
 /// used.
 ///
-/// Default behaviour is to pop the menu and than call the [onTap].
+/// Default behavior is to pop the menu and call the [onTap].
 ///
 /// Used by [PullDownMenuItem.tapHandler].
 ///
@@ -29,6 +29,8 @@ const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(8);
 /// * [PullDownMenuItem.defaultTapHandler], a default tap handler.
 /// * [PullDownMenuItem.noPopTapHandler], a tap handler that immediately calls
 /// [onTap] without popping the menu.
+/// * [PullDownMenuItem.delayedTapHandler], a tap handler that pops the menu,
+/// waits for an animation to end and calls the [onTap].
 typedef PullDownMenuItemTapHandler = void Function(
   BuildContext context,
   VoidCallback onTap,
@@ -39,10 +41,10 @@ typedef PullDownMenuItemTapHandler = void Function(
 /// To show a pull-down menu and create a button that shows a pull-down menu
 /// use [PullDownButton.buttonBuilder].
 ///
-/// To show a checkmark next to pull-down menu item (an item with selection
-/// state), consider using [PullDownMenuItem.selectable].
+/// To show a checkmark next to the pull-down menu item (an item with a
+/// selection state), consider using [PullDownMenuItem.selectable].
 ///
-/// By default, a [PullDownMenuItem] is minimum of
+/// By default, a [PullDownMenuItem] is a minimum of
 /// [kMinInteractiveDimensionCupertino] pixels height.
 @immutable
 class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
@@ -95,6 +97,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// * [defaultTapHandler], a default tap handler.
   /// * [noPopTapHandler], a tap handler that immediately calls [onTap] without
   /// popping the menu.
+  /// * [delayedTapHandler], a tap handler that pops the menu, waits for an
+  /// animation to end and calls the [onTap].
   final VoidCallback? onTap;
 
   /// Handler that provides this item's [BuildContext] as well as [onTap] to
@@ -103,9 +107,9 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
 
   /// Whether the user is permitted to tap this item.
   ///
-  /// Defaults to true. If this is false, then the item will not react to
-  /// touches and item's text styles and icon colors will be updated with lower
-  /// opacity to indicate disabled state.
+  /// Defaults to true. If this is false, the item will not react to touches,
+  /// and item text styles and icon colors will be updated with a lower opacity
+  /// to indicate a disabled state.
   final bool enabled;
 
   /// Title of this [PullDownMenuItem].
@@ -115,36 +119,36 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   ///
   /// If the [iconWidget] is used, this property must be null;
   ///
-  /// If used in [PullDownMenuActionsRow] either this or [iconWidget] are
+  /// If used in [PullDownMenuActionsRow], either this or [iconWidget] are
   /// required.
   final IconData? icon;
 
   /// Theme of this [PullDownMenuItem].
   ///
-  /// If this property is null then [PullDownMenuItemTheme] from
+  /// If this property is null, then [PullDownMenuItemTheme] from
   /// [PullDownButtonTheme.itemTheme] is used.
   ///
-  /// If that's null then defaults from [PullDownMenuItemTheme.defaults] are
+  /// If that's null, then defaults from [PullDownMenuItemTheme.defaults] are
   /// used.
   final PullDownMenuItemTheme? itemTheme;
 
   /// Color for this [PullDownMenuItem]'s [icon].
   ///
-  /// If not provided `textStyle.color` from [itemTheme] will be used.
+  /// If not provided, `textStyle.color` from [itemTheme] will be used.
   ///
-  /// If [PullDownMenuItem] `isDestructive` then [iconColor] will be ignored.
+  /// If [PullDownMenuItem] `isDestructive`, then [iconColor] will be ignored.
   final Color? iconColor;
 
   /// Custom icon widget of this [PullDownMenuItem].
   ///
   /// If the [icon] is used, this property must be null;
   ///
-  /// If used in [PullDownMenuActionsRow] either this or [icon] are required.
+  /// If used in [PullDownMenuActionsRow], either this or [icon] is required.
   final Widget? iconWidget;
 
   /// Whether this item represents destructive action;
   ///
-  /// If this is true then `destructiveColor` from [itemTheme] is used.
+  /// If this is true, then `destructiveColor` from [itemTheme] is used.
   final bool isDestructive;
 
   /// Whether to display a checkmark next to the menu item.
@@ -152,20 +156,20 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// Defaults to `null`.
   ///
   /// If [PullDownMenuItem] is used inside [PullDownMenuActionsRow] this
-  /// property will be ignored and checkmark will not be showed.
+  /// property will be ignored, and a checkmark will not be shown.
   ///
   /// When true, an [PullDownMenuItemTheme.checkmark] checkmark is displayed
   /// (from [itemTheme]).
   ///
-  /// If itemTheme is null then defaults from [PullDownMenuItemTheme.defaults]
+  /// If itemTheme is null, then defaults from [PullDownMenuItemTheme.defaults]
   /// are used.
   final bool? selected;
 
   /// Default tap handler for [PullDownMenuItem].
   ///
-  /// The behaviour is to pop the menu and than call the [onTap].
+  /// The behavior is to pop the menu and then call the [onTap].
   static void defaultTapHandler(BuildContext context, VoidCallback? onTap) {
-    // If menu was opened from [PullDownButton] or [showPullDownMenu] then pop
+    // If the menu was opened from [PullDownButton] or [showPullDownMenu] - pop
     // route.
     if (ModalRoute.of(context) is PullDownMenuRoute) {
       Navigator.pop(context, onTap);
@@ -176,18 +180,18 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
 
   /// An additional, pre-made tap handler for [PullDownMenuItem].
   ///
-  /// The behaviour is to pop the menu, wait until animation ends and than call
+  /// The behavior is to pop the menu, wait until the animation ends, and call
   /// the [onTap].
   ///
   /// This might be useful if [onTap] results in action involved with changing
-  /// navigation stack (like opening new screen or showing dialog) so there is
-  /// a smoother transition between pull-down menu and said navigation stack
-  /// changing action.
+  /// navigation stack (like opening a new screen or showing dialog) so there
+  /// is a smoother transition between the pull-down menu and said navigation
+  /// stack changing action.
   static void delayedTapHandler(
     BuildContext context,
     VoidCallback? onTap,
   ) {
-    // If menu was opened from [PullDownButton] or [showPullDownMenu] then pop
+    // If the menu was opened from [PullDownButton] or [showPullDownMenu] - pop
     // route.
     if (ModalRoute.of(context) is PullDownMenuRoute) {
       Future<void> future() async {
@@ -204,8 +208,11 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
 
   /// An additional, pre-made tap handler for [PullDownMenuItem].
   ///
-  /// The behaviour is to call the [onTap] without popping the menu.
-  static void noPopTapHandler(BuildContext _, VoidCallback? onTap) =>
+  /// The behavior is to call the [onTap] without popping the menu.
+  static void noPopTapHandler(
+    BuildContext _,
+    VoidCallback? onTap,
+  ) =>
       onTap?.call();
 
   @protected
@@ -255,7 +262,7 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         );
         break;
       case ElementSize.large:
-        // don't do unnecessary checks from inherited widget if [selected] is
+        // Don't do unnecessary checks from inherited widget if [selected] is
         // not null.
         final viewAsSelectable = selected != null || MenuConfig.of(context);
 
@@ -445,7 +452,7 @@ class _MediumItem extends StatelessWidget {
       );
 }
 
-// Replicate the Icon logic here to add weight to checkmark as seen in iOS.
+// Replicate the Icon logic here to add weight to the checkmark as seen in iOS.
 @immutable
 class _CheckmarkIcon extends StatelessWidget {
   const _CheckmarkIcon({

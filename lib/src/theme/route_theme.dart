@@ -10,7 +10,7 @@ import '../../pull_down_button.dart';
 ///
 /// All [PullDownMenuRouteTheme] properties are `null` by default. When null,
 /// the pull-down menu will use iOS 16 defaults specified in
-/// [_PullDownMenuRouteThemeDefaults].
+/// [PullDownMenuRouteTheme.defaults].
 @immutable
 class PullDownMenuRouteTheme with Diagnosticable {
   /// Creates the set of properties used to configure [PullDownMenuRouteTheme].
@@ -34,7 +34,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
   /// The border radius of the pull-down menu.
   final BorderRadius? borderRadius;
 
-  /// The pull-down menu shadow at the moment of menu being opened.
+  /// The pull-down menu shadow at the moment of the menu being opened.
   ///
   /// Will interpolate to [endShadow] (on open) or from [endShadow] (on close).
   ///
@@ -42,7 +42,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
   /// transition).
   final BoxShadow? beginShadow;
 
-  /// The pull-down menu shadow at the moment of menu being fully opened.
+  /// The pull-down menu shadow at the moment of the menu being fully opened.
   ///
   /// Will interpolate from [beginShadow] (on open) or to [beginShadow]
   /// (on close).
@@ -53,8 +53,8 @@ class PullDownMenuRouteTheme with Diagnosticable {
 
   /// The [PullDownButtonTheme.routeTheme] property of the ambient
   /// [PullDownButtonTheme].
-  static PullDownMenuRouteTheme? of(BuildContext context) =>
-      PullDownButtonTheme.of(context)?.routeTheme;
+  static PullDownMenuRouteTheme? maybeOf(BuildContext context) =>
+      PullDownButtonTheme.maybeOf(context)?.routeTheme;
 
   /// The helper method to quickly resolve [PullDownMenuRouteTheme] from
   /// [PullDownButtonTheme.routeTheme] or [PullDownMenuRouteTheme.defaults]
@@ -64,7 +64,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
     BuildContext context, {
     required PullDownMenuRouteTheme? routeTheme,
   }) {
-    final theme = PullDownMenuRouteTheme.of(context);
+    final theme = PullDownMenuRouteTheme.maybeOf(context);
     final defaults = PullDownMenuRouteTheme.defaults(context);
 
     return PullDownMenuRouteTheme(
@@ -163,7 +163,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
 
 // Based on values from https://www.figma.com/community/file/1121065701252736567,
 // https://www.figma.com/community/file/1172051389106515682 and direct
-// color compare with native variant.
+// color compare with the native variant.
 @immutable
 class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
   const _PullDownMenuRouteThemeDefaults(this.context)

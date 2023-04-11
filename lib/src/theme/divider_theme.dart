@@ -6,7 +6,7 @@ import '../../pull_down_button.dart';
 
 /// Defines the visual properties of the dividers in pull-down menus.
 ///
-/// Is used by [PullDownMenuDivider], [PullDownMenuDivider.large] and vertical
+/// Is used by [PullDownMenuDivider], [PullDownMenuDivider.large], and vertical
 /// dividers in [PullDownMenuActionsRow].
 ///
 /// All [PullDownMenuDividerTheme] properties are `null` by default. When null,
@@ -27,23 +27,22 @@ class PullDownMenuDividerTheme with Diagnosticable {
   const factory PullDownMenuDividerTheme.defaults(BuildContext context) =
       _PullDownMenuDividerDefaults;
 
-  /// The divider color of the pull-down menu divider [PullDownMenuDivider].
+  /// The color of the [PullDownMenuDivider].
   final Color? dividerColor;
 
-  /// The large divider color of the pull-down menu
-  /// divider [PullDownMenuDivider.large].
+  /// The color of the [PullDownMenuDivider.large].
   final Color? largeDividerColor;
 
   /// The [PullDownButtonTheme.dividerTheme] property of the ambient
   /// [PullDownButtonTheme].
-  static PullDownMenuDividerTheme? of(BuildContext context) =>
-      PullDownButtonTheme.of(context)?.dividerTheme;
+  static PullDownMenuDividerTheme? maybeOf(BuildContext context) =>
+      PullDownButtonTheme.maybeOf(context)?.dividerTheme;
 
   /// The helper method to quickly resolve [PullDownMenuDividerTheme] from
   /// [PullDownButtonTheme.dividerTheme] or [PullDownMenuDividerTheme.defaults].
   @internal
   static PullDownMenuDividerTheme resolve(BuildContext context) {
-    final theme = PullDownMenuDividerTheme.of(context);
+    final theme = PullDownMenuDividerTheme.maybeOf(context);
     final defaults = PullDownMenuDividerTheme.defaults(context);
 
     return theme ?? defaults;
@@ -107,7 +106,7 @@ class PullDownMenuDividerTheme with Diagnosticable {
 
 // Based on values from https://www.figma.com/community/file/1121065701252736567,
 // https://www.figma.com/community/file/1172051389106515682 and direct
-// color compare with native variant.
+// color compare with the native variant.
 @immutable
 class _PullDownMenuDividerDefaults extends PullDownMenuDividerTheme {
   const _PullDownMenuDividerDefaults(this.context);

@@ -5,10 +5,10 @@ import 'package:pull_down_button/src/_internals/menu_config.dart';
 import '../pull_down_button.dart';
 import '_internals/continuous_swipe.dart';
 
-/// Displays a pull-down menu as a simple widget, with no animations or adding
-/// routes to navigation stack.
+/// Displays a pull-down menu as a simple widget without animations or adding
+/// routes to the navigation stack.
 ///
-/// This is an alternative way of displaying pull-down menu, [PullDownButton]
+/// This is an alternative way of displaying a pull-down menu, [PullDownButton]
 /// should be enough for most cases.
 ///
 /// See also:
@@ -24,8 +24,8 @@ import '_internals/continuous_swipe.dart';
 ///   menu entries for a simple action.
 /// * [PullDownButtonTheme], a pull-down button and menu theme configuration.
 /// * [PullDownButton], a default way of displaying a pull-down menu.
-/// * [showPullDownMenu], an another alternative way of displaying a pull-down
-/// menu.
+/// * [showPullDownMenu], another alternative way of displaying a pull-down
+///   menu.
 @immutable
 class PullDownMenu extends StatelessWidget {
   /// Creates a pull-down menu.
@@ -37,23 +37,22 @@ class PullDownMenu extends StatelessWidget {
 
   /// Items to show in the menu.
   ///
-  /// If items contains at least one tappable menu item of type
+  /// If items contain at least one tappable menu item of type
   /// [PullDownMenuItem.selectable] all of [PullDownMenuItem]s should also be of
   /// type [PullDownMenuItem.selectable].
   ///
   /// See https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
   ///
   /// In order to achieve it all [PullDownMenuItem]s will automatically switch
-  /// to "selectable" view.
+  /// to the "selectable" view.
   final List<PullDownMenuEntry> items;
 
-  /// Theme of route used to display pull-down menu launched from this
-  /// [PullDownMenu].
+  /// The theme of this [PullDownMenu].
   ///
-  /// If this property is null then [PullDownMenuRouteTheme] from
+  /// If this property is null, then [PullDownMenuRouteTheme] from
   /// [PullDownButtonTheme.routeTheme] is used.
   ///
-  /// If that's null then [PullDownMenuRouteTheme.defaults] is used.
+  /// If that's null, then [PullDownMenuRouteTheme.defaults] is used.
   final PullDownMenuRouteTheme? routeTheme;
 
   @override
@@ -78,7 +77,7 @@ class PullDownMenu extends StatelessWidget {
             constraints: BoxConstraints.tightFor(
               width: theme.width,
             ),
-            child: MenuContinuousSwipe(
+            child: SwipeRegion(
               child: MenuBody(items: items),
             ),
           ),

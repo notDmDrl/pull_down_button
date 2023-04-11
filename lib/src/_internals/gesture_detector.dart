@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 import 'continuous_swipe.dart';
@@ -8,13 +9,13 @@ import 'extensions.dart';
 
 // ignore_for_file: avoid_positional_boolean_parameters
 
-/// Default menu gesture detector for applying on pressed color and / or on
-/// hover color, and providing builder method that exposes `isHovered` state to
-/// descendant widgets.
+/// Default menu gesture detector for applying on pressed color or on
+/// hover color, and providing builder method that exposes the `isHovered`
+/// state to descendant widgets.
 @immutable
 @internal
 class MenuActionGestureDetector extends StatefulWidget {
-  /// Creates default menu gesture detector.
+  /// Creates [MenuActionGestureDetector].
   const MenuActionGestureDetector({
     super.key,
     required this.onTap,
@@ -55,28 +56,26 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final continuousSwipeState = MenuContinuousSwipeState.of(context);
+    final swipeState = SwipeState.maybeOf(context);
 
-    continuousSwipeState?.addListener(
-      () => continuousSwipeStateListener(continuousSwipeState.value),
-    );
+    if (swipeState != null) swipeStateListener(swipeState);
   }
 
-  void continuousSwipeStateListener(ContinuousSwipeState state) {
-    if (state is ContinuousSwipeInProcessState && enabled) {
-      final currentPositionWithinMenuItem = state.currentPositionWithinMenuItem(
+  void swipeStateListener(SwipeState state) {
+    if (state is SwipeInProcessState && enabled) {
+      final isWithinMenuItem = state.isWithinMenuItem(
         itemPosition: _currentPosition,
         itemSize: _currentSize,
       );
 
-      if (currentPositionWithinMenuItem) {
-        setState(() => isPressed = true);
-      } else {
-        setState(() => isPressed = false);
+      if (isWithinMenuItem && !isPressed) {
+        HapticFeedback.selectionClick();
       }
+
+      setState(() => isPressed = isWithinMenuItem);
     }
 
-    if (state is ContinuousSwipeCompleteState && isPressed) {
+    if (state is SwipeCompleteState && isPressed) {
       onTap();
     }
   }
@@ -106,10 +105,6 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
     if (enabled && !isPressed) setState(() => isPressed = true);
   }
 
-  void onTapCancel() {
-    if (enabled && isPressed) setState(() => isPressed = false);
-  }
-
   void onTapUp(TapUpDetails _) {
     if (enabled && isPressed) setState(() => isPressed = false);
   }
@@ -125,7 +120,6 @@ class _MenuActionGestureDetectorState extends State<MenuActionGestureDetector> {
         child: GestureDetector(
           onTap: onTap,
           onTapDown: onTapDown,
-          onTapCancel: onTapCancel,
           onTapUp: onTapUp,
           behavior: HitTestBehavior.opaque,
           child: DecoratedBox(

@@ -7,12 +7,12 @@ import '../../pull_down_button.dart';
 /// Defines the visual properties of the routes used to display pull-down menus
 /// as well as any widgets that extend [PullDownMenuEntry].
 ///
-/// Widgets that extend [PullDownMenuEntry] obtain current
+/// Widgets that extend [PullDownMenuEntry] obtain the current
 /// [PullDownButtonTheme] object using `PullDownTheme.of(context)`.
 ///
 /// [PullDownButtonTheme] should be specified in [ThemeData.extensions] or
-/// using [PullDownButtonInheritedTheme] in `builder` property of [MaterialApp]
-/// or [CupertinoApp].
+/// using [PullDownButtonInheritedTheme] in the `builder` property of
+/// [MaterialApp] or [CupertinoApp].
 ///
 /// All [PullDownButtonTheme] properties are `null` by default.
 /// If any of these properties are null, or some properties of sub-themes are
@@ -46,8 +46,8 @@ class PullDownButtonTheme extends ThemeExtension<PullDownButtonTheme>
   ///
   /// If that's null get [PullDownButtonTheme] from [ThemeData.extensions]
   /// property of the ambient [Theme].
-  static PullDownButtonTheme? of(BuildContext context) =>
-      PullDownButtonInheritedTheme.of(context) ??
+  static PullDownButtonTheme? maybeOf(BuildContext context) =>
+      PullDownButtonInheritedTheme.maybeOf(context) ??
       Theme.of(context).extensions[PullDownButtonTheme] as PullDownButtonTheme?;
 
   /// Creates a copy of this object with the given fields replaced with the
@@ -150,7 +150,7 @@ class PullDownButtonInheritedTheme extends InheritedTheme {
 
   /// The closest nullable instance of this class that encloses the given
   /// context.
-  static PullDownButtonTheme? of(BuildContext context) => context
+  static PullDownButtonTheme? maybeOf(BuildContext context) => context
       .dependOnInheritedWidgetOfExactType<PullDownButtonInheritedTheme>()
       ?.data;
 

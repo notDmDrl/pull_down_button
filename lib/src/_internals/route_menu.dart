@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
 import 'animation.dart';
-import 'continuous_swipe.dart';
 import 'menu.dart';
 import 'route.dart';
 
@@ -23,12 +22,12 @@ class RoutePullDownMenu extends StatelessWidget {
   /// Items to show in the menu.
   final List<PullDownMenuEntry> items;
 
-  /// A per menu custom theme.
+  /// A per-menu custom theme.
   ///
   /// Final theme is resolved using [PullDownMenuRouteTheme.resolve].
   final PullDownMenuRouteTheme? routeTheme;
 
-  /// An animation provided by [PullDownMenuRoute] for scale, fade and size
+  /// An animation provided by [PullDownMenuRoute] for scale, fade, and size
   /// transitions.
   final Animation<double> animation;
 
@@ -45,9 +44,6 @@ class RoutePullDownMenu extends StatelessWidget {
       end: BoxDecoration(boxShadow: [theme.endShadow!]),
     );
 
-    // Since [kCurve] has an overshoot at the end and only [ScaleTransition]
-    // requires it, [_ClampedAnimation] is introduced for every other
-    // *Transition* widget.
     final clampedAnimation = ClampedAnimation(animation);
 
     return ScaleTransition(
@@ -71,10 +67,8 @@ class RoutePullDownMenu extends StatelessWidget {
                 child: SizeTransition(
                   axisAlignment: -1,
                   sizeFactor: clampedAnimation,
-                  child: MenuContinuousSwipe(
-                    child: MenuBody(
-                      items: items,
-                    ),
+                  child: MenuBody(
+                    items: items,
                   ),
                 ),
               ),

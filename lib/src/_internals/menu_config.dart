@@ -3,27 +3,26 @@ import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
 
-/// Used to configure how the [PullDownMenuActionsRow] show its
+/// Used to configure how the [PullDownMenuActionsRow] shows its
 /// [PullDownMenuItem]'s and their maximum count.
 ///
 /// See also:
 ///
-/// * preferredElementSize: https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize
+/// * preferredElementSize:
+///   https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize
 @internal
 enum ElementSize {
-  /// Compact, icon only representation.
+  /// Compact layout, icon-only representation.
   ///
-  /// Used to configure how the [PullDownMenuActionsRow] show its
-  /// [PullDownMenuItem]'s and their maximum count. Maximum 4 items.
+  /// Maximum 4 items.
   small,
 
-  /// Medium, icon and title vertically aligned.
+  /// Medium layout, icon and title vertically aligned.
   ///
-  /// Used to configure how the [PullDownMenuActionsRow] show its
-  /// [PullDownMenuItem]'s and their maximum count. Maximum 3 items.
+  /// Maximum 3 items.
   medium,
 
-  /// Large, title and icon horizontally aligned.
+  /// Large layout, title and icon horizontally aligned.
   large
 }
 
@@ -42,9 +41,7 @@ class ActionsRowSizeConfig extends InheritedWidget {
   /// The display type of actions in [PullDownMenuActionsRow].
   final ElementSize size;
 
-  /// The closest instance of this class that encloses the given
-  /// context.
-  @internal
+  /// The closest instance of this class that encloses the given context.
   static ElementSize of(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<ActionsRowSizeConfig>()
@@ -56,8 +53,8 @@ class ActionsRowSizeConfig extends InheritedWidget {
       size != oldWidget.size;
 }
 
-/// Is internally used by [PullDownButton], [showPullDownMenu] or [PullDownMenu]
-/// to provide information whether the pull-down menu has any
+/// Is internally used by [PullDownButton], [showPullDownMenu], or
+/// [PullDownMenu] to provide information on whether the pull-down menu has any
 /// [PullDownMenuItem]s with leading widget such as chevron to all descendant
 /// [PullDownMenuItem]s.
 @immutable
@@ -74,16 +71,13 @@ class MenuConfig extends InheritedWidget {
   /// widget such as chevron.
   final bool hasLeading;
 
-  /// Used to determine if menu's have any items with leading widget.
-  @internal
+  /// Used to determine if the menu has any items with a leading widget.
   static bool menuHasLeading(List<PullDownMenuEntry> items) =>
       items.whereType<PullDownMenuItem>().any(
             (element) => element.selected != null,
           );
 
-  /// The closest instance of this class that encloses the given
-  /// context.
-  @internal
+  /// The closest instance of this class that encloses the given context.
   static bool of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<MenuConfig>()!.hasLeading;
 
