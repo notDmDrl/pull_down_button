@@ -37,6 +37,15 @@ struct OverlaySwiftUIView: View {
                 "Pickers",
                 AnyView(PickerView())
             ),
+            // This doesn't seem to work unfortunately, crashes immediately upon selection
+//            "ElementSizeSmall": (
+//                "ElementSizeSmall",
+//                AnyView(ElementSizeView(size: .small))
+//            ),
+//            "ElementSizeMedium": (
+//                "ElementSizeMedium",
+//                AnyView(ElementSizeView(size: .medium))
+//            ),
         ]
     }
 
@@ -61,7 +70,6 @@ struct SingleItemView: View {
             button
         }
         .buttonStyle(.borderedProminent)
-
     }
 
     @ViewBuilder
@@ -83,7 +91,6 @@ struct SingleItemView: View {
     }
 }
 
-
 @available(iOS 16.0, *)
 struct DividersView: View {
     var body: some View {
@@ -101,7 +108,7 @@ struct DividersView: View {
 struct PickerView: View {
     @State private var selection = "Item1"
     let values = ["Value1", "Value2", "Value3"]
-    
+
     var body: some View {
         Picker("Picker", selection: $selection) {
             ForEach(values, id: \.self) {
@@ -110,5 +117,52 @@ struct PickerView: View {
         }
         .pickerStyle(MenuPickerStyle())
         .buttonStyle(.borderedProminent)
+    }
+}
+
+@available(iOS 16.0, *)
+struct ElementSizeView: View {
+    let size: UIMenu.ElementSize
+
+    var body: some View {
+        ElementSizeView(size: size)
+    }
+}
+
+@available(iOS 16.0, *)
+struct ElementSizeUIKitView: UIViewRepresentable {
+    let size: UIMenu.ElementSize
+
+    func makeUIView(context: Context) -> ElementSizeMenu {
+        ElementSizeMenu(elementSize: size)
+    }
+
+    func updateUIView(_ uiView: ElementSizeMenu, context: Context) {
+    }
+}
+
+@available(iOS 16.0, *)
+class ElementSizeMenu: UIButton {
+    var size: UIMenu.ElementSize
+    
+    required init(elementSize: UIMenu.ElementSize) {
+        self.size = elementSize
+        super.init(frame: .zero)
+
+        let item = self.item()
+
+        setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
+        menu = UIMenu(children: [item, item, item, item, item, item])
+        menu?.preferredElementSize = size
+        showsMenuAsPrimaryAction = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func item() -> UIAction {
+        UIAction(title: "Item", image: UIImage(systemName: "star")) { _ in
+        }
     }
 }

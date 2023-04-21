@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
+import '../_internals/content_size_category.dart';
 
 /// Defines the visual properties of the routes used to display pull-down menus.
 ///
@@ -20,10 +21,21 @@ class PullDownMenuRouteTheme with Diagnosticable {
     this.beginShadow,
     this.endShadow,
     this.width,
+    this.largeTextScaleWidth,
   });
 
   /// Creates default set of properties used to configure
   /// [PullDownMenuRouteTheme].
+  ///
+  /// Default properties where taken from community Figma files and direct
+  /// color compare with SwiftUI `Menu`.
+  ///
+  /// See also:
+  ///
+  /// * iOS 16 UI Kit for Figma by Joey Banks:
+  ///   https://www.figma.com/community/file/1121065701252736567.
+  /// * iOS 16 UI Kit for Figma by Itty Bitty Apps:
+  ///   https://www.figma.com/community/file/1172051389106515682
   @internal
   const factory PullDownMenuRouteTheme.defaults(BuildContext context) =
       _PullDownMenuRouteThemeDefaults;
@@ -50,6 +62,11 @@ class PullDownMenuRouteTheme with Diagnosticable {
 
   /// The width of pull-down menu.
   final double? width;
+
+  /// The width of pull-down menu when `MediaQuery.of(context).textScaleFactor`
+  /// is bigger than [ContentSizeCategory.extraExtraExtraLarge]. At this text
+  /// scale factor menu transitions to its bigger size "accessibility" mode.
+  final double? largeTextScaleWidth;
 
   /// The [PullDownButtonTheme.routeTheme] property of the ambient
   /// [PullDownButtonTheme].
@@ -80,6 +97,9 @@ class PullDownMenuRouteTheme with Diagnosticable {
       endShadow:
           routeTheme?.endShadow ?? theme?.endShadow ?? defaults.endShadow!,
       width: routeTheme?.width ?? theme?.width ?? defaults.width!,
+      largeTextScaleWidth: routeTheme?.largeTextScaleWidth ??
+          theme?.largeTextScaleWidth ??
+          defaults.largeTextScaleWidth!,
     );
   }
 
@@ -91,6 +111,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
     BoxShadow? beginShadow,
     BoxShadow? endShadow,
     double? width,
+    double? largeTextScaleWidth,
   }) =>
       PullDownMenuRouteTheme(
         backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -98,6 +119,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
         beginShadow: beginShadow ?? this.beginShadow,
         endShadow: endShadow ?? this.endShadow,
         width: width ?? this.width,
+        largeTextScaleWidth: largeTextScaleWidth ?? this.largeTextScaleWidth,
       );
 
   /// Linearly interpolate between two themes.
@@ -114,6 +136,8 @@ class PullDownMenuRouteTheme with Diagnosticable {
       beginShadow: BoxShadow.lerp(a?.beginShadow, b?.beginShadow, t),
       endShadow: BoxShadow.lerp(a?.endShadow, b?.endShadow, t),
       width: ui.lerpDouble(a?.width, b?.width, t),
+      largeTextScaleWidth:
+          ui.lerpDouble(a?.largeTextScaleWidth, b?.largeTextScaleWidth, t),
     );
   }
 
@@ -124,6 +148,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
         beginShadow,
         endShadow,
         width,
+        largeTextScaleWidth,
       );
 
   @override
@@ -136,7 +161,8 @@ class PullDownMenuRouteTheme with Diagnosticable {
         other.borderRadius == borderRadius &&
         other.beginShadow == beginShadow &&
         other.endShadow == endShadow &&
-        other.width == width;
+        other.width == width &&
+        other.largeTextScaleWidth == largeTextScaleWidth;
   }
 
   @override
@@ -157,33 +183,45 @@ class PullDownMenuRouteTheme with Diagnosticable {
       )
       ..add(
         DoubleProperty('width', width, defaultValue: null),
+      )
+      ..add(
+        DoubleProperty(
+          'largeTextScaleWidth',
+          largeTextScaleWidth,
+          defaultValue: null,
+        ),
       );
   }
 }
 
-// Based on values from https://www.figma.com/community/file/1121065701252736567,
-// https://www.figma.com/community/file/1172051389106515682 and direct
-// color compare with the native variant.
+/// A set of default values for [PullDownMenuRouteTheme].
 @immutable
 class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
+  /// Creates [_PullDownMenuRouteThemeDefaults].
   const _PullDownMenuRouteThemeDefaults(this.context)
       : super(
           borderRadius: const BorderRadius.all(Radius.circular(12)),
           width: 250,
+          largeTextScaleWidth: 390,
         );
 
+  /// A build context used to resolve [CupertinoDynamicColor]s defined in this
+  /// theme.
   final BuildContext context;
 
+  /// The light and dark color of the menu's on open shadow.
   static const kBeginShadowColor = CupertinoDynamicColor.withBrightness(
     color: Color.fromRGBO(0, 0, 0, 0),
     darkColor: Color.fromRGBO(0, 255, 0, 0),
   );
 
+  /// The light and dark color of the menu's on fully open shadow.
   static const kEndShadowColor = CupertinoDynamicColor.withBrightness(
     color: Color.fromRGBO(0, 0, 0, 0.1),
     darkColor: Color.fromRGBO(0, 255, 0, 0.015),
   );
 
+  /// The light and dark color of the menu's background.
   static const kBackgroundColor = CupertinoDynamicColor.withBrightness(
     color: Color.fromRGBO(249, 249, 249, 0.78),
     darkColor: Color.fromRGBO(84, 84, 88, 0.36),

@@ -56,6 +56,8 @@ class _SwipeRegionState extends State<SwipeRegion> {
       );
 }
 
+/// An inherited widget used to indicate current [SwipeState].
+///
 /// Is internally used to provide [SwipeState] to
 /// [MenuActionGestureDetector] of each "button" action item in the pull-down
 /// menu.
@@ -83,8 +85,9 @@ abstract class SwipeState {
   /// const constructors so that they can be used in const expressions.
   const SwipeState._();
 
-  /// The closest nullable instance of this class that encloses the given
-  /// context.
+  /// Returns the current swipe state from the closest [_SwipeState] ancestor.
+  ///
+  /// If there is no ancestor, it returns `0`.
   static SwipeState? maybeOf(BuildContext context) =>
       _SwipeState.maybeOf(context);
 }

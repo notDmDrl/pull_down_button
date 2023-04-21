@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
           child: AspectRatio(
             aspectRatio: 1,
             child: Align(
-              alignment: Alignment.topRight,
+              alignment: Alignment.bottomRight,
               child: body(controlName),
             ),
           ),
@@ -56,8 +56,16 @@ class _MyAppState extends State<MyApp> {
 Widget body(CompareTest controlName) {
   if (controlName == CompareTest.Null) return const SizedBox.shrink();
 
+  final entries = controlName.entries;
+
+  if (controlName == CompareTest.ElementSizeSmall) {
+    entries.insert(0, small);
+  } else if (controlName == CompareTest.ElementSizeMedium) {
+    entries.insert(0, medium);
+  }
+
   return PullDownButton(
-    itemBuilder: (_) => controlName.entries,
+    itemBuilder: (_) => entries,
     buttonBuilder: ExampleButton.builder,
   );
 }
@@ -122,7 +130,20 @@ enum CompareTest {
       onTap: _call,
       title: 'Value3',
     )
-  ]);
+  ]),
+  ElementSizeSmall([
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+  ]),
+  ElementSizeMedium([]);
 
   const CompareTest(this.entries);
 
@@ -130,3 +151,48 @@ enum CompareTest {
 
   final List<PullDownMenuEntry> entries;
 }
+
+final small = PullDownMenuActionsRow.small(
+  items: const [
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+  ],
+);
+
+final medium = PullDownMenuActionsRow.medium(
+  items: const [
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+    PullDownMenuItem(
+      onTap: CompareTest._call,
+      icon: CupertinoIcons.star,
+      title: 'Item',
+    ),
+  ],
+);

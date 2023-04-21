@@ -31,6 +31,14 @@ class PullDownMenuItemTheme with Diagnosticable {
 
   /// Creates default set of properties used to configure
   /// [PullDownMenuTitleTheme].
+  ///
+  /// Default properties where taken from community Figma files and direct
+  /// color compare with SwiftUI `Menu`.
+  ///
+  /// See also:
+  ///
+  /// * iOS 16 UI Kit for Figma by Joey Banks:
+  ///   https://www.figma.com/community/file/1121065701252736567.
   @internal
   const factory PullDownMenuItemTheme.defaults(BuildContext context) =
       _PullDownMenuItemThemeDefaults;
@@ -277,9 +285,10 @@ class PullDownMenuItemTheme with Diagnosticable {
 
 IconData? _lerpIconData(IconData? a, IconData? b, double t) => t < 0.5 ? a : b;
 
-// Based on values from https://www.figma.com/community/file/1121065701252736567.
+/// A set of default values for [PullDownMenuItemTheme].
 @immutable
 class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
+  /// Creates [_PullDownMenuItemThemeDefaults].
   const _PullDownMenuItemThemeDefaults(this.context)
       : super(
           iconSize: 20,
@@ -288,16 +297,25 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
           checkmarkSize: 16,
         );
 
+  /// A build context used to resolve [CupertinoDynamicColor]s defined in this
+  /// theme.
   final BuildContext context;
 
-  // Taken from https://developer.apple.com/design/human-interface-guidelines/inputs/pointing-devices#pointer-shape-and-content-effects.
+  /// The light and dark on hover colors of [PullDownMenuItem].
+  ///
+  /// See also:
+  ///
+  /// * Apple guidelines for pointing devices:
+  ///   https://developer.apple.com/design/human-interface-guidelines/inputs/pointing-devices#pointer-shape-and-content-effects.
   static const kOnHoverColor = CupertinoDynamicColor.withBrightness(
     color: Color.fromRGBO(225, 226, 229, 1),
     darkColor: Color.fromRGBO(46, 45, 46, 1),
   );
 
-  // Opacity values were based on a direct pixel-to-pixel comparison with the
-  // native variant.
+  /// Returns an opacity level for disabled state for specific [Brightness].
+  ///
+  /// Opacity values were based on a direct pixel-to-pixel comparison with the
+  /// native variant.
   static double _disabledOpacity(BuildContext context) {
     final brightness = Theme.of(context).brightness;
 
@@ -316,12 +334,12 @@ class _PullDownMenuItemThemeDefaults extends PullDownMenuItemTheme {
   TextStyle get textStyle => TextStyle(
         inherit: false,
         fontFamily: '.SF UI Text',
-        fontSize: 16.8,
-        height: 22 / 16.8,
+        fontSize: 17,
+        height: 22 / 17,
         fontWeight: FontWeight.w400,
         color: CupertinoColors.label.resolveFrom(context),
         textBaseline: TextBaseline.alphabetic,
-        letterSpacing: -0.3,
+        letterSpacing: -0.41,
       );
 
   @override

@@ -20,6 +20,14 @@ class PullDownMenuTitleTheme with Diagnosticable {
 
   /// Creates default set of properties used to configure
   /// [PullDownMenuTitleTheme].
+  ///
+  /// Default properties where taken from community Figma files and direct
+  /// color compare with SwiftUI `Menu`.
+  ///
+  /// See also:
+  ///
+  /// * iOS 16 UI Kit for Figma by Joey Banks:
+  ///   https://www.figma.com/community/file/1121065701252736567.
   @internal
   const factory PullDownMenuTitleTheme.defaults(BuildContext context) =
       _PullDownMenuTitleDefaults;
@@ -90,13 +98,17 @@ class PullDownMenuTitleTheme with Diagnosticable {
   }
 }
 
-// Based on values from https://www.figma.com/community/file/1121065701252736567.
+/// A set of default values for [PullDownMenuTitleTheme].
 @immutable
 class _PullDownMenuTitleDefaults extends PullDownMenuTitleTheme {
+  /// Creates [_PullDownMenuTitleDefaults].
   const _PullDownMenuTitleDefaults(this.context);
 
+  /// A build context used to resolve [CupertinoDynamicColor]s defined in this
+  /// theme.
   final BuildContext context;
 
+  /// The light and dark colors of [PullDownMenuTitle.title].
   static const kTitleColor = CupertinoDynamicColor.withBrightness(
     color: Color.fromRGBO(60, 60, 60, 0.6),
     darkColor: Color.fromRGBO(235, 235, 245, 0.6),

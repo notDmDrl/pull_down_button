@@ -1,21 +1,22 @@
 import 'package:flutter/cupertino.dart';
-import 'package:pull_down_button/src/_internals/animation.dart';
-import 'package:pull_down_button/src/_internals/route.dart';
 
 import '../../pull_down_button.dart';
+import '../_internals/animation.dart';
+import '../_internals/content_size_category.dart';
 import '../_internals/gesture_detector.dart';
 import '../_internals/menu_config.dart';
+import '../_internals/route.dart';
 
 // Note:
 // I am not entirely sure why top and bottom padding values are that much
 // different, but only using those values was possible to closely match with
 // native counterpart when we have a `PullDownMenuItem.title` long enough to
 // overflow to the second row.
-const EdgeInsetsGeometry _kItemPadding =
-    EdgeInsetsDirectional.only(start: 16, end: 18, top: 9.5, bottom: 12.5);
-const EdgeInsetsGeometry _kSelectableItemPadding =
-    EdgeInsetsDirectional.only(start: 13, end: 18, top: 9.5, bottom: 12.5);
-const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(8);
+const EdgeInsetsDirectional _kItemPadding =
+    EdgeInsetsDirectional.only(start: 16, end: 18, top: 10.5, bottom: 11.5);
+const EdgeInsetsDirectional _kSelectableItemPadding =
+    EdgeInsetsDirectional.only(start: 13, end: 18, top: 10.5, bottom: 11.5);
+const EdgeInsetsDirectional _kIconActionPadding = EdgeInsetsDirectional.all(8);
 
 /// Signature used by [PullDownMenuItem] to resolve how [onTap] callback is
 /// used.
@@ -215,6 +216,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   ) =>
       onTap?.call();
 
+  /// Asserts that an item with sizes [ElementSize.small] or
+  /// [ElementSize.medium] has an [icon] or a [iconWidget].
   @protected
   bool _debugActionRowHasIcon(ElementSize size) {
     assert(
@@ -266,23 +269,19 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
         // not null.
         final viewAsSelectable = selected != null || MenuConfig.of(context);
 
-        child = viewAsSelectable
-            ? _SelectableLargeItem(
-                checkmark: _CheckmarkIcon(
+        child = _LargeItem(
+          checkmark: viewAsSelectable
+              ? _CheckmarkIcon(
                   selected: selected ?? false,
                   checkmark: theme.checkmark!,
                   checkmarkWeight: theme.checkmarkWeight!,
                   checkmarkSize: theme.checkmarkSize!,
-                ),
-                title: title,
-                icon: icon,
-                iconWidget: iconWidget,
-              )
-            : _LargeItem(
-                title: title,
-                icon: icon,
-                iconWidget: iconWidget,
-              );
+                )
+              : null,
+          title: title,
+          icon: icon,
+          iconWidget: iconWidget,
+        );
         break;
     }
 
@@ -295,7 +294,10 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
 
     final hoverTextStyle = theme.onHoverTextStyle!;
 
-    final iconSize = theme.iconSize;
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final iconSize = theme.iconSize! * textScaleFactor;
+
+    final isLargeTextScale = TextScaleUtils.isLargeTextScale(textScaleFactor);
 
     return MergeSemantics(
       child: Semantics(
@@ -326,7 +328,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
               ),
               child: DefaultTextStyle(
                 style: textStyle,
-                maxLines: 2,
+                // Seems like for large text scale more lines are allowed.
+                maxLines: isLargeTextScale ? 3 : 2,
                 overflow: TextOverflow.ellipsis,
                 softWrap: false,
                 child: child,
@@ -339,88 +342,64 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   }
 }
 
+/// An a [ElementSize.large] menu item.
 @immutable
 class _LargeItem extends StatelessWidget {
+  /// Creates [_LargeItem].
   const _LargeItem({
-    required this.title,
-    required this.icon,
-    required this.iconWidget,
-  });
-
-  final String title;
-  final IconData? icon;
-  final Widget? iconWidget;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        alignment: AlignmentDirectional.centerStart,
-        constraints: const BoxConstraints(
-          minHeight: kMinInteractiveDimensionCupertino,
-        ),
-        padding: _kItemPadding,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.start,
-              ),
-            ),
-            if (icon != null || iconWidget != null)
-              Padding(
-                padding: const EdgeInsetsDirectional.only(start: 8),
-                child: iconWidget ?? Icon(icon),
-              ),
-          ],
-        ),
-      );
-}
-
-@immutable
-class _SelectableLargeItem extends StatelessWidget {
-  const _SelectableLargeItem({
     required this.checkmark,
     required this.title,
     required this.icon,
     required this.iconWidget,
   });
 
-  final Widget checkmark;
+  final Widget? checkmark;
   final String title;
   final IconData? icon;
   final Widget? iconWidget;
 
   @override
-  Widget build(BuildContext context) => Container(
-        alignment: AlignmentDirectional.centerStart,
-        constraints: const BoxConstraints(
-          minHeight: kMinInteractiveDimensionCupertino,
-        ),
-        padding: _kSelectableItemPadding,
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.only(end: 3),
+  Widget build(BuildContext context) {
+    final minHeight = ElementSize.resolveLarge(context);
+    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final isLargeTextScale = TextScaleUtils.isLargeTextScale(textScaleFactor);
+
+    final isSelectable = checkmark != null;
+
+    return AnimatedMenuContainer(
+      alignment: AlignmentDirectional.centerStart,
+      constraints: BoxConstraints(minHeight: minHeight),
+      padding: isSelectable ? _kSelectableItemPadding : _kItemPadding,
+      child: Row(
+        children: [
+          if (isSelectable)
+            AnimatedMenuPadding(
+              padding: EdgeInsetsDirectional.only(
+                end: 3 * textScaleFactor * (isLargeTextScale ? 2 : 1),
+              ),
               child: checkmark,
             ),
-            Expanded(
-              child: Text(
-                title,
-                textAlign: TextAlign.start,
-              ),
+          Expanded(
+            child: Text(
+              title,
+              textAlign: TextAlign.start,
             ),
-            if (icon != null || iconWidget != null)
-              Padding(
-                padding: const EdgeInsetsDirectional.only(start: 8),
-                child: iconWidget ?? Icon(icon),
-              ),
-          ],
-        ),
-      );
+          ),
+          if (!isLargeTextScale && (icon != null || iconWidget != null))
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 8),
+              child: iconWidget ?? Icon(icon),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
+/// An a [ElementSize.medium] menu item.
 @immutable
 class _MediumItem extends StatelessWidget {
+  /// Creates [_MediumItem].
   const _MediumItem({
     required this.icon,
     required this.title,
@@ -452,9 +431,13 @@ class _MediumItem extends StatelessWidget {
       );
 }
 
-// Replicate the Icon logic here to add weight to the checkmark as seen in iOS.
+/// A checkmark widget.
+///
+/// Replicated the [Icon] logic here to add weight to the checkmark as seen in
+/// iOS.
 @immutable
 class _CheckmarkIcon extends StatelessWidget {
+  /// Creates [_CheckmarkIcon].
   const _CheckmarkIcon({
     required this.selected,
     required this.checkmark,

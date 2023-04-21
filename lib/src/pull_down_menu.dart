@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:pull_down_button/src/_internals/menu.dart';
-import 'package:pull_down_button/src/_internals/menu_config.dart';
 
 import '../pull_down_button.dart';
+import '_internals/content_size_category.dart';
 import '_internals/continuous_swipe.dart';
+import '_internals/menu.dart';
+import '_internals/menu_config.dart';
 
 /// Displays a pull-down menu as a simple widget without animations or adding
 /// routes to the navigation stack.
@@ -64,6 +65,10 @@ class PullDownMenu extends StatelessWidget {
 
     final hasLeading = MenuConfig.menuHasLeading(items);
 
+    final isLargeTextScale = TextScaleUtils.isLargeTextScale(
+      MediaQuery.of(context).textScaleFactor,
+    );
+
     return MenuConfig(
       hasLeading: hasLeading,
       child: DecoratedBox(
@@ -73,9 +78,9 @@ class PullDownMenu extends StatelessWidget {
         child: MenuDecoration(
           backgroundColor: theme.backgroundColor!,
           borderRadius: theme.borderRadius!,
-          child: ConstrainedBox(
+          child: AnimatedMenuContainer(
             constraints: BoxConstraints.tightFor(
-              width: theme.width,
+              width: isLargeTextScale ? theme.largeTextScaleWidth : theme.width,
             ),
             child: SwipeRegion(
               child: MenuBody(items: items),

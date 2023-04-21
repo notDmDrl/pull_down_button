@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
 import 'animation.dart';
+import 'content_size_category.dart';
 import 'menu.dart';
 import 'route.dart';
 
@@ -46,6 +47,10 @@ class RoutePullDownMenu extends StatelessWidget {
 
     final clampedAnimation = ClampedAnimation(animation);
 
+    final isLargeTextScale = TextScaleUtils.isLargeTextScale(
+      MediaQuery.of(context).textScaleFactor,
+    );
+
     return ScaleTransition(
       scale: animation,
       alignment: alignment,
@@ -60,9 +65,11 @@ class RoutePullDownMenu extends StatelessWidget {
             borderRadius: theme.borderRadius!,
             child: FadeTransition(
               opacity: clampedAnimation,
-              child: ConstrainedBox(
+              child: AnimatedMenuContainer(
                 constraints: BoxConstraints.tightFor(
-                  width: theme.width,
+                  width: isLargeTextScale
+                      ? theme.largeTextScaleWidth
+                      : theme.width,
                 ),
                 child: SizeTransition(
                   axisAlignment: -1,

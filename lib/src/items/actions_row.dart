@@ -28,7 +28,7 @@ class PullDownMenuActionsRow extends StatelessWidget
     implements PullDownMenuEntry {
   /// Creates a row of 4 actions at max; icon only.
   ///
-  /// Actions have a height of 44 logical pixels.
+  /// Actions have a default fixed height of 44 logical pixels.
   const PullDownMenuActionsRow.small({
     super.key,
     required this.items,
@@ -41,7 +41,7 @@ class PullDownMenuActionsRow extends StatelessWidget
 
   /// Creates a row of 3 actions at max; icon and short (one-worded) title.
   ///
-  /// Actions have a height of 66 logical pixels.
+  /// Actions have a default fixed height of 66 logical pixels.
   const PullDownMenuActionsRow.medium({
     super.key,
     required this.items,
@@ -75,12 +75,13 @@ class PullDownMenuActionsRow extends StatelessWidget
   /// used.
   final Color? dividerColor;
 
-  double get _height {
+  /// Returns fixed height for [PullDownMenuItem] in [PullDownMenuActionsRow].
+  double _height(BuildContext context) {
     switch (_size) {
       case ElementSize.small:
-        return kMinInteractiveDimensionCupertino;
+        return ElementSize.resolveLarge(context);
       case ElementSize.medium:
-        return kMinInteractiveDimensionCupertino * 1.5;
+        return ElementSize.resolveMedium(context);
       case ElementSize.large:
         throw UnsupportedError(
           '[PullDownMenuActionsRow] only supports `ElementSize.small` '
@@ -90,17 +91,21 @@ class PullDownMenuActionsRow extends StatelessWidget
   }
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: BoxConstraints.tightFor(height: _height),
-        child: ActionsRowSizeConfig(
-          size: _size,
-          child: Row(
-            children: PullDownMenuVerticalDivider.wrapWithDivider(
-              items,
-              height: _height,
-              color: dividerColor,
-            ),
+  Widget build(BuildContext context) {
+    final height = _height(context);
+
+    return ConstrainedBox(
+      constraints: BoxConstraints.tightFor(height: height),
+      child: ActionsRowSizeConfig(
+        size: _size,
+        child: Row(
+          children: PullDownMenuVerticalDivider.wrapWithDivider(
+            items,
+            height: height,
+            color: dividerColor,
           ),
         ),
-      );
+      ),
+    );
+  }
 }

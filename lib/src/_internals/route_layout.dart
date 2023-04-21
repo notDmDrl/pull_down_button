@@ -96,10 +96,12 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
       menuPosition != oldDelegate.menuPosition;
 }
 
+/// A set of utils to help calculating menu's position on screen.
 @immutable
 abstract class _PositionUtils {
   const _PositionUtils._();
 
+  /// Returns closest screen for specific [point].
   static Rect closestScreen(Iterable<Rect> screens, Offset point) {
     var closest = screens.first;
     for (final screen in screens) {
@@ -112,6 +114,7 @@ abstract class _PositionUtils {
     return closest;
   }
 
+  /// Returns the `y` a top left offset point for menu's container.
   static double fitY(
     Rect buttonRect,
     Rect screen,
@@ -144,6 +147,7 @@ abstract class _PositionUtils {
     return y;
   }
 
+  /// Returns the `x` a top left offset point for menu's container.
   static double fitX(
     double wantedX,
     Rect screen,

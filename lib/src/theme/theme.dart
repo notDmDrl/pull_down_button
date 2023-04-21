@@ -148,8 +148,10 @@ class PullDownButtonInheritedTheme extends InheritedTheme {
   /// The configuration of this theme.
   final PullDownButtonTheme data;
 
-  /// The closest nullable instance of this class that encloses the given
-  /// context.
+  /// Returns the current [PullDownButtonTheme] from the closest
+  /// [PullDownButtonInheritedTheme] ancestor.
+  ///
+  /// If there is no ancestor, it returns `null`.
   static PullDownButtonTheme? maybeOf(BuildContext context) => context
       .dependOnInheritedWidgetOfExactType<PullDownButtonInheritedTheme>()
       ?.data;

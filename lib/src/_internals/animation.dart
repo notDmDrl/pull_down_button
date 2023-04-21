@@ -32,6 +32,8 @@ abstract class AnimationUtils {
   );
 }
 
+/// An animation that clamps its parent value between `0` and `1`.
+///
 /// Since [AnimationUtils.kCurve] has an overshoot at the end and only
 /// [ScaleTransition] requires it, [ClampedAnimation] is introduced for every
 /// other *Transition* widget.

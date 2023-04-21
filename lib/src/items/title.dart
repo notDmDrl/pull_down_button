@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../pull_down_button.dart';
+import '../_internals/content_size_category.dart';
+import '../_internals/menu_config.dart';
 
 /// The (optional) title of the pull-down menu that is usually displayed at the
 /// top of the pull-down menu.
@@ -28,8 +30,13 @@ class PullDownMenuTitle extends StatelessWidget implements PullDownMenuEntry {
   /// used.
   final TextStyle? titleStyle;
 
-  /// Eyeballed from iOS 16 Simulator.
-  static const double kPullDownMenuTitleHeight = 30;
+  /// Returns a minimum height of title container.
+  ///
+  /// The default height is 30px.
+  // TODO(notDmDrl): revisit this when `Menu` in SwiftUI will have support for
+  // menu titles (only in UIKit right now).
+  static double _resolveHeight(BuildContext context) =>
+      (ElementSize.resolveLarge(context) * 0.68).ceilToDouble();
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +45,21 @@ class PullDownMenuTitle extends StatelessWidget implements PullDownMenuEntry {
       titleStyle: titleStyle,
     );
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minHeight: kPullDownMenuTitleHeight),
-      child: Center(
-        child: DefaultTextStyle(
-          style: theme.style!,
-          child: title,
-        ),
+    final minHeight = _resolveHeight(context);
+
+    final hasLeading = MenuConfig.of(context);
+
+    return AnimatedMenuContainer(
+      constraints: BoxConstraints(minHeight: minHeight),
+      padding: EdgeInsetsDirectional.symmetric(
+        // Use title with menu item's padding so it's all nicely aligned.
+        horizontal: hasLeading ? 13 : 16,
+        vertical: 7,
+      ),
+      alignment: Alignment.center,
+      child: DefaultTextStyle(
+        style: theme.style!,
+        child: title,
       ),
     );
   }

@@ -122,6 +122,10 @@ enum PullDownButtonAnimationState {
 /// Used to configure what horizontal part of the
 /// [PullDownButton.buttonBuilder] will be considered as an anchor to open
 /// the menu from.
+///
+/// It's best suited for situations where [PullDownButton.buttonBuilder] fills
+/// the entire width of the screen and it is desired that menu opens from a
+/// specific button edge.
 enum PullDownMenuAnchor {
   /// The menu will be "opened" from the [PullDownButton.buttonBuilder]
   /// start edge.
@@ -136,7 +140,7 @@ enum PullDownMenuAnchor {
   /// The menu will be "opened" from the [PullDownButton.buttonBuilder]
   /// end edge.
   ///
-  /// A [TextDirection] must be available to determine if the start is the left
+  /// A [TextDirection] must be available to determine if the end is the left
   /// or the right.
   end,
 }
@@ -446,6 +450,9 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   );
 }
 
+/// "Anchors" menu to specific [buttonRect] side.
+///
+/// [anchor] is a side to which it is required to "anchor".
 Rect _anchorToButtonPart(
   BuildContext context,
   Rect buttonRect,
@@ -478,6 +485,7 @@ Rect _anchorToButtonPart(
   );
 }
 
+/// Returns a barrier label for [PullDownMenuRoute].
 String _barrierLabel(BuildContext context) {
   // Use this instead of `MaterialLocalizations.of(context)` because
   // [MaterialLocalizations] might be null in some cases.

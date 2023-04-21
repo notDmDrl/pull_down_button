@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
-import 'package:pull_down_button/src/_internals/continuous_swipe.dart';
 
 import '../../pull_down_button.dart';
 import 'animation.dart';
+import 'continuous_swipe.dart';
 import 'menu_config.dart';
 import 'route_menu.dart';
 
@@ -126,16 +126,14 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
         removeBottom: true,
         removeLeft: true,
         removeRight: true,
-        child: Builder(
-          builder: (context) => CustomSingleChildLayout(
-            delegate: _PopupMenuRouteLayout(
-              buttonRect: buttonRect,
-              padding: mediaQuery.padding,
-              avoidBounds: avoidBounds,
-              menuPosition: menuPosition,
-            ),
-            child: capturedThemes.wrap(child),
+        child: CustomSingleChildLayout(
+          delegate: _PopupMenuRouteLayout(
+            buttonRect: buttonRect,
+            padding: mediaQuery.padding,
+            avoidBounds: avoidBounds,
+            menuPosition: menuPosition,
           ),
+          child: capturedThemes.wrap(child),
         ),
       ),
     );
@@ -168,11 +166,24 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   }
 }
 
+/// A predicted menu's horizontal position.
+///
+/// Is used by [PullDownMenuRoute.animationAlignment]
 enum _MenuHorizontalPosition {
+  /// The button's left side is located closer to the left side of the screen
+  /// than the button's right side to the right side of the screen.
   left,
+
+  /// The button's right side is located closer to the right side of the screen
+  /// than the button's left side to the left side of the screen.
   right,
+
+  /// Both horizontal button's sides are located in an allowed screen zone
+  /// around center.
   center;
 
+  /// Returns a [_MenuHorizontalPosition] for provided screen [size] and a
+  /// [buttonRect].
   static _MenuHorizontalPosition get(
     Size size,
     Rect buttonRect,

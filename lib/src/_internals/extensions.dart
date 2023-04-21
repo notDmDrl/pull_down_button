@@ -34,6 +34,8 @@ extension RectExtension on BuildContext {
   }
 }
 
+/// Apply some additional adjustments on [Rect] from [RectExtension.getRect] if
+/// [rect] is bigger than [size].
 Rect _normalizeLargeRect(
   Rect rect,
   Size size,
