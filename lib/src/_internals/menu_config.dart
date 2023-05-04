@@ -75,7 +75,7 @@ enum ElementSize {
   /// Values were eyeballed based on a direct comparison with the native variant
   /// for each [ContentSizeCategory].
   ///
-  /// Returned value is always 1.36 times bigger than [resolveLarge].
+  /// Returned value is always 1.45 times bigger than [resolveLarge].
   ///
   /// Base is 64px.
   static double resolveLargeWithSubtitle(BuildContext context) =>

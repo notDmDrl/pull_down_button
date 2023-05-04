@@ -1,10 +1,10 @@
-// ignore_for_file: avoid_redundant_argument_values
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
 import 'example_scaffold.dart';
+
+// ignore_for_file: avoid_redundant_argument_values
 
 @immutable
 class ShowPullDownMenu extends StatelessWidget {

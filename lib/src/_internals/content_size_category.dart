@@ -95,6 +95,7 @@ enum ContentSizeCategory {
   /// * SwiftUI value - `.accessibility5`.
   accessibilityExtraExtraExtraLarge(3.1176470588235294);
 
+  /// Creates [ContentSizeCategory].
   const ContentSizeCategory(this.textScaleFactor);
 
   /// A text scale factor for specific preferred text size level.
@@ -117,7 +118,7 @@ enum ContentSizeCategory {
 /// All of the values were eyeballed using the iOS 16 Simulator.
 @internal
 abstract class TextUtils {
-  // TODO(notDmdrl): if it ever is decided to bump the minimum dart version to
+  // TODO(notDmDrl): if it ever is decided to bump the minimum dart version to
   // 3.0 migrate to class modifiers
   // `abstract final class TextScaleUtils` and remove this constructor.
   const TextUtils._();

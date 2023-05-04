@@ -27,7 +27,7 @@ Since this package uses the new Flutter feature `ThemeExtension` for theming, th
   - [PullDownMenuActionsRow](#pulldownmenuactionsrow)
   - [PullDownMenuDivider](#pulldownmenudivider)
   - [PullDownMenuTitle](#pulldownmenutitle)
-  - [PullDownMenuTitle](#pulldownmenuheader)
+  - [PullDownMenuHeader](#pulldownmenuheader)
 - [showPullDownMenu](#showpulldownmenu)
 - [PullDownMenu](#pulldownmenu)
 - [Theming](#theming)
@@ -209,7 +209,7 @@ Depending on `PullDownMenuActionsRow`s size, `PullDownMenuItem` might be either 
 
 `PullDownMenuDivider.large` is a widget used to create cupertino-style pull-down menu large divider.
 
-## There is no need in adding `PullDownMenuDivider` by hand, pull-down menu does it automatically!
+There is no need in adding `PullDownMenuDivider` by hand, pull-down menu does it automatically!
 
 ### PullDownMenuTitle
 
@@ -230,7 +230,7 @@ const PullDownMenuTitle(title: Text('Menu title')),
 
 ### PullDownMenuHeader
 
-![PullDownMenuHeader example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title.png)
+![PullDownMenuHeader example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/header.png)
 
 `PullDownMenuHeader` is a widget used to create cupertino-style pull-down menu document header (usually at the top of menu).
 

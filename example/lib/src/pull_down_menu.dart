@@ -1,6 +1,7 @@
-import 'package:example/src/example_scaffold.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pull_down_button/pull_down_button.dart';
+
+import 'example_scaffold.dart';
 
 @immutable
 class PullDownMenuBox extends StatelessWidget {
