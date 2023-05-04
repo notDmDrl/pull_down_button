@@ -1,3 +1,35 @@
+## 0.9.0
+
+###### 2023-05-05 - Match guidelines from the Apple Design Resources Sketch file
+
+### Changed
+
+- Update the following stuff based on guidelines defined in the Apple Design Resources Sketch file:
+  - Update menu blur to include color saturation.
+  - Update the `PullDownMenuItem` layout.
+  - Update the `PullDownMenuTitle` layout.
+  - Update default height for `PullDownMenuActionsRow`.
+  - Update default height for `PullDownMenuTitle`.
+  - Update default theme values for all sub-themes.
+- Update the example app to include newly added stuff.
+- Deprecate `PullDownMenuDivider` and `PullDownMenuDivider.wrapWithDivider`. _Menu now inserts small dividers automatically._
+- **Breaking:** rename `PullDownMenuRouteTheme.largeTextScaleWidth` to `PullDownMenuRouteTheme.accessibilityWidth`.
+
+### Added
+
+- Add `PullDownMenuHeader`. Based on [UIDocumentProperties](https://developer.apple.com/documentation/uikit/uidocumentproperties) from iOS 16.
+- Add `subtitle` to `PullDownMenuItem` and `PullDownMenuItem.selectable`.
+- Add `PullDownMenuTitle.alignment` to allow customizing alignment of `PullDownMenuTitle`.
+- Add `subtitleStyle`, `onHoverBackgroundColor`, `onPressedBackgroundColor`, and `onHoverTextColor` to `PullDownMenuItemTheme`.
+
+### Removed
+
+- **Breaking:** remove `dividerColor` from `PullDownMenuActionsRow`.
+- **Breaking:** remove `iconSize`, `checkmarkWeight`, `checkmarkSize` from `PullDownMenuItemTheme`.
+- **Breaking:** remove `onHoverColor` from `PullDownMenuItemTheme`. _Use `onHoverBackgroundColor` instead._
+- **Breaking:** remove `onHoverTextStyle` from `PullDownMenuItemTheme`. _Use `onHoverTextColor` instead._
+- **Breaking:** remove `beginShadow` and `endShadow` from `PullDownMenuRouteTheme`. _Use `shadow` instead._
+
 ## 0.8.3
 
 ###### 2023-04-21 - Support iOS 16 "Large Text" accessibility options

@@ -7,8 +7,8 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'item_examples.dart';
 import 'setup.dart';
 
-/// This file includes basic example for [PullDownButton] that uses all of
-/// available menu items and [PullDownMenuPosition.automatic].
+/// This file includes basic example for [PullDownButton] that uses some of
+/// available menu items.
 ///
 /// For more specific examples (per menu item, theming, positioning) check
 /// [ItemExamples] on [GitHub](https://github.com/notDmDrl/pull_down_button/tree/main/example/lib)
@@ -39,8 +39,6 @@ class Example extends StatelessWidget {
         return Align(
           alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
           child: ExampleMenu(
-            position: PullDownMenuPosition.automatic,
-            itemsOrder: PullDownMenuItemsOrder.automatic,
             builder: (_, showMenu) => CupertinoButton(
               onPressed: showMenu,
               padding: EdgeInsets.zero,
@@ -60,24 +58,30 @@ class Example extends StatelessWidget {
 class ExampleMenu extends StatelessWidget {
   const ExampleMenu({
     super.key,
-    required this.position,
-    required this.itemsOrder,
     required this.builder,
   });
 
-  final PullDownMenuPosition position;
   final PullDownMenuButtonBuilder builder;
-  final PullDownMenuItemsOrder itemsOrder;
 
   @override
   Widget build(BuildContext context) => PullDownButton(
         itemBuilder: (context) => [
-          PullDownMenuActionsRow.small(
+          PullDownMenuHeader(
+            leading: ColoredBox(
+              color: CupertinoColors.systemBlue.resolveFrom(context),
+            ),
+            title: 'Profile',
+            subtitle: 'Tap to open',
+            onTap: () {},
+            icon: CupertinoIcons.profile_circled,
+          ),
+          const PullDownMenuDivider.large(),
+          PullDownMenuActionsRow.medium(
             items: [
               PullDownMenuItem(
                 onTap: () {},
-                title: 'Cut',
-                icon: CupertinoIcons.scissors,
+                title: 'Reply',
+                icon: CupertinoIcons.arrowshape_turn_up_left,
               ),
               PullDownMenuItem(
                 onTap: () {},
@@ -86,69 +90,38 @@ class ExampleMenu extends StatelessWidget {
               ),
               PullDownMenuItem(
                 onTap: () {},
-                title: 'Paste',
-                icon: CupertinoIcons.doc_on_clipboard,
-              ),
-              PullDownMenuItem(
-                onTap: () {},
-                title: 'Look Up',
-                icon: CupertinoIcons.doc_text_search,
+                title: 'Edit',
+                icon: CupertinoIcons.pencil,
               ),
             ],
           ),
           const PullDownMenuDivider.large(),
           PullDownMenuItem(
-            enabled: false,
+            onTap: () {},
+            title: 'Pin',
+            icon: CupertinoIcons.pin,
+          ),
+          PullDownMenuItem(
+            title: 'Forward',
+            subtitle: 'Share in different channel',
+            onTap: () {},
+            icon: CupertinoIcons.arrowshape_turn_up_right,
+          ),
+          PullDownMenuItem(
+            onTap: () {},
+            title: 'Delete',
+            isDestructive: true,
+            icon: CupertinoIcons.delete,
+          ),
+          const PullDownMenuDivider.large(),
+          PullDownMenuItem(
             title: 'Select',
             onTap: () {},
             icon: CupertinoIcons.checkmark_circle,
           ),
-          const PullDownMenuDivider(),
-          PullDownMenuItem(
-            title: 'Connect to remote server',
-            onTap: () {},
-            icon: CupertinoIcons.cloud_upload,
-          ),
-          const PullDownMenuDivider.large(),
-          PullDownMenuItem.selectable(
-            title: 'Grid',
-            selected: true,
-            onTap: () {},
-            icon: CupertinoIcons.square_grid_2x2,
-          ),
-          const PullDownMenuDivider(),
-          PullDownMenuItem.selectable(
-            title: 'List',
-            selected: false,
-            onTap: () {},
-            icon: CupertinoIcons.list_bullet,
-          ),
-          const PullDownMenuDivider.large(),
-          PullDownMenuActionsRow.medium(
-            items: [
-              PullDownMenuItem(
-                enabled: false,
-                onTap: () {},
-                title: 'Inbox',
-                icon: CupertinoIcons.tray_arrow_down,
-              ),
-              PullDownMenuItem(
-                onTap: () {},
-                title: 'Archive',
-                icon: CupertinoIcons.archivebox,
-              ),
-              PullDownMenuItem(
-                onTap: () {},
-                title: 'Trash',
-                isDestructive: true,
-                icon: CupertinoIcons.delete,
-              ),
-            ],
-          ),
         ],
         animationBuilder: null,
-        itemsOrder: itemsOrder,
-        position: position,
+        position: PullDownMenuPosition.automatic,
         buttonBuilder: builder,
       );
 }
@@ -170,9 +143,7 @@ class _MessageExample extends StatelessWidget {
               ? CupertinoColors.systemBlue.resolveFrom(context)
               : CupertinoColors.systemFill.resolveFrom(context),
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(18),
-            ),
+            borderRadius: BorderRadius.all(Radius.circular(18)),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

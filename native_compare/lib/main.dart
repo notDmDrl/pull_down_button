@@ -4,7 +4,7 @@ import 'package:pull_down_button/pull_down_button.dart';
 
 import 'utils.dart';
 
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, avoid_redundant_argument_values
 
 const EventChannel _platformEventChannel =
     EventChannel('native_compare.example.com/responder');
@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
           child: AspectRatio(
             aspectRatio: 1,
             child: Align(
-              alignment: Alignment.bottomRight,
+              alignment: Alignment.center,
               child: body(controlName),
             ),
           ),
@@ -103,7 +103,6 @@ enum CompareTest {
       onTap: _call,
       title: 'Item',
     ),
-    PullDownMenuDivider(),
     PullDownMenuItem(
       onTap: _call,
       title: 'Item',
@@ -120,12 +119,10 @@ enum CompareTest {
       onTap: _call,
       title: 'Value1',
     ),
-    PullDownMenuDivider(),
     PullDownMenuItem.selectable(
       onTap: _call,
       title: 'Value2',
     ),
-    PullDownMenuDivider(),
     PullDownMenuItem.selectable(
       onTap: _call,
       title: 'Value3',
@@ -152,8 +149,8 @@ enum CompareTest {
   final List<PullDownMenuEntry> entries;
 }
 
-final small = PullDownMenuActionsRow.small(
-  items: const [
+const small = PullDownMenuActionsRow.small(
+  items: [
     PullDownMenuItem(
       onTap: CompareTest._call,
       icon: CupertinoIcons.star,
@@ -177,8 +174,8 @@ final small = PullDownMenuActionsRow.small(
   ],
 );
 
-final medium = PullDownMenuActionsRow.medium(
-  items: const [
+const medium = PullDownMenuActionsRow.medium(
+  items: [
     PullDownMenuItem(
       onTap: CompareTest._call,
       icon: CupertinoIcons.star,

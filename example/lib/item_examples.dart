@@ -6,10 +6,10 @@ import 'src/actions_row.dart';
 import 'src/anchor.dart';
 import 'src/animation_builder.dart';
 import 'src/divider.dart';
+import 'src/header.dart';
 import 'src/item.dart';
 import 'src/position.dart';
 import 'src/pull_down_menu.dart';
-import 'src/selectable_item.dart';
 import 'src/show_menu.dart';
 import 'src/tap_handler.dart';
 import 'src/theming_custom.dart';
@@ -60,16 +60,16 @@ class ItemExamples extends StatelessWidget {
                     title: 'PullDownMenuItem',
                   ),
                   _Tile(
-                    destination: SelectableItem(),
-                    title: 'PullDownMenuItem.selectable',
-                  ),
-                  _Tile(
                     destination: Divider(),
                     title: 'PullDownMenuDivider',
                   ),
                   _Tile(
                     destination: Title(),
                     title: 'PullDownMenuTitle',
+                  ),
+                  _Tile(
+                    destination: Header(),
+                    title: 'PullDownMenuHeader',
                   ),
                   _Tile(
                     destination: ActionsRow(),
@@ -96,7 +96,7 @@ class ItemExamples extends StatelessWidget {
                   ),
                   _Tile(
                     destination: ThemingCustom(),
-                    title: 'Material 3 custom theme',
+                    title: 'Custom theme',
                   ),
                 ],
               ),

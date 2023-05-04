@@ -9,26 +9,20 @@ const double _kMenuLargeDividerHeight = 8;
 /// A horizontal divider for a cupertino style pull-down menu.
 ///
 /// This widget adapts the [Divider] for use in pull-down menus.
-///
-/// See also:
-///
-/// * [PullDownMenuItem], a pull-down menu entry for a simple action.
-/// * [PullDownMenuItem.selectable], a pull-down menu entry for a selection
-///   action.
-/// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
 @immutable
 class PullDownMenuDivider extends StatelessWidget implements PullDownMenuEntry {
   /// Creates a horizontal divider for a pull-down menu.
-  ///
-  /// Divider has a height and thickness of 0 logical pixels.
+  @Deprecated(
+    'Can be safely removed as the pull-down menu now automatically '
+    'inserts dividers when needed. '
+    'This feature was deprecated after v0.9.0.',
+  )
   const PullDownMenuDivider({
     super.key,
     this.color,
   }) : _isLarge = false;
 
   /// Creates a large horizontal divider for a pull-down menu.
-  ///
-  /// Divider has a height and thickness of 8 logical pixels.
   const PullDownMenuDivider.large({
     super.key,
     this.color,
@@ -56,20 +50,15 @@ class PullDownMenuDivider extends StatelessWidget implements PullDownMenuEntry {
       _isLarge ? _kMenuLargeDividerHeight : _kMenuDividerHeight;
 
   /// Helper method that simplifies separation of pull-down menu items.
+  @Deprecated(
+    'Can be safely removed as the pull-down menu now automatically '
+    'inserts dividers when needed. '
+    'This feature was deprecated after v0.9.0.',
+  )
   static List<PullDownMenuEntry> wrapWithDivider(
     List<PullDownMenuEntry> items,
-  ) {
-    if (items.isEmpty || items.length == 1) {
-      return items;
-    }
-
-    const divider = PullDownMenuDivider();
-
-    return [
-      for (final i in items.take(items.length - 1)) ...[i, divider],
-      items.last,
-    ];
-  }
+  ) =>
+      items;
 
   @override
   Widget build(BuildContext context) {
@@ -86,56 +75,62 @@ class PullDownMenuDivider extends StatelessWidget implements PullDownMenuEntry {
   }
 }
 
-/// A horizontal divider for a cupertino style pull-down menu.
+/// A small divider for a cupertino style pull-down menu.
 ///
-/// This widget adapts the [VerticalDivider] for use in
-/// [PullDownMenuActionsRow].
-///
-/// This widget should not be used outside of [PullDownMenuActionsRow].
+/// This widget adapts the [Divider] and [VerticalDivider] for use in pull-down
+/// menus.
 @immutable
 @internal
-class PullDownMenuVerticalDivider extends StatelessWidget
-    implements PullDownMenuEntry {
-  /// Creates a vertical divider for a side-by-side appearance row.
+class MenuSeparator extends StatelessWidget implements PullDownMenuEntry {
+  /// Creates a small divider for a pull-down menu.
   ///
-  /// Divider has a width and thickness of 0 logical pixels.
-  const PullDownMenuVerticalDivider({
-    super.key,
-    this.color,
-    required this.height,
+  /// Divider has a height/width and thickness of 0 logical pixels.
+  const MenuSeparator._({
+    required this.axis,
   });
 
-  /// The color of the divider.
-  ///
-  /// If this property is null, then [PullDownMenuDividerTheme.dividerColor]
-  /// from [PullDownButtonTheme.dividerTheme] is used.
-  ///
-  /// If that's null, then defaults from [PullDownMenuDividerTheme.defaults] are
-  /// used.
-  final Color? color;
+  /// The direction along which the divider is rendered.
+  final Axis axis;
 
-  /// The height of the divider.
-  final double height;
-
-  /// Helper method that simplifies separation of side-by-side appearance row
-  /// items.
-  static List<Widget> wrapWithDivider(
-    List<PullDownMenuItem> items, {
-    required double height,
-    Color? color,
-  }) {
-    if (items.isEmpty) {
+  /// Helper method that simplifies separation of pull-down menu items.
+  static List<PullDownMenuEntry> wrapVerticalList(
+    List<PullDownMenuEntry> items,
+  ) {
+    if (items.isEmpty || items.length == 1) {
       return items;
     }
 
-    if (items.length == 1) {
+    const divider = MenuSeparator._(axis: Axis.horizontal);
+
+    final list = <PullDownMenuEntry>[];
+
+    for (var i = 0; i < items.length - 1; i++) {
+      final item = items[i];
+
+      if (item is PullDownMenuDivider || items[i + 1] is PullDownMenuDivider) {
+        list.add(item);
+      } else {
+        list.addAll([item, divider]);
+      }
+    }
+
+    list.add(items.last);
+
+    return list;
+  }
+
+  /// Helper method that simplifies separation of side-by-side appearance row
+  /// items.
+  static List<Widget> wrapSideBySide(
+    List<PullDownMenuItem> items,
+  ) {
+    if (items.isEmpty) {
+      return items;
+    } else if (items.length == 1) {
       return [Expanded(child: items.single)];
     }
 
-    final divider = PullDownMenuVerticalDivider(
-      height: height,
-      color: color,
-    );
+    const divider = MenuSeparator._(axis: Axis.vertical);
 
     return [
       for (final i in items.take(items.length - 1)) ...[
@@ -150,15 +145,19 @@ class PullDownMenuVerticalDivider extends StatelessWidget
   Widget build(BuildContext context) {
     final theme = PullDownMenuDividerTheme.resolve(context);
 
-    final divider = color ?? theme.dividerColor!;
-
-    return SizedBox(
-      height: height,
-      child: VerticalDivider(
-        thickness: 0,
-        width: 0,
-        color: divider,
-      ),
-    );
+    switch (axis) {
+      case Axis.horizontal:
+        return Divider(
+          height: _kMenuDividerHeight,
+          thickness: _kMenuDividerHeight,
+          color: theme.dividerColor,
+        );
+      case Axis.vertical:
+        return VerticalDivider(
+          width: _kMenuDividerHeight,
+          thickness: _kMenuDividerHeight,
+          color: theme.dividerColor,
+        );
+    }
   }
 }

@@ -18,24 +18,20 @@ class PullDownMenuRouteTheme with Diagnosticable {
   const PullDownMenuRouteTheme({
     this.backgroundColor,
     this.borderRadius,
-    this.beginShadow,
-    this.endShadow,
+    this.shadow,
     this.width,
-    this.largeTextScaleWidth,
+    this.accessibilityWidth,
   });
 
   /// Creates default set of properties used to configure
   /// [PullDownMenuRouteTheme].
   ///
-  /// Default properties where taken from community Figma files and direct
-  /// color compare with SwiftUI `Menu`.
+  /// Default properties were taken from the Apple Design Resources Sketch file.
   ///
   /// See also:
   ///
-  /// * iOS 16 UI Kit for Figma by Joey Banks:
-  ///   https://www.figma.com/community/file/1121065701252736567.
-  /// * iOS 16 UI Kit for Figma by Itty Bitty Apps:
-  ///   https://www.figma.com/community/file/1172051389106515682
+  /// * Apple Design Resources Sketch file:
+  ///   https://developer.apple.com/design/resources/
   @internal
   const factory PullDownMenuRouteTheme.defaults(BuildContext context) =
       _PullDownMenuRouteThemeDefaults;
@@ -46,27 +42,18 @@ class PullDownMenuRouteTheme with Diagnosticable {
   /// The border radius of the pull-down menu.
   final BorderRadius? borderRadius;
 
-  /// The pull-down menu shadow at the moment of the menu being opened.
-  ///
-  /// Will interpolate to [endShadow] (on open) or from [endShadow] (on close).
-  ///
-  /// Usually uses [endShadow] color with opacity set to `0` (for smooth color
-  /// transition).
-  final BoxShadow? beginShadow;
-
-  /// The pull-down menu shadow at the moment of the menu being fully opened.
-  ///
-  /// Will interpolate from [beginShadow] (on open) or to [beginShadow]
-  /// (on close).
-  final BoxShadow? endShadow;
+  /// The pull-down menu shadow.
+  final BoxShadow? shadow;
 
   /// The width of pull-down menu.
   final double? width;
 
+  /// The accessibility width of pull-down menu.
+  ///
   /// The width of pull-down menu when `MediaQuery.of(context).textScaleFactor`
   /// is bigger than [ContentSizeCategory.extraExtraExtraLarge]. At this text
   /// scale factor menu transitions to its bigger size "accessibility" mode.
-  final double? largeTextScaleWidth;
+  final double? accessibilityWidth;
 
   /// The [PullDownButtonTheme.routeTheme] property of the ambient
   /// [PullDownButtonTheme].
@@ -91,15 +78,11 @@ class PullDownMenuRouteTheme with Diagnosticable {
       borderRadius: routeTheme?.borderRadius ??
           theme?.borderRadius ??
           defaults.borderRadius!,
-      beginShadow: routeTheme?.beginShadow ??
-          theme?.beginShadow ??
-          defaults.beginShadow!,
-      endShadow:
-          routeTheme?.endShadow ?? theme?.endShadow ?? defaults.endShadow!,
+      shadow: routeTheme?.shadow ?? theme?.shadow ?? defaults.shadow!,
       width: routeTheme?.width ?? theme?.width ?? defaults.width!,
-      largeTextScaleWidth: routeTheme?.largeTextScaleWidth ??
-          theme?.largeTextScaleWidth ??
-          defaults.largeTextScaleWidth!,
+      accessibilityWidth: routeTheme?.accessibilityWidth ??
+          theme?.accessibilityWidth ??
+          defaults.accessibilityWidth!,
     );
   }
 
@@ -108,18 +91,16 @@ class PullDownMenuRouteTheme with Diagnosticable {
   PullDownMenuRouteTheme copyWith({
     Color? backgroundColor,
     BorderRadius? borderRadius,
-    BoxShadow? beginShadow,
-    BoxShadow? endShadow,
+    BoxShadow? shadow,
     double? width,
-    double? largeTextScaleWidth,
+    double? accessibilityWidth,
   }) =>
       PullDownMenuRouteTheme(
         backgroundColor: backgroundColor ?? this.backgroundColor,
         borderRadius: borderRadius ?? this.borderRadius,
-        beginShadow: beginShadow ?? this.beginShadow,
-        endShadow: endShadow ?? this.endShadow,
+        shadow: shadow ?? this.shadow,
         width: width ?? this.width,
-        largeTextScaleWidth: largeTextScaleWidth ?? this.largeTextScaleWidth,
+        accessibilityWidth: accessibilityWidth ?? this.accessibilityWidth,
       );
 
   /// Linearly interpolate between two themes.
@@ -133,11 +114,10 @@ class PullDownMenuRouteTheme with Diagnosticable {
     return PullDownMenuRouteTheme(
       backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
       borderRadius: BorderRadius.lerp(a?.borderRadius, b?.borderRadius, t),
-      beginShadow: BoxShadow.lerp(a?.beginShadow, b?.beginShadow, t),
-      endShadow: BoxShadow.lerp(a?.endShadow, b?.endShadow, t),
+      shadow: BoxShadow.lerp(a?.shadow, b?.shadow, t),
       width: ui.lerpDouble(a?.width, b?.width, t),
-      largeTextScaleWidth:
-          ui.lerpDouble(a?.largeTextScaleWidth, b?.largeTextScaleWidth, t),
+      accessibilityWidth:
+          ui.lerpDouble(a?.accessibilityWidth, b?.accessibilityWidth, t),
     );
   }
 
@@ -145,10 +125,9 @@ class PullDownMenuRouteTheme with Diagnosticable {
   int get hashCode => Object.hash(
         backgroundColor,
         borderRadius,
-        beginShadow,
-        endShadow,
+        shadow,
         width,
-        largeTextScaleWidth,
+        accessibilityWidth,
       );
 
   @override
@@ -159,10 +138,9 @@ class PullDownMenuRouteTheme with Diagnosticable {
     return other is PullDownMenuRouteTheme &&
         other.backgroundColor == backgroundColor &&
         other.borderRadius == borderRadius &&
-        other.beginShadow == beginShadow &&
-        other.endShadow == endShadow &&
+        other.shadow == shadow &&
         other.width == width &&
-        other.largeTextScaleWidth == largeTextScaleWidth;
+        other.accessibilityWidth == accessibilityWidth;
   }
 
   @override
@@ -176,18 +154,15 @@ class PullDownMenuRouteTheme with Diagnosticable {
         DiagnosticsProperty('borderRadius', borderRadius, defaultValue: null),
       )
       ..add(
-        DiagnosticsProperty('beginShadow', beginShadow, defaultValue: null),
-      )
-      ..add(
-        DiagnosticsProperty('endShadow', endShadow, defaultValue: null),
+        DiagnosticsProperty('shadow', shadow, defaultValue: null),
       )
       ..add(
         DoubleProperty('width', width, defaultValue: null),
       )
       ..add(
         DoubleProperty(
-          'largeTextScaleWidth',
-          largeTextScaleWidth,
+          'accessibilityWidth',
+          accessibilityWidth,
           defaultValue: null,
         ),
       );
@@ -202,43 +177,23 @@ class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
       : super(
           borderRadius: const BorderRadius.all(Radius.circular(12)),
           width: 250,
-          largeTextScaleWidth: 390,
+          accessibilityWidth: 390,
+          shadow: const BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, 0.2),
+            blurRadius: 64,
+          ),
         );
 
   /// A build context used to resolve [CupertinoDynamicColor]s defined in this
   /// theme.
   final BuildContext context;
 
-  /// The light and dark color of the menu's on open shadow.
-  static const kBeginShadowColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(0, 0, 0, 0),
-    darkColor: Color.fromRGBO(0, 255, 0, 0),
-  );
-
-  /// The light and dark color of the menu's on fully open shadow.
-  static const kEndShadowColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(0, 0, 0, 0.1),
-    darkColor: Color.fromRGBO(0, 255, 0, 0.015),
-  );
-
   /// The light and dark color of the menu's background.
   static const kBackgroundColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(249, 249, 249, 0.78),
-    darkColor: Color.fromRGBO(84, 84, 88, 0.36),
+    color: Color.fromRGBO(247, 247, 247, 0.8),
+    darkColor: Color.fromRGBO(36, 36, 36, 0.75),
   );
 
   @override
   Color get backgroundColor => kBackgroundColor.resolveFrom(context);
-
-  @override
-  BoxShadow get beginShadow => BoxShadow(
-        color: kBeginShadowColor.resolveFrom(context),
-      );
-
-  @override
-  BoxShadow get endShadow => BoxShadow(
-        color: kEndShadowColor.resolveFrom(context),
-        blurRadius: 64,
-        spreadRadius: 64,
-      );
 }

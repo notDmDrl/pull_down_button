@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
+import '../items/divider.dart';
 import 'blur.dart';
 
 /// A widget used to create pull-down menu container.
@@ -34,7 +35,7 @@ class MenuDecoration extends StatelessWidget {
 
     if (BlurUtils.useBackdropFilter(backgroundColor)) {
       box = BackdropFilter(
-        filter: BlurUtils.pullDownMenuBlur,
+        filter: BlurUtils.menuBlur(context),
         child: box,
       );
     }
@@ -64,11 +65,22 @@ class MenuBody extends StatefulWidget {
 }
 
 class _MenuBodyState extends State<MenuBody> {
-  final scrollController = ScrollController();
+  // Making it nullable sounds unnecessary but leak_tracker is angry so leave it
+  // like this for now.
+  // TODO(notDmDrl): look into this when leak_tracker is fully baked into
+  // devtools.
+  ScrollController? scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController = ScrollController();
+  }
 
   @override
   void dispose() {
-    scrollController.dispose();
+    scrollController?.dispose();
+    scrollController = null;
     super.dispose();
   }
 
@@ -82,8 +94,11 @@ class _MenuBodyState extends State<MenuBody> {
           controller: scrollController,
           child: SingleChildScrollView(
             primary: false,
+            clipBehavior: Clip.none,
             controller: scrollController,
-            child: ListBody(children: widget.items),
+            child: ListBody(
+              children: MenuSeparator.wrapVerticalList(widget.items),
+            ),
           ),
         ),
       );

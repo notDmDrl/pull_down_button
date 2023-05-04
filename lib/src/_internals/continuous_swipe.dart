@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-import 'gesture_detector.dart';
+import 'button.dart';
 
 /// A widget that tracks an [SwipeState] of current global "pan" offset.
 ///
@@ -29,21 +29,32 @@ class SwipeRegion extends StatefulWidget {
 }
 
 class _SwipeRegionState extends State<SwipeRegion> {
-  late final _state = ValueNotifier<SwipeState>(const SwipeInitState._());
+  // Making it nullable sounds unnecessary but leak_tracker is angry so leave it
+  // like this for now.
+  // TODO(notDmDrl): look into this when leak_tracker is fully baked into
+  // devtools.
+  ValueNotifier<SwipeState>? _state;
+
+  @override
+  void initState() {
+    super.initState();
+    _state = ValueNotifier<SwipeState>(const SwipeInitState._());
+  }
 
   @override
   void dispose() {
-    _state.dispose();
+    _state?.dispose();
+    _state = null;
     super.dispose();
   }
 
   void _onPanUpdate(DragUpdateDetails details) =>
-      _state.value = SwipeInProcessState._(
+      _state?.value = SwipeInProcessState._(
         offset: details.globalPosition,
       );
 
   void _onPanEnd(DragEndDetails _) =>
-      _state.value = const SwipeCompleteState._();
+      _state?.value = const SwipeCompleteState._();
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -59,7 +70,7 @@ class _SwipeRegionState extends State<SwipeRegion> {
 /// An inherited widget used to indicate current [SwipeState].
 ///
 /// Is internally used to provide [SwipeState] to
-/// [MenuActionGestureDetector] of each "button" action item in the pull-down
+/// [MenuActionButton] of each "button" action item in the pull-down
 /// menu.
 @immutable
 class _SwipeState extends InheritedNotifier<ValueNotifier<SwipeState>> {

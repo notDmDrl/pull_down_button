@@ -8,37 +8,44 @@ class Divider extends StatelessWidget {
   const Divider({super.key});
 
   @override
-  Widget build(BuildContext context) => ExampleScaffold(
-        title: 'PullDownMenuDivider',
-        pullDownButton: PullDownButton(
-          itemBuilder: (context) => [
-            PullDownMenuItem(
-              enabled: false,
-              title: 'Select',
-              onTap: () {},
-              icon: CupertinoIcons.checkmark_circle,
+  Widget build(BuildContext context) => CupertinoPageScaffold(
+        navigationBar: ExampleScaffoldNavigationBar(
+          title: 'PullDownMenuDivider',
+        ),
+        child: ListView(
+          children: const [
+            LabeledExample(
+              label: 'PullDownMenuDivider',
+              items: [
+                PullDownMenuItem(
+                  onTap: noAction,
+                  title: 'Title',
+                  icon: CupertinoIcons.square,
+                ),
+                PullDownMenuItem(
+                  onTap: noAction,
+                  title: 'Title',
+                  icon: CupertinoIcons.square,
+                ),
+              ],
             ),
-            const PullDownMenuDivider(),
-            PullDownMenuItem(
-              title: 'Connect to remote server',
-              onTap: () {},
-              icon: CupertinoIcons.cloud_upload,
-            ),
-            const PullDownMenuDivider.large(),
-            PullDownMenuItem.selectable(
-              title: 'Grid',
-              selected: true,
-              onTap: () {},
-              icon: CupertinoIcons.square_grid_2x2,
-            ),
-            const PullDownMenuDivider(),
-            PullDownMenuItem.selectable(
-              title: 'List',
-              onTap: () {},
-              icon: CupertinoIcons.list_bullet,
-            ),
+            LabeledExample(
+              label: 'PullDownMenuDivider.large',
+              items: [
+                PullDownMenuItem(
+                  onTap: noAction,
+                  title: 'Title',
+                  icon: CupertinoIcons.square,
+                ),
+                PullDownMenuDivider.large(),
+                PullDownMenuItem(
+                  onTap: noAction,
+                  title: 'Title',
+                  icon: CupertinoIcons.square,
+                ),
+              ],
+            )
           ],
-          buttonBuilder: ExampleButton.builder,
         ),
       );
 }

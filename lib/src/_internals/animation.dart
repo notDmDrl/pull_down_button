@@ -25,8 +25,7 @@ abstract class AnimationUtils {
   /// Pull-down menu animation curve used on menu close.
   static const Curve kCurveReverse = Curves.easeIn;
 
-  /// A shadow tween for [PullDownMenuRouteTheme.beginShadow] and
-  /// [PullDownMenuRouteTheme.endShadow].
+  /// A curve tween for [PullDownMenuRouteTheme.shadow].
   static final CurveTween shadowTween = CurveTween(
     curve: const Interval(1 / 3, 1),
   );

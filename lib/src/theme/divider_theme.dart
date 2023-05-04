@@ -24,15 +24,12 @@ class PullDownMenuDividerTheme with Diagnosticable {
   /// Creates default set of properties used to configure
   /// [PullDownMenuRouteTheme].
   ///
-  /// Default properties where taken from community Figma files and direct
-  /// color compare with SwiftUI `Menu`.
+  /// Default properties were taken from the Apple Design Resources Sketch file.
   ///
   /// See also:
   ///
-  /// * iOS 16 UI Kit for Figma by Joey Banks:
-  ///   https://www.figma.com/community/file/1121065701252736567.
-  /// * iOS 16 UI Kit for Figma by Itty Bitty Apps:
-  ///   https://www.figma.com/community/file/1172051389106515682
+  /// * Apple Design Resources Sketch file:
+  ///   https://developer.apple.com/design/resources/
   @internal
   const factory PullDownMenuDividerTheme.defaults(BuildContext context) =
       _PullDownMenuDividerDefaults;
@@ -126,14 +123,14 @@ class _PullDownMenuDividerDefaults extends PullDownMenuDividerTheme {
 
   /// The light and dark colors of the [PullDownMenuDivider].
   static const kDividerColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(0, 0, 0, 0.25),
-    darkColor: Color.fromRGBO(255, 255, 255, 0.3),
+    color: Color.fromRGBO(17, 17, 17, 0.3),
+    darkColor: Color.fromRGBO(217, 217, 217, 0.3),
   );
 
   /// The light and dark colors of the [PullDownMenuDivider.large].
   static const kLargeDividerColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(140, 140, 140, 0.18),
-    darkColor: Color.fromRGBO(0, 0, 0, 0.15),
+    color: Color.fromRGBO(0, 0, 0, 0.08),
+    darkColor: Color.fromRGBO(0, 0, 0, 0.16),
   );
 
   @override

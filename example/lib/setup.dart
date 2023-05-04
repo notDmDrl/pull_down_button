@@ -23,17 +23,21 @@ class MyApp extends StatelessWidget {
         builder: (context, value, child) => MaterialApp(
           title: 'PullDownButton Example',
           theme: ThemeData(
+            fontFamily: '.SF Pro Text',
             cupertinoOverrideTheme: const CupertinoThemeData(
               scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
               barBackgroundColor: Color(0xF0F9F9F9),
+              applyThemeToAll: true,
             ),
           ),
           darkTheme: ThemeData(
+            fontFamily: '.SF Pro Text',
             brightness: Brightness.dark,
             cupertinoOverrideTheme: const CupertinoThemeData(
               brightness: Brightness.dark,
               scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
               barBackgroundColor: Color(0xF01D1D1D),
+              applyThemeToAll: true,
             ),
           ),
           themeMode: value,

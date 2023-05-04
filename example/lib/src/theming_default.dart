@@ -8,11 +8,16 @@ class ThemingDefault extends StatelessWidget {
   const ThemingDefault({super.key});
 
   @override
-  Widget build(BuildContext context) => const ExampleScaffold(
-        title: 'Default theme',
-        pullDownButton: PullDownButton(
-          itemBuilder: ExampleScaffold.exampleItems,
-          buttonBuilder: ExampleButton.builder,
+  Widget build(BuildContext context) => CupertinoPageScaffold(
+        navigationBar: ExampleScaffoldNavigationBar(
+          title: 'Default theme',
+        ),
+        child: SafeArea(
+          child: Center(
+            child: PullDownMenu(
+              items: ExampleScaffold.exampleItems(context),
+            ),
+          ),
         ),
       );
 }

@@ -67,6 +67,20 @@ enum ElementSize {
     }
   }
 
+  /// Minimum allowed height for [ElementSize.large] with a subtitle.
+  ///
+  /// [ElementSize.large] should use returned value as a `minHeight` for its
+  /// constraints.
+  ///
+  /// Values were eyeballed based on a direct comparison with the native variant
+  /// for each [ContentSizeCategory].
+  ///
+  /// Returned value is always 1.36 times bigger than [resolveLarge].
+  ///
+  /// Base is 64px.
+  static double resolveLargeWithSubtitle(BuildContext context) =>
+      (resolveLarge(context) * 1.45).ceilToDouble();
+
   /// Minimum allowed height for [ElementSize.medium].
   ///
   /// [ElementSize.medium] should use returned value as a fixed height.
@@ -74,11 +88,11 @@ enum ElementSize {
   /// Values were eyeballed based on a direct comparison with the native variant
   /// for each [ContentSizeCategory].
   ///
-  /// Returned value is always 1.5 times bigger than [resolveLarge].
-  // TODO(notDmDrl): revisit this when `Menu` in SwiftUI will have support for
-  // preferredElementSize (only in UIKit right now).
+  /// Returned value is always 1.36 times bigger than [resolveLarge].
+  ///
+  /// Base is 60px.
   static double resolveMedium(BuildContext context) =>
-      resolveLarge(context) * 1.5;
+      (resolveLarge(context) * 1.36).ceilToDouble();
 }
 
 /// An inherited widget used to indicate current [ElementSize] configuration.

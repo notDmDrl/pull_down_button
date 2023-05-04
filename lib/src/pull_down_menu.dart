@@ -65,22 +65,22 @@ class PullDownMenu extends StatelessWidget {
 
     final hasLeading = MenuConfig.menuHasLeading(items);
 
-    final isLargeTextScale = TextScaleUtils.isLargeTextScale(
-      MediaQuery.of(context).textScaleFactor,
-    );
+    final isInAccessibilityMode = TextUtils.isInAccessibilityMode(context);
 
     return MenuConfig(
       hasLeading: hasLeading,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          boxShadow: [theme.endShadow!],
+          boxShadow: [theme.shadow!],
         ),
         child: MenuDecoration(
           backgroundColor: theme.backgroundColor!,
           borderRadius: theme.borderRadius!,
           child: AnimatedMenuContainer(
             constraints: BoxConstraints.tightFor(
-              width: isLargeTextScale ? theme.largeTextScaleWidth : theme.width,
+              width: isInAccessibilityMode
+                  ? theme.accessibilityWidth
+                  : theme.width,
             ),
             child: SwipeRegion(
               child: MenuBody(items: items),

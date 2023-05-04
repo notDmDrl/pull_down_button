@@ -9,7 +9,7 @@
 **pull_down_button** is an attempt to bring
 [Pop-Up](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pop-up-buttons) and
 [Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons)
-Buttons from iOS 14+ (SwiftUI version) to Flutter with some additional customisation options.
+Buttons from iOS 14+ to Flutter with some additional customisation options.
 
 ##### This package only tries to visually replicate the native counterpart, some parts might be somewhat different.
 
@@ -27,6 +27,7 @@ Since this package uses the new Flutter feature `ThemeExtension` for theming, th
   - [PullDownMenuActionsRow](#pulldownmenuactionsrow)
   - [PullDownMenuDivider](#pulldownmenudivider)
   - [PullDownMenuTitle](#pulldownmenutitle)
+  - [PullDownMenuTitle](#pulldownmenuheader)
 - [showPullDownMenu](#showpulldownmenu)
 - [PullDownMenu](#pulldownmenu)
 - [Theming](#theming)
@@ -56,7 +57,6 @@ PullDownButton(
       onTap: () {},
     ),
   ],
-  position: PullDownMenuPosition.under,
   buttonBuilder: (context, showMenu) => CupertinoButton(
     onPressed: showMenu,
     padding: EdgeInsets.zero,
@@ -72,22 +72,13 @@ PullDownButton(
 | itemBuilder      | Called when the button is pressed to create the items to show in the menu.                               |
 | buttonBuilder    | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
 | onCanceled       | Called when the user dismisses the pull-down menu.                                                       |
-| animationBuilder | Custom animation for `buttonBuilder` when the pull-down menu is opening or closing                       |
 | position         | Whether the pull-down menu is positioned above, over, or under the pull-down menu button.                |
 | itemsOrder       | Whether the pull-down menu orders its items from `itemBuilder` in downward or upwards way.               |
 | buttonAnchor     | Whether the pull-down menu is anchored to the center, left, or right side of `buttonBuilder`             |
 | routeTheme       | The theme of the pull-down menu box.                                                                     |
+| animationBuilder | Custom animation for `buttonBuilder` when the pull-down menu is opening or closing                       |
 
 </details>
-
-#### PullDownMenuPosition
-
-The way `PullDownButton` positions its pull-down menu.
-
-Available options:
-
-- `automatic` - menu is positioned under or above an anchor depending on the side that has more space available.
-- `over` - menu is positioned under or above an anchor depending on the side that has more space available. Also covers the button used to open the menu.
 
 ---
 
@@ -99,9 +90,21 @@ Available options:
 
 ```dart
 PullDownMenuItem(
-  title: 'Add to favourites',
   onTap: () {},
-  icon: CupertinoIcons.star,
+  title: 'Pin',
+  icon: CupertinoIcons.pin,
+),
+PullDownMenuItem(
+  title: 'Forward',
+  subtitle: 'Share in different channel',
+  onTap: () {},
+  icon: CupertinoIcons.arrowshape_turn_up_right,
+),
+PullDownMenuItem(
+  onTap: () {},
+  title: 'Delete',
+  isDestructive: true,
+  icon: CupertinoIcons.delete,
 ),
 ```
 
@@ -113,6 +116,7 @@ PullDownMenuItem(
 | tapHandler    | Handler to resolve how `onTap` callback is used. |
 | enabled       | Whether the user is permitted to tap this item.  |
 | title         | Title of this `PullDownMenuItem`.                |
+| subtitle      | Subtitle of this `PullDownMenuItem`.             |
 | icon          | Trailing icon of this `PullDownMenuItem`.        |
 | iconColor     | Trailing icon's color.                           |
 | iconWidget    | Custom trailing widget.                          |
@@ -131,16 +135,27 @@ PullDownMenuItem(
 
 ```dart
 PullDownMenuItem.selectable(
-  title: 'Grid',
-  selected: true,
   onTap: () {},
-  icon: CupertinoIcons.square_grid_2x2,
+  selected: true,
+  title: 'Green',
+  icon: CupertinoIcons.circle_fill,
+  iconColor: CupertinoColors.systemGreen.resolveFrom(context),
 ),
+PullDownMenuItem.selectable(
+  onTap: () {},
+  selected: false,
+  title: 'Orange',
+  icon: CupertinoIcons.circle_fill,
+  iconColor: CupertinoColors.systemOrange.resolveFrom(context),
+),
+PullDownMenuItem.selectable(
+  onTap: () {},
+  selected: false,
+  title: 'Indigo',
+  icon: CupertinoIcons.circle_fill,
+  iconColor: CupertinoColors.systemIndigo.resolveFrom(context),
+        ),
 ```
-
-##### Note:
-
-Based on [guidelines](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons), if menu items contain at least one tappable menu item of type `PullDownMenuItem.selectable` all of `PullDownMenuItem`s should also be of type `PullDownMenuItem.selectable` (to insert additional padding so all items have same). Although the manual change of all `PullDownMenuItem`s is not needed, it is done automatically.
 
 <details><summary>Properties table</summary>
 
@@ -161,21 +176,19 @@ Based on [guidelines](https://developer.apple.com/design/human-interface-guideli
 PullDownMenuActionsRow.medium(
   items: [
     PullDownMenuItem(
-      enabled: false,
       onTap: () {},
-      title: 'Inbox',
-      icon: CupertinoIcons.tray_arrow_down,
+      title: 'Reply',
+      icon: CupertinoIcons.arrowshape_turn_up_left,
     ),
     PullDownMenuItem(
       onTap: () {},
-      title: 'Archive',
-      icon: CupertinoIcons.archivebox,
+      title: 'Copy',
+      icon: CupertinoIcons.doc_on_doc,
     ),
     PullDownMenuItem(
       onTap: () {},
-      title: 'Trash',
-      isDestructive: true,
-      icon: CupertinoIcons.delete,
+      title: 'Edit',
+      icon: CupertinoIcons.pencil,
     ),
   ],
 ),
@@ -184,10 +197,9 @@ PullDownMenuActionsRow.medium(
 `PullDownMenuItem` is used to populate `PullDownMenuActionsRow.items`.
 Depending on `PullDownMenuActionsRow`s size, `PullDownMenuItem` might be either icon only or icon and title in a vertical array.
 
-| Properties   | Description                                       |
-| ------------ | ------------------------------------------------- |
-| items        | List of `PullDownMenuItem`.                       |
-| dividerColor | Color of vertical dividers used to split `items`. |
+| Properties | Description                 |
+| ---------- | --------------------------- |
+| items      | List of `PullDownMenuItem`. |
 
 ---
 
@@ -195,37 +207,9 @@ Depending on `PullDownMenuActionsRow`s size, `PullDownMenuItem` might be either 
 
 ![PullDownMenuDivider example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/dividers.png)
 
-`PullDownMenuDivider` is a widget used to create cupertino-style pull-down menu divider (small or large).
+`PullDownMenuDivider.large` is a widget used to create cupertino-style pull-down menu large divider.
 
-```dart
-const PullDownMenuDivider(),
-```
-
-or to create large divider:
-
-```dart
-const PullDownMenuDivider.large(),
-```
-
-There is also convenient method to wrap multiple menu items with small dividers:
-
-```dart
-...PullDownMenuDivider.wrapWithDivider([
-  PullDownMenuItem(
-    enabled: false,
-    title: 'Select',
-    onTap: () {},
-    icon: CupertinoIcons.checkmark_circle,
-  ),
-  PullDownMenuItem(
-    title: 'Connect to remote server',
-    onTap: () {},
-    icon: CupertinoIcons.cloud_upload,
-  ),
-]),
-```
-
----
+## There is no need in adding `PullDownMenuDivider` by hand, pull-down menu does it automatically!
 
 ### PullDownMenuTitle
 
@@ -241,6 +225,41 @@ const PullDownMenuTitle(title: Text('Menu title')),
 | ---------- | ------------------------ |
 | title      | Title widget.            |
 | titleStyle | Title widget text style. |
+
+---
+
+### PullDownMenuHeader
+
+![PullDownMenuHeader example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/title.png)
+
+`PullDownMenuHeader` is a widget used to create cupertino-style pull-down menu document header (usually at the top of menu).
+
+```dart
+PullDownMenuHeader(
+  leading: ColoredBox(
+    color: CupertinoColors.systemBlue.resolveFrom(context),
+  ),
+  title: 'Profile',
+  subtitle: 'Tap to open',
+  onTap: () {},
+  icon: CupertinoIcons.profile_circled,
+),
+```
+
+<details><summary>Properties table</summary>
+
+| Properties | Description                                      |
+| ---------- | ------------------------------------------------ |
+| onTap      | The action this header represents.               |
+| tapHandler | Handler to resolve how `onTap` callback is used. |
+| leading    | Leading widget of this `PullDownMenuItem`.       |
+| title      | Title of this `PullDownMenuItem`.                |
+| subtitle   | Subtitle of this `PullDownMenuItem`.             |
+| itemTheme  | The theme of the menu item.                      |
+| icon       | Trailing icon of this `PullDownMenuItem`.        |
+| iconWidget | Custom trailing widget.                          |
+
+ </details>
 
 ---
 
@@ -325,7 +344,7 @@ ThemeData(
         backgroundColor: Colors.grey,
       ),
       itemTheme: PullDownMenuItemTheme(
-        iconSize: 24,
+        destructiveColor: Colors.red,
       ),
       dividerTheme: PullDownMenuDividerTheme(
         dividerColor: Colors.black,
@@ -350,13 +369,13 @@ ThemeData(
 
 <details><summary>PullDownMenuRouteTheme</summary>
 
-| Properties      | Description                                                       |
-| --------------- | ----------------------------------------------------------------- |
-| backgroundColor | The background color of the pull-down menu.                       |
-| borderRadius    | The border radius of the pull-down menu.                          |
-| beginShadow     | The pull-down menu shadow at the moment of the menu being opened. |
-| endShadow       | The pull-down menu shadow at the moment the menu is fully opened. |
-| width           | Pull-down menu width.                                             |
+| Properties         | Description                                 |
+| ------------------ | ------------------------------------------- |
+| backgroundColor    | The background color of the pull-down menu. |
+| borderRadius       | The border radius of the pull-down menu.    |
+| shadowhadow        | The pull-down menu shadow.                  |
+| width              | Pull-down menu width.                       |
+| accessibilityWidth | Pull-down menu accessibility width.         |
 
 `backgroundColor` usually has opacity in the range of **0.7-0.8** so that menu has a blur effect.
 If `backgroundColor` is fully opaque (opacity set to **1**), no blur effect will be applied.
@@ -365,17 +384,16 @@ If `backgroundColor` is fully opaque (opacity set to **1**), no blur effect will
 
 <details><summary>PullDownMenuItemTheme</summary>
 
-| Properties          | Description                                                       |
-| ------------------- | ----------------------------------------------------------------- |
-| destructiveColor    | Color for destructive action.                                     |
-| iconSize            | Size of trailing icon.                                            |
-| checkmark           | Checkmark icon.                                                   |
-| checkmarkWeight     | Weight of checkmark icon.                                         |
-| checkmarkSize       | Size of checkmark icon.                                           |
-| textStyle           | `PullDownMenuItem` text style.                                    |
-| iconActionTextStyle | `PullDownMenuItem` text style inside of `PullDownMenuActionsRow`. |
-| onHoverColor        | On hover color of `PullDownMenuItem`.                             |
-| onHoverTextStyle    | On hover text style of `PullDownMenuItem`.                        |
+| Properties               | Description                                                       |
+| ------------------------ | ----------------------------------------------------------------- |
+| destructiveColor         | Color for destructive action.                                     |
+| checkmark                | Checkmark icon.                                                   |
+| textStyle                | `PullDownMenuItem` text style.                                    |
+| subtitleStyle            | `PullDownMenuItem` subtitle text style.                           |
+| iconActionTextStyle      | `PullDownMenuItem` text style inside of `PullDownMenuActionsRow`. |
+| onHoverBackgroundColor   | On hover color of `PullDownMenuItem`.                             |
+| onPressedBackgroundColor | On pressed color of `PullDownMenuItem`.                           |
+| onHoverTextColor         | On hover color of text of `PullDownMenuItem`.                     |
 
 </details>
 

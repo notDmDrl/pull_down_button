@@ -116,11 +116,11 @@ enum ContentSizeCategory {
 ///
 /// All of the values were eyeballed using the iOS 16 Simulator.
 @internal
-abstract class TextScaleUtils {
+abstract class TextUtils {
   // TODO(notDmdrl): if it ever is decided to bump the minimum dart version to
   // 3.0 migrate to class modifiers
   // `abstract final class TextScaleUtils` and remove this constructor.
-  const TextScaleUtils._();
+  const TextUtils._();
 
   /// Utility method for resolving if current text scale factor is bigger
   /// than [ContentSizeCategory.extraExtraExtraLarge]. At this text scale
@@ -128,8 +128,8 @@ abstract class TextScaleUtils {
   ///
   /// Required text scale factor was deducted using the iPhone 14 Pro Max and
   /// iPhone SE (3rd gen) iOS 16 Simulators.
-  static bool isLargeTextScale(double textScaleFactor) =>
-      textScaleFactor >
+  static bool isInAccessibilityMode(BuildContext context) =>
+      MediaQuery.of(context).textScaleFactor >
       ContentSizeCategory.extraExtraExtraLarge.textScaleFactor;
 }
 
@@ -144,22 +144,6 @@ class AnimatedMenuContainer extends AnimatedContainer {
     super.constraints,
     super.alignment,
     super.padding,
-    required super.child,
-  }) : super(
-          duration: AnimationUtils.kMenuDuration,
-          curve: Curves.fastOutSlowIn,
-        );
-}
-
-/// An [AnimatedPadding] with predefined [duration] and [curve].
-///
-/// Is used to animate a container on text scale factor change.
-@internal
-class AnimatedMenuPadding extends AnimatedPadding {
-  /// Creates [AnimatedMenuPadding].
-  AnimatedMenuPadding({
-    super.key,
-    required super.padding,
     required super.child,
   }) : super(
           duration: AnimationUtils.kMenuDuration,

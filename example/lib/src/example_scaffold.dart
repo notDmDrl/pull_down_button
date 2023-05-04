@@ -3,6 +3,8 @@ import 'package:pull_down_button/pull_down_button.dart';
 
 import '../setup.dart';
 
+void noAction() {}
+
 @immutable
 class ExampleScaffold extends StatelessWidget {
   const ExampleScaffold({
@@ -15,12 +17,22 @@ class ExampleScaffold extends StatelessWidget {
   final PullDownButton pullDownButton;
 
   static List<PullDownMenuEntry> exampleItems(BuildContext context) => [
-        PullDownMenuActionsRow.small(
+        PullDownMenuHeader(
+          leading: ColoredBox(
+            color: CupertinoColors.systemBlue.resolveFrom(context),
+          ),
+          title: 'Profile',
+          subtitle: 'Tap to open',
+          onTap: () {},
+          icon: CupertinoIcons.profile_circled,
+        ),
+        const PullDownMenuDivider.large(),
+        PullDownMenuActionsRow.medium(
           items: [
             PullDownMenuItem(
               onTap: () {},
-              title: 'Cut',
-              icon: CupertinoIcons.scissors,
+              title: 'Reply',
+              icon: CupertinoIcons.arrowshape_turn_up_left,
             ),
             PullDownMenuItem(
               onTap: () {},
@@ -29,94 +41,69 @@ class ExampleScaffold extends StatelessWidget {
             ),
             PullDownMenuItem(
               onTap: () {},
-              title: 'Paste',
-              icon: CupertinoIcons.doc_on_clipboard,
-            ),
-            PullDownMenuItem(
-              onTap: () {},
-              title: 'Look Up',
-              icon: CupertinoIcons.doc_text_search,
+              title: 'Edit',
+              icon: CupertinoIcons.pencil,
             ),
           ],
         ),
         const PullDownMenuDivider.large(),
         PullDownMenuItem(
-          enabled: false,
+          onTap: () {},
+          title: 'Pin',
+          icon: CupertinoIcons.pin,
+        ),
+        PullDownMenuItem(
+          title: 'Forward',
+          subtitle: 'Share in different channel',
+          onTap: () {},
+          icon: CupertinoIcons.arrowshape_turn_up_right,
+        ),
+        PullDownMenuItem(
+          onTap: () {},
+          title: 'Delete',
+          isDestructive: true,
+          icon: CupertinoIcons.delete,
+        ),
+        const PullDownMenuDivider.large(),
+        PullDownMenuItem(
           title: 'Select',
           onTap: () {},
           icon: CupertinoIcons.checkmark_circle,
         ),
-        const PullDownMenuDivider(),
-        PullDownMenuItem(
-          title: 'Connect to remote server',
-          onTap: () {},
-          icon: CupertinoIcons.cloud_upload,
-        ),
-        const PullDownMenuDivider.large(),
-        PullDownMenuItem.selectable(
-          title: 'Grid',
-          selected: true,
-          onTap: () {},
-          icon: CupertinoIcons.square_grid_2x2,
-        ),
-        const PullDownMenuDivider(),
-        PullDownMenuItem.selectable(
-          title: 'List',
-          onTap: () {},
-          icon: CupertinoIcons.list_bullet,
-        ),
-        const PullDownMenuDivider.large(),
-        PullDownMenuActionsRow.medium(
-          items: [
-            PullDownMenuItem(
-              enabled: false,
-              onTap: () {},
-              title: 'Inbox',
-              icon: CupertinoIcons.tray_arrow_down,
-            ),
-            PullDownMenuItem(
-              onTap: () {},
-              title: 'Archive',
-              icon: CupertinoIcons.archivebox,
-            ),
-            PullDownMenuItem(
-              onTap: () {},
-              title: 'Trash',
-              isDestructive: true,
-              icon: CupertinoIcons.delete,
-            ),
-          ],
-        ),
       ];
 
   @override
-  Widget build(BuildContext context) => CupertinoPageScaffold(
-        navigationBar: ExampleScaffoldNavigationBar(title: title),
-        child: SafeArea(
-          child: Row(
-            children: [
-              for (final alignment in const [
-                AlignmentDirectional.centerStart,
-                AlignmentDirectional.center,
-                AlignmentDirectional.centerEnd
-              ])
-                Expanded(
-                  child: Align(
-                    alignment: alignment,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        pullDownButton,
-                        pullDownButton,
-                        pullDownButton,
-                      ],
-                    ),
-                  ),
-                ),
-            ],
+  Widget build(BuildContext context) {
+    final child = Row(
+      children: [
+        for (final alignment in const [
+          AlignmentDirectional.centerStart,
+          AlignmentDirectional.center,
+          AlignmentDirectional.centerEnd
+        ])
+          Expanded(
+            child: Align(
+              alignment: alignment,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  pullDownButton,
+                  pullDownButton,
+                  pullDownButton,
+                ],
+              ),
+            ),
           ),
-        ),
-      );
+      ],
+    );
+
+    return CupertinoPageScaffold(
+      navigationBar: ExampleScaffoldNavigationBar(title: title),
+      child: SafeArea(
+        child: child,
+      ),
+    );
+  }
 }
 
 @immutable
@@ -134,6 +121,7 @@ class ExampleScaffoldNavigationBar extends CupertinoNavigationBar {
                   context,
                 ),
               ),
+              textAlign: TextAlign.center,
             ),
           ),
           previousPageTitle: 'Back',
@@ -176,4 +164,57 @@ class ExampleButton extends StatelessWidget {
         pressedOpacity: 1,
         child: const Icon(CupertinoIcons.ellipsis_circle),
       );
+}
+
+@immutable
+class LabeledExample extends StatelessWidget {
+  const LabeledExample({
+    super.key,
+    required this.label,
+    required this.items,
+    this.anchor = PullDownMenuAnchor.end,
+    this.animationBuilder = PullDownButton.defaultAnimationBuilder,
+  });
+
+  final String label;
+  final List<PullDownMenuEntry> items;
+  final PullDownMenuAnchor anchor;
+  final PullDownButtonAnimationBuilder? animationBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    final backgroundColor =
+        CupertinoColors.secondarySystemGroupedBackground.resolveFrom(context);
+
+    return CupertinoListSection.insetGrouped(
+      margin: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
+      children: [
+        PullDownButton(
+          itemBuilder: (_) => items,
+          buttonAnchor: anchor,
+          animationBuilder: animationBuilder,
+          buttonBuilder: (context, showMenu) => CupertinoListTile(
+            backgroundColor: backgroundColor,
+            backgroundColorActivated: backgroundColor,
+            onTap: showMenu,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                label,
+                maxLines: 3,
+                style: TextStyle(
+                  color: CupertinoColors.label.resolveFrom(context),
+                ),
+              ),
+            ),
+            trailing: Icon(
+              CupertinoIcons.chevron_up_chevron_down,
+              color: CupertinoColors.secondaryLabel.resolveFrom(context),
+              size: 17,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

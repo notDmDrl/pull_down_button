@@ -2,28 +2,36 @@ import 'package:flutter/cupertino.dart';
 
 import '../../pull_down_button.dart';
 import '../_internals/animation.dart';
+import '../_internals/button.dart';
 import '../_internals/content_size_category.dart';
-import '../_internals/gesture_detector.dart';
+import '../_internals/item_layout.dart';
 import '../_internals/menu_config.dart';
 import '../_internals/route.dart';
 
-// Note:
-// I am not entirely sure why top and bottom padding values are that much
-// different, but only using those values was possible to closely match with
-// native counterpart when we have a `PullDownMenuItem.title` long enough to
-// overflow to the second row.
-const EdgeInsetsDirectional _kItemPadding =
-    EdgeInsetsDirectional.only(start: 16, end: 18, top: 10.5, bottom: 11.5);
-const EdgeInsetsDirectional _kSelectableItemPadding =
-    EdgeInsetsDirectional.only(start: 13, end: 18, top: 10.5, bottom: 11.5);
-const EdgeInsetsDirectional _kIconActionPadding = EdgeInsetsDirectional.all(8);
+const double _kItemVerticalPadding = 11;
+const double _kItemStartPadding = 16;
+const double _kItemWithLeadingStartPadding = 9;
+const double _kItemEndPadding = 16;
+// This value is present in layout guidelines but is not used anywhere right
+// now. Have it here already to not forget about it later.
+// const double _kItemWithTrailingEndPadding = 6;
+
+EdgeInsetsDirectional _itemPadding({required bool hasLeading}) =>
+    EdgeInsetsDirectional.only(
+      start: hasLeading ? _kItemWithLeadingStartPadding : _kItemStartPadding,
+      end: _kItemEndPadding,
+      top: _kItemVerticalPadding,
+      bottom: _kItemVerticalPadding,
+    );
+
+const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(10);
 
 /// Signature used by [PullDownMenuItem] to resolve how [onTap] callback is
 /// used.
 ///
 /// Default behavior is to pop the menu and call the [onTap].
 ///
-/// Used by [PullDownMenuItem.tapHandler].
+/// Used by [PullDownMenuItem.tapHandler] and [PullDownMenuHeader.tapHandler].
 ///
 /// See also:
 ///
@@ -34,19 +42,13 @@ const EdgeInsetsDirectional _kIconActionPadding = EdgeInsetsDirectional.all(8);
 /// waits for an animation to end and calls the [onTap].
 typedef PullDownMenuItemTapHandler = void Function(
   BuildContext context,
-  VoidCallback onTap,
+  VoidCallback? onTap,
 );
 
 /// An item in a cupertino style pull-down menu.
 ///
-/// To show a pull-down menu and create a button that shows a pull-down menu
-/// use [PullDownButton.buttonBuilder].
-///
 /// To show a checkmark next to the pull-down menu item (an item with a
-/// selection state), consider using [PullDownMenuItem.selectable].
-///
-/// By default, a [PullDownMenuItem] is a minimum of
-/// [kMinInteractiveDimensionCupertino] pixels height.
+/// selection state), use [PullDownMenuItem.selectable].
 @immutable
 class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// Creates an item for a pull-down menu.
@@ -58,8 +60,9 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     this.tapHandler = defaultTapHandler,
     this.enabled = true,
     required this.title,
-    this.icon,
+    this.subtitle,
     this.itemTheme,
+    this.icon,
     this.iconColor,
     this.iconWidget,
     this.isDestructive = false,
@@ -78,8 +81,9 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     this.tapHandler = defaultTapHandler,
     this.enabled = true,
     required this.title,
-    this.icon,
+    this.subtitle,
     this.itemTheme,
+    this.icon,
     this.iconColor,
     this.iconWidget,
     this.isDestructive = false,
@@ -116,13 +120,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// Title of this [PullDownMenuItem].
   final String title;
 
-  /// Icon of this [PullDownMenuItem].
-  ///
-  /// If the [iconWidget] is used, this property must be null;
-  ///
-  /// If used in [PullDownMenuActionsRow], either this or [iconWidget] are
-  /// required.
-  final IconData? icon;
+  /// Subtitle of this [PullDownMenuItem].
+  final String? subtitle;
 
   /// Theme of this [PullDownMenuItem].
   ///
@@ -132,6 +131,14 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   /// If that's null, then defaults from [PullDownMenuItemTheme.defaults] are
   /// used.
   final PullDownMenuItemTheme? itemTheme;
+
+  /// Icon of this [PullDownMenuItem].
+  ///
+  /// If the [iconWidget] is used, this property must be null;
+  ///
+  /// If used in [PullDownMenuActionsRow], either this or [iconWidget] are
+  /// required.
+  final IconData? icon;
 
   /// Color for this [PullDownMenuItem]'s [icon].
   ///
@@ -245,152 +252,118 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     final theme = PullDownMenuItemTheme.resolve(
       context,
       itemTheme: itemTheme,
-      enabled: enabled,
-      isDestructive: isDestructive,
     );
 
     final Widget child;
 
+    final isEnabled = enabled && onTap != null;
+
     switch (size) {
       case ElementSize.small:
-        child = Padding(
-          padding: _kIconActionPadding,
-          child: Center(child: iconWidget ?? Icon(icon)),
+        child = _SmallItem(
+          icon: iconWidget ?? Icon(icon),
+          destructiveColor: theme.destructiveColor!,
+          onHoverColor: theme.onHoverTextColor!,
+          color: iconColor ?? theme.iconActionTextStyle!.color!,
+          enabled: isEnabled,
+          destructive: isDestructive,
         );
         break;
       case ElementSize.medium:
         child = _MediumItem(
           icon: iconWidget ?? Icon(icon),
+          destructiveColor: theme.destructiveColor!,
+          onHoverColor: theme.onHoverTextColor!,
+          iconColor: iconColor,
+          enabled: isEnabled,
+          destructive: isDestructive,
           title: title,
+          titleStyle: theme.iconActionTextStyle!,
         );
         break;
       case ElementSize.large:
         // Don't do unnecessary checks from inherited widget if [selected] is
         // not null.
-        final viewAsSelectable = selected != null || MenuConfig.of(context);
+        final hasLeading = selected != null || MenuConfig.of(context);
 
         child = _LargeItem(
-          checkmark: viewAsSelectable
+          icon: icon,
+          iconWidget: iconWidget,
+          destructiveColor: theme.destructiveColor!,
+          onHoverColor: theme.onHoverTextColor!,
+          iconColor: iconColor,
+          enabled: isEnabled,
+          destructive: isDestructive,
+          leading: hasLeading
               ? _CheckmarkIcon(
                   selected: selected ?? false,
                   checkmark: theme.checkmark!,
-                  checkmarkWeight: theme.checkmarkWeight!,
-                  checkmarkSize: theme.checkmarkSize!,
                 )
               : null,
           title: title,
-          icon: icon,
-          iconWidget: iconWidget,
+          titleStyle: theme.textStyle!,
+          subtitle: subtitle,
+          subtitleStyle: theme.subtitleStyle!,
         );
         break;
     }
-
-    final style = size == ElementSize.large
-        ? theme.textStyle!
-        : theme.iconActionTextStyle!;
-
-    final colorIcon =
-        !isDestructive && iconColor != null ? iconColor : style.color;
-
-    final hoverTextStyle = theme.onHoverTextStyle!;
-
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-    final iconSize = theme.iconSize! * textScaleFactor;
-
-    final isLargeTextScale = TextScaleUtils.isLargeTextScale(textScaleFactor);
 
     return MergeSemantics(
       child: Semantics(
         enabled: enabled,
         button: true,
         selected: selected,
-        child: MenuActionGestureDetector(
-          onTap: enabled ? () => tapHandler(context, onTap!) : null,
-          pressedColor:
-              PullDownMenuDividerTheme.resolve(context).largeDividerColor!,
-          hoverColor: theme.onHoverColor!,
-          builder: (context, isHovered) {
-            var textStyle = style;
-
-            if (isHovered) {
-              textStyle = size == ElementSize.large
-                  ? hoverTextStyle
-                  : hoverTextStyle.copyWith(
-                      fontSize: style.fontSize,
-                      height: style.height,
-                    );
-            }
-
-            return IconTheme(
-              data: IconThemeData(
-                color: isHovered ? hoverTextStyle.color : colorIcon,
-                size: iconSize,
-              ),
-              child: DefaultTextStyle(
-                style: textStyle,
-                // Seems like for large text scale more lines are allowed.
-                maxLines: isLargeTextScale ? 3 : 2,
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-                child: child,
-              ),
-            );
-          },
+        child: MenuActionButton(
+          onTap: enabled ? () => tapHandler(context, onTap) : null,
+          pressedColor: theme.onPressedBackgroundColor!,
+          hoverColor: theme.onHoverBackgroundColor!,
+          child: child,
         ),
       ),
     );
   }
 }
 
-/// An a [ElementSize.large] menu item.
+/// An a [ElementSize.small] menu item.
 @immutable
-class _LargeItem extends StatelessWidget {
-  /// Creates [_LargeItem].
-  const _LargeItem({
-    required this.checkmark,
-    required this.title,
+class _SmallItem extends StatelessWidget {
+  const _SmallItem({
     required this.icon,
-    required this.iconWidget,
+    required this.destructiveColor,
+    required this.onHoverColor,
+    required this.color,
+    required this.enabled,
+    required this.destructive,
   });
 
-  final Widget? checkmark;
-  final String title;
-  final IconData? icon;
-  final Widget? iconWidget;
+  final Widget icon;
+  final Color destructiveColor;
+  final Color onHoverColor;
+  final Color color;
+  final bool enabled;
+  final bool destructive;
 
   @override
   Widget build(BuildContext context) {
-    final minHeight = ElementSize.resolveLarge(context);
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
-    final isLargeTextScale = TextScaleUtils.isLargeTextScale(textScaleFactor);
+    final isHovered = MenuActionButtonState.of(context);
 
-    final isSelectable = checkmark != null;
+    var resolvedColor = color;
+    if (destructive) {
+      resolvedColor = destructiveColor;
+    } else if (isHovered) {
+      resolvedColor = onHoverColor;
+    }
 
-    return AnimatedMenuContainer(
-      alignment: AlignmentDirectional.centerStart,
-      constraints: BoxConstraints(minHeight: minHeight),
-      padding: isSelectable ? _kSelectableItemPadding : _kItemPadding,
-      child: Row(
-        children: [
-          if (isSelectable)
-            AnimatedMenuPadding(
-              padding: EdgeInsetsDirectional.only(
-                end: 3 * textScaleFactor * (isLargeTextScale ? 2 : 1),
-              ),
-              child: checkmark,
-            ),
-          Expanded(
-            child: Text(
-              title,
-              textAlign: TextAlign.start,
-            ),
-          ),
-          if (!isLargeTextScale && (icon != null || iconWidget != null))
-            Padding(
-              padding: const EdgeInsetsDirectional.only(start: 8),
-              child: iconWidget ?? Icon(icon),
-            ),
-        ],
+    if (!enabled) {
+      resolvedColor = resolvedColor.withOpacity(
+        PullDownMenuItemTheme.disabledOpacity(context),
+      );
+    }
+
+    return Center(
+      child: IconBox(
+        color: resolvedColor,
+        child: icon,
       ),
     );
   }
@@ -402,71 +375,238 @@ class _MediumItem extends StatelessWidget {
   /// Creates [_MediumItem].
   const _MediumItem({
     required this.icon,
+    required this.destructiveColor,
+    required this.onHoverColor,
+    required this.iconColor,
+    required this.enabled,
+    required this.destructive,
     required this.title,
+    required this.titleStyle,
   });
 
   final Widget icon;
+  final Color destructiveColor;
+  final Color onHoverColor;
+  final Color? iconColor;
+  final bool enabled;
+  final bool destructive;
   final String title;
+  final TextStyle titleStyle;
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: _kIconActionPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon,
+  Widget build(BuildContext context) {
+    final isHovered = MenuActionButtonState.of(context);
+
+    var resolvedColor = iconColor ?? titleStyle.color!;
+    var resolvedStyle = titleStyle;
+    if (destructive) {
+      resolvedColor = destructiveColor;
+      resolvedStyle = resolvedStyle.copyWith(color: destructiveColor);
+    } else if (isHovered) {
+      resolvedColor = onHoverColor;
+      resolvedStyle = resolvedStyle.copyWith(color: onHoverColor);
+    }
+
+    if (!enabled) {
+      final disabledOpacity = PullDownMenuItemTheme.disabledOpacity(context);
+
+      resolvedColor = resolvedColor.withOpacity(disabledOpacity);
+      resolvedStyle = resolvedStyle.copyWith(
+        color: resolvedStyle.color!.withOpacity(disabledOpacity),
+      );
+    }
+
+    return Padding(
+      padding: _kIconActionPadding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconBox.small(
+            color: resolvedColor,
+            child: icon,
+          ),
+          const SizedBox(height: 1),
+          Text(
+            title,
+            style: resolvedStyle,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// An a [ElementSize.large] menu item.
+@immutable
+class _LargeItem extends StatelessWidget {
+  /// Creates [_LargeItem].
+  const _LargeItem({
+    required this.icon,
+    required this.iconWidget,
+    required this.destructiveColor,
+    required this.onHoverColor,
+    required this.iconColor,
+    required this.enabled,
+    required this.destructive,
+    required this.leading,
+    required this.title,
+    required this.titleStyle,
+    required this.subtitle,
+    required this.subtitleStyle,
+  });
+
+  final IconData? icon;
+  final Widget? iconWidget;
+  final Color destructiveColor;
+  final Color onHoverColor;
+  final Color? iconColor;
+  final bool enabled;
+  final bool destructive;
+  final Widget? leading;
+  final String title;
+  final TextStyle titleStyle;
+  final String? subtitle;
+  final TextStyle subtitleStyle;
+
+  @override
+  Widget build(BuildContext context) {
+    final isHovered = MenuActionButtonState.of(context);
+
+    final minHeight = subtitle != null
+        ? ElementSize.resolveLargeWithSubtitle(context)
+        : ElementSize.resolveLarge(context);
+
+    final isInAccessibilityMode = TextUtils.isInAccessibilityMode(context);
+    final maxLines = isInAccessibilityMode ? 3 : 2;
+
+    var resolvedColor = iconColor ?? titleStyle.color!;
+    var resolvedStyle = titleStyle;
+    var resolvedSubtitleStyle = subtitleStyle;
+    if (destructive) {
+      resolvedColor = destructiveColor;
+      resolvedStyle = resolvedStyle.copyWith(color: destructiveColor);
+    } else if (isHovered) {
+      resolvedColor = onHoverColor;
+      resolvedStyle = resolvedStyle.copyWith(color: onHoverColor);
+    }
+
+    if (!enabled) {
+      final disabledOpacity = PullDownMenuItemTheme.disabledOpacity(context);
+
+      resolvedColor = resolvedColor.withOpacity(disabledOpacity);
+      resolvedStyle = resolvedStyle.copyWith(
+        color: resolvedStyle.color!.withOpacity(disabledOpacity),
+      );
+      resolvedSubtitleStyle = resolvedSubtitleStyle.copyWith(
+        color: resolvedSubtitleStyle.color!.withOpacity(disabledOpacity),
+      );
+    }
+
+    Widget body = Text(
+      title,
+      style: resolvedStyle,
+      textAlign: TextAlign.start,
+      overflow: TextOverflow.ellipsis,
+      softWrap: false,
+      maxLines: maxLines,
+    );
+
+    if (subtitle != null) {
+      body = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          body,
+          Text(
+            subtitle!,
+            style: resolvedSubtitleStyle,
+            textAlign: TextAlign.start,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            maxLines: maxLines,
+          ),
+        ],
+      );
+    }
+
+    final hasIcon =
+        !isInAccessibilityMode && (icon != null || iconWidget != null);
+    final hasLeading = leading != null;
+
+    if (hasLeading || hasIcon) {
+      body = Row(
+        children: [
+          if (hasLeading)
+            DefaultTextStyle(
+              style: TextStyle(color: resolvedStyle.color),
+              child: leading!,
+            ),
+          Expanded(child: body),
+          if (hasIcon)
             Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
+              padding: const EdgeInsetsDirectional.only(start: 8),
+              child: IconBox(
+                color: resolvedColor,
+                child: iconWidget ?? Icon(icon),
               ),
             ),
-          ],
-        ),
+        ],
       );
+    }
+
+    return AnimatedMenuContainer(
+      alignment: AlignmentDirectional.centerStart,
+      constraints: BoxConstraints(minHeight: minHeight),
+      padding: _itemPadding(hasLeading: hasLeading),
+      child: body,
+    );
+  }
 }
 
 /// A checkmark widget.
 ///
-/// Replicated the [Icon] logic here to add weight to the checkmark as seen in
-/// iOS.
+/// Replicated the [Icon] logic here with required parameters as seen in
+/// iOS 16 Guidelines.
 @immutable
 class _CheckmarkIcon extends StatelessWidget {
   /// Creates [_CheckmarkIcon].
   const _CheckmarkIcon({
     required this.selected,
     required this.checkmark,
-    required this.checkmarkWeight,
-    required this.checkmarkSize,
   });
 
   final IconData checkmark;
-  final FontWeight checkmarkWeight;
-  final double checkmarkSize;
   final bool selected;
 
   @override
   Widget build(BuildContext context) {
     if (!selected) {
-      return SizedBox.square(dimension: checkmarkSize);
+      return const LeadingWidgetBox(
+        height: 22,
+      );
     }
 
-    return SizedBox(
-      width: checkmarkSize,
-      child: Text.rich(
-        TextSpan(
-          text: String.fromCharCode(checkmark.codePoint),
-          style: TextStyle(
-            fontSize: checkmarkSize,
-            fontWeight: checkmarkWeight,
-            fontFamily: checkmark.fontFamily,
-            package: checkmark.fontPackage,
+    return LeadingWidgetBox(
+      height: 22,
+      child: Center(
+        child: Text.rich(
+          TextSpan(
+            text: String.fromCharCode(checkmark.codePoint),
+            style: TextStyle(
+              fontSize: 17,
+              height: 22 / 17,
+              fontWeight: FontWeight.w600,
+              fontFamily: checkmark.fontFamily,
+              package: checkmark.fontPackage,
+              textBaseline: TextBaseline.alphabetic,
+            ),
           ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

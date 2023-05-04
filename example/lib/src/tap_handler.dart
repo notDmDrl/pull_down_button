@@ -9,40 +9,62 @@ class TapHandler extends StatelessWidget {
   const TapHandler({super.key});
 
   @override
-  Widget build(BuildContext context) => ExampleScaffold(
-        title: '.tapHandler',
-        pullDownButton: PullDownButton(
-          itemBuilder: (context) => PullDownMenuDivider.wrapWithDivider([
-            PullDownMenuItem(
-              onTap: () => print('This action is called after menu is popped'),
-              // A default behaviour
-              tapHandler: PullDownMenuItem.defaultTapHandler,
-              title: 'Pop menu and call [onTap]',
+  Widget build(BuildContext context) => CupertinoPageScaffold(
+        navigationBar: ExampleScaffoldNavigationBar(
+          title: '.tapHandler',
+        ),
+        child: ListView(
+          children: [
+            LabeledExample(
+              label: 'PullDownMenuItem.defaultTapHandler',
+              items: [
+                PullDownMenuItem(
+                  onTap: () =>
+                      print('This action is called after menu is popped'),
+                  // A default behaviour
+                  tapHandler: PullDownMenuItem.defaultTapHandler,
+                  title: 'Pop menu and call [onTap]',
+                ),
+              ],
             ),
-            PullDownMenuItem(
-              onTap: () => print(
-                'This action is called after menu is popped '
-                'and animation ended',
-              ),
-              // A delayed behaviour
-              tapHandler: PullDownMenuItem.delayedTapHandler,
-              title: 'Pop, wait for animation to end and call [onTap]',
+            LabeledExample(
+              label: 'PullDownMenuItem.delayedTapHandler',
+              items: [
+                PullDownMenuItem(
+                  onTap: () => print(
+                    'This action is called after menu is popped '
+                    'and animation ended',
+                  ),
+                  // A delayed behaviour
+                  tapHandler: PullDownMenuItem.delayedTapHandler,
+                  title: 'Pop, wait for animation to end and call [onTap]',
+                ),
+              ],
             ),
-            PullDownMenuItem(
-              onTap: () =>
-                  print('This action is called without menu being popped'),
-              // A no pop behaviour
-              tapHandler: PullDownMenuItem.noPopTapHandler,
-              title: 'Call [onTap]',
+            LabeledExample(
+              label: 'PullDownMenuItem.noPopTapHandler',
+              items: [
+                PullDownMenuItem(
+                  onTap: () =>
+                      print('This action is called without menu being popped'),
+                  // A no pop behaviour
+                  tapHandler: PullDownMenuItem.noPopTapHandler,
+                  title: 'Call [onTap]',
+                ),
+              ],
             ),
-            PullDownMenuItem(
-              onTap: () => print('This action will never be called'),
-              // A "do nothing" behaviour
-              tapHandler: (context, onTap) => {},
-              title: "Don't call anything",
+            LabeledExample(
+              label: 'Custom "Don\'t call anything" behaviour',
+              items: [
+                PullDownMenuItem(
+                  onTap: () => print('This action will never be called'),
+                  // A "do nothing" behaviour
+                  tapHandler: (context, onTap) => {},
+                  title: "Don't call anything",
+                ),
+              ],
             ),
-          ]),
-          buttonBuilder: ExampleButton.builder,
+          ],
         ),
       );
 }

@@ -41,15 +41,21 @@ class RoutePullDownMenu extends StatelessWidget {
         PullDownMenuRouteTheme.resolve(context, routeTheme: routeTheme);
 
     final shadowTween = DecorationTween(
-      begin: BoxDecoration(boxShadow: [theme.beginShadow!]),
-      end: BoxDecoration(boxShadow: [theme.endShadow!]),
+      begin: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadow!.color.withOpacity(0),
+            blurRadius: theme.shadow!.blurRadius,
+            spreadRadius: theme.shadow!.spreadRadius,
+          ),
+        ],
+      ),
+      end: BoxDecoration(boxShadow: [theme.shadow!]),
     );
 
     final clampedAnimation = ClampedAnimation(animation);
 
-    final isLargeTextScale = TextScaleUtils.isLargeTextScale(
-      MediaQuery.of(context).textScaleFactor,
-    );
+    final isInAccessibilityMode = TextUtils.isInAccessibilityMode(context);
 
     return ScaleTransition(
       scale: animation,
@@ -67,8 +73,8 @@ class RoutePullDownMenu extends StatelessWidget {
               opacity: clampedAnimation,
               child: AnimatedMenuContainer(
                 constraints: BoxConstraints.tightFor(
-                  width: isLargeTextScale
-                      ? theme.largeTextScaleWidth
+                  width: isInAccessibilityMode
+                      ? theme.accessibilityWidth
                       : theme.width,
                 ),
                 child: SizeTransition(

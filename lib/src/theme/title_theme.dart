@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
+import '_fonts.dart';
 
 /// Defines the visual properties of the titles in pull-down menus.
 ///
@@ -21,13 +22,12 @@ class PullDownMenuTitleTheme with Diagnosticable {
   /// Creates default set of properties used to configure
   /// [PullDownMenuTitleTheme].
   ///
-  /// Default properties where taken from community Figma files and direct
-  /// color compare with SwiftUI `Menu`.
+  /// Default properties were taken from the Apple Design Resources Sketch file.
   ///
   /// See also:
   ///
-  /// * iOS 16 UI Kit for Figma by Joey Banks:
-  ///   https://www.figma.com/community/file/1121065701252736567.
+  /// * Apple Design Resources Sketch file:
+  ///   https://developer.apple.com/design/resources/
   @internal
   const factory PullDownMenuTitleTheme.defaults(BuildContext context) =
       _PullDownMenuTitleDefaults;
@@ -110,18 +110,25 @@ class _PullDownMenuTitleDefaults extends PullDownMenuTitleTheme {
 
   /// The light and dark colors of [PullDownMenuTitle.title].
   static const kTitleColor = CupertinoDynamicColor.withBrightness(
-    color: Color.fromRGBO(60, 60, 60, 0.6),
+    color: Color.fromRGBO(60, 60, 67, 0.6),
     darkColor: Color.fromRGBO(235, 235, 245, 0.6),
   );
 
+  /// The [PullDownMenuTitleTheme.style] as a constant.
+  ///
+  /// [style] will resolve [kStyle] with [kTitleColor] applied.
+  static const kStyle = TextStyle(
+    inherit: false,
+    fontFamily: kFontFamily,
+    fontFamilyFallback: kFontFallbacks,
+    fontSize: 12,
+    height: 16 / 12,
+    fontWeight: FontWeight.w400,
+    textBaseline: TextBaseline.alphabetic,
+  );
+
   @override
-  TextStyle get style => TextStyle(
-        inherit: false,
-        fontFamily: '.SF UI Text',
-        fontSize: 12,
-        height: 16 / 12,
-        fontWeight: FontWeight.w400,
+  TextStyle get style => kStyle.copyWith(
         color: kTitleColor.resolveFrom(context),
-        textBaseline: TextBaseline.alphabetic,
       );
 }

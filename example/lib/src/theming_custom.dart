@@ -21,7 +21,7 @@ class ThemingCustom extends StatelessWidget {
       brightness: themeData.brightness,
     );
 
-    // For the sake of simplicity, define global theme override
+    // For the sake of simplicity, define global theme override.
     return Theme(
       data: themeData.copyWith(
         extensions: [
@@ -30,12 +30,12 @@ class ThemingCustom extends StatelessWidget {
               backgroundColor: ElevationOverlay.applySurfaceTint(
                 colorScheme.surface,
                 colorScheme.surfaceTint,
-                3,
+                2,
               ),
             ),
             dividerTheme: PullDownMenuDividerTheme(
-              dividerColor: colorScheme.outline,
-              largeDividerColor: colorScheme.outlineVariant,
+              dividerColor: colorScheme.outlineVariant,
+              largeDividerColor: colorScheme.surfaceVariant,
             ),
             itemTheme: PullDownMenuItemTheme(
               destructiveColor: colorScheme.error,
@@ -47,15 +47,23 @@ class ThemingCustom extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: colorScheme.onSurface,
               ),
+              onHoverBackgroundColor: colorScheme.primary,
+              onHoverTextColor: colorScheme.onPrimary,
+              onPressedBackgroundColor: colorScheme.surfaceVariant,
             ),
           ),
         ],
       ),
-      child: const ExampleScaffold(
-        title: 'Custom theme',
-        pullDownButton: PullDownButton(
-          itemBuilder: ExampleScaffold.exampleItems,
-          buttonBuilder: ExampleButton.builder,
+      child: CupertinoPageScaffold(
+        navigationBar: ExampleScaffoldNavigationBar(
+          title: 'Custom theme',
+        ),
+        child: SafeArea(
+          child: Center(
+            child: PullDownMenu(
+              items: ExampleScaffold.exampleItems(context),
+            ),
+          ),
         ),
       ),
     );

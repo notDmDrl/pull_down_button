@@ -8,66 +8,67 @@ class ActionsRow extends StatelessWidget {
   const ActionsRow({super.key});
 
   @override
-  Widget build(BuildContext context) => ExampleScaffold(
-        title: 'PullDownMenuActionsRow',
-        pullDownButton: PullDownButton(
-          itemBuilder: (context) => [
-            const PullDownMenuTitle(
-              title: Text('PullDownMenuActionsRow.small'),
-            ),
-            const PullDownMenuDivider(),
-            PullDownMenuActionsRow.small(
+  Widget build(BuildContext context) => CupertinoPageScaffold(
+        navigationBar: ExampleScaffoldNavigationBar(
+          title: 'PullDownMenuActionsRow',
+        ),
+        child: ListView(
+          children: const [
+            LabeledExample(
+              label: 'PullDownMenuActionsRow.small',
               items: [
-                PullDownMenuItem(
-                  onTap: () {},
-                  title: 'Cut',
-                  icon: CupertinoIcons.scissors,
-                ),
-                PullDownMenuItem(
-                  onTap: () {},
-                  title: 'Copy',
-                  icon: CupertinoIcons.doc_on_doc,
-                ),
-                PullDownMenuItem(
-                  onTap: () {},
-                  title: 'Paste',
-                  icon: CupertinoIcons.doc_on_clipboard,
-                ),
-                PullDownMenuItem(
-                  onTap: () {},
-                  title: 'Look Up',
-                  icon: CupertinoIcons.doc_text_search,
-                ),
+                PullDownMenuActionsRow.small(
+                  items: [
+                    PullDownMenuItem(
+                      onTap: noAction,
+                      title: 'Cut',
+                      icon: CupertinoIcons.scissors,
+                    ),
+                    PullDownMenuItem(
+                      onTap: noAction,
+                      title: 'Copy',
+                      icon: CupertinoIcons.doc_on_doc,
+                    ),
+                    PullDownMenuItem(
+                      onTap: noAction,
+                      title: 'Paste',
+                      icon: CupertinoIcons.doc_on_clipboard,
+                    ),
+                    PullDownMenuItem(
+                      onTap: noAction,
+                      isDestructive: true,
+                      title: 'Delete',
+                      icon: CupertinoIcons.delete,
+                    ),
+                  ],
+                )
               ],
             ),
-            const PullDownMenuDivider.large(),
-            const PullDownMenuTitle(
-              title: Text('PullDownMenuActionsRow.medium'),
-            ),
-            const PullDownMenuDivider(),
-            PullDownMenuActionsRow.medium(
+            LabeledExample(
+              label: 'PullDownMenuActionsRow.medium',
               items: [
-                PullDownMenuItem(
-                  enabled: false,
-                  onTap: () {},
-                  title: 'Inbox',
-                  icon: CupertinoIcons.tray_arrow_down,
-                ),
-                PullDownMenuItem(
-                  onTap: () {},
-                  title: 'Archive',
-                  icon: CupertinoIcons.archivebox,
-                ),
-                PullDownMenuItem(
-                  onTap: () {},
-                  title: 'Trash',
-                  isDestructive: true,
-                  icon: CupertinoIcons.delete,
-                ),
+                PullDownMenuActionsRow.medium(
+                  items: [
+                    PullDownMenuItem(
+                      onTap: noAction,
+                      title: 'Cut',
+                      icon: CupertinoIcons.scissors,
+                    ),
+                    PullDownMenuItem(
+                      onTap: noAction,
+                      title: 'Copy',
+                      icon: CupertinoIcons.doc_on_doc,
+                    ),
+                    PullDownMenuItem(
+                      onTap: noAction,
+                      title: 'Paste',
+                      icon: CupertinoIcons.doc_on_clipboard,
+                    ),
+                  ],
+                )
               ],
-            ),
+            )
           ],
-          buttonBuilder: ExampleButton.builder,
         ),
       );
 }
