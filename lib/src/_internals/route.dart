@@ -25,6 +25,8 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.hasLeading,
     required this.itemsOrder,
     required this.alignment,
+    required this.menuOffset,
+    required this.initialScrollOffset,
   });
 
   /// Items to show in the [RoutePullDownMenu] created by this route.
@@ -46,7 +48,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// Is used to calculate the final menu's position.
   final Rect buttonRect;
 
-  /// Is used to define whether the popup menu is positioned above, over or
+  /// Is used to define whether the pull-down menu is positioned above, over or
   /// under the calculated menu's position.
   final PullDownMenuPosition menuPosition;
 
@@ -57,6 +59,12 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// The point menu scales from. Generated with
   /// [PullDownMenuRoute.animationAlignment] before creating the route.
   final Alignment alignment;
+
+  /// Is used to define additional on-side offset to the menu's final position.
+  final double menuOffset;
+
+  /// Is used to define the initial scroll offset of menu's body.
+  final double? initialScrollOffset;
 
   @override
   final String barrierLabel;
@@ -100,6 +108,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     return MenuConfig(
       hasLeading: hasLeading,
       child: RoutePullDownMenu(
+        initialScrollOffset: initialScrollOffset,
         items: orderedItems.toList(),
         routeTheme: routeTheme,
         animation: animation,
@@ -132,6 +141,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
             padding: mediaQuery.padding,
             avoidBounds: avoidBounds,
             menuPosition: menuPosition,
+            menuOffset: menuOffset,
           ),
           child: capturedThemes.wrap(child),
         ),

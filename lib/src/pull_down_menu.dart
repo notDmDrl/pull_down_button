@@ -33,6 +33,7 @@ class PullDownMenu extends StatelessWidget {
   const PullDownMenu({
     super.key,
     required this.items,
+    this.initialScrollOffset,
     this.routeTheme,
   });
 
@@ -47,6 +48,15 @@ class PullDownMenu extends StatelessWidget {
   /// In order to achieve it all [PullDownMenuItem]s will automatically switch
   /// to the "selectable" view.
   final List<PullDownMenuEntry> items;
+
+  /// The initial scroll offset of the pull-down menu's body.
+  ///
+  /// If `null`, defaults to 0.
+  ///
+  /// See also:
+  ///
+  /// * [ScrollController.initialScrollOffset].
+  final double? initialScrollOffset;
 
   /// The theme of this [PullDownMenu].
   ///
@@ -83,7 +93,10 @@ class PullDownMenu extends StatelessWidget {
                   : theme.width,
             ),
             child: SwipeRegion(
-              child: MenuBody(items: items),
+              child: MenuBody(
+                initialScrollOffset: initialScrollOffset,
+                items: items,
+              ),
             ),
           ),
         ),

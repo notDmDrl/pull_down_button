@@ -7,9 +7,6 @@ import 'package:meta/meta.dart';
 /// A set of blur utils.
 @internal
 abstract class BlurUtils {
-  // TODO(notDmdrl): if it ever is decided to bump the minimum dart version to
-  // 3.0 migrate to class modifiers
-  // `abstract final class AnimationUtils` and remove this constructor.
   const BlurUtils._();
 
   /// Check if the menu's background color is not fully opaque.

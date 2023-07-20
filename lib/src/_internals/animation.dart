@@ -8,9 +8,6 @@ import '../../pull_down_button.dart';
 /// All of the values were eyeballed using the iOS 16 Simulator.
 @internal
 abstract class AnimationUtils {
-  // TODO(notDmdrl): if it ever is decided to bump the minimum dart version to
-  // 3.0 migrate to class modifiers
-  // `abstract final class AnimationUtils` and remove this constructor.
   const AnimationUtils._();
 
   /// Pull-down menu animation duration.

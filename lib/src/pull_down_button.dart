@@ -206,6 +206,8 @@ class PullDownButton extends StatefulWidget {
     this.position = PullDownMenuPosition.automatic,
     this.itemsOrder = PullDownMenuItemsOrder.downwards,
     this.buttonAnchor,
+    this.menuOffset = 16,
+    this.initialScrollOffset,
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
   });
@@ -250,6 +252,29 @@ class PullDownButton extends StatefulWidget {
   ///
   /// Defaults to `null`.
   final PullDownMenuAnchor? buttonAnchor;
+
+  /// Additional horizontal offset for the pull-down menu if the menu's desired
+  /// position is not in the central third of the screen.
+  ///
+  /// If the menu's desired position is in the right side of the screen,
+  /// [menuOffset] is added to said position (menu moves to the right). If the
+  /// menu's desired position is in the left side of the screen, [menuOffset]
+  /// is subtracted from said position (menu moves to the left).
+  ///
+  /// Consider using [buttonAnchor] if you want to offset the menu for a large
+  /// amount of px.
+  ///
+  /// Defaults to 16px.
+  final double menuOffset;
+
+  /// The initial scroll offset of the pull-down menu's body.
+  ///
+  /// If `null`, defaults to 0.
+  ///
+  /// See also:
+  ///
+  /// * [ScrollController.initialScrollOffset].
+  final double? initialScrollOffset;
 
   /// Theme of the route used to display pull-down menu launched from this
   /// [PullDownButton].
@@ -321,6 +346,8 @@ class _PullDownButtonState extends State<PullDownButton> {
       routeTheme: widget.routeTheme,
       hasLeading: hasLeading,
       animationAlignment: animationAlignment,
+      menuOffset: widget.menuOffset,
+      initialScrollOffset: widget.initialScrollOffset,
     );
 
     if (!mounted) return;
@@ -363,6 +390,13 @@ class _PullDownButtonState extends State<PullDownButton> {
 /// on the calculated menu's position. Defaults to
 /// [PullDownMenuItemsOrder.downwards].
 ///
+/// [menuOffset] is used to define additional horizontal offset for
+/// the pull-down menu if the menu's desired position is not in the central
+/// third of the screen. Defaults to 16px.
+///
+/// [initialScrollOffset] is used to define the initial scroll offset of
+/// the pull-down menu's body. If null, defaults to 0.
+///
 /// [onCanceled] is called when the user dismisses the pull-down menu.
 ///
 /// [routeTheme] is used to define the theme of the route used to display
@@ -389,6 +423,8 @@ Future<void> showPullDownMenu({
   required List<PullDownMenuEntry> items,
   required Rect position,
   PullDownMenuItemsOrder itemsOrder = PullDownMenuItemsOrder.downwards,
+  double menuOffset = 16,
+  double? initialScrollOffset,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
 }) async {
@@ -405,11 +441,9 @@ Future<void> showPullDownMenu({
     routeTheme: routeTheme,
     hasLeading: hasLeading,
     animationAlignment: PullDownMenuRoute.animationAlignment(context, position),
+    menuOffset: menuOffset,
+    initialScrollOffset: initialScrollOffset,
   );
-
-  // TODO(notDmDrl): this was not available at Flutter 3.0.0 release,
-  // uncomment after min dart version for a package is 3.0?
-  // if (!context.mounted) return;
 
   if (action != null) {
     action.call();
@@ -429,6 +463,8 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required PullDownMenuRouteTheme? routeTheme,
   required bool hasLeading,
   required Alignment animationAlignment,
+  required double menuOffset,
+  required double? initialScrollOffset,
 }) {
   final navigator = Navigator.of(context);
 
@@ -446,6 +482,8 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
       hasLeading: hasLeading,
       itemsOrder: itemsOrder,
       alignment: animationAlignment,
+      menuOffset: menuOffset,
+      initialScrollOffset: initialScrollOffset,
     ),
   );
 }

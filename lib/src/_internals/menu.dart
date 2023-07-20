@@ -55,10 +55,14 @@ class MenuBody extends StatefulWidget {
   const MenuBody({
     super.key,
     required this.items,
+    required this.initialScrollOffset,
   });
 
   /// Items to show in the menu.
   final List<PullDownMenuEntry> items;
+
+  /// The initial scroll offset of menu's body.
+  final double? initialScrollOffset;
 
   @override
   State<MenuBody> createState() => _MenuBodyState();
@@ -74,7 +78,9 @@ class _MenuBodyState extends State<MenuBody> {
   @override
   void initState() {
     super.initState();
-    scrollController = ScrollController();
+    scrollController = ScrollController(
+      initialScrollOffset: widget.initialScrollOffset ?? 0,
+    );
   }
 
   @override

@@ -1,3 +1,16 @@
+## 0.9.2
+
+##### 2023-07-20 - Add support for menu offsets
+
+### Changed
+
+- Fix menu items being "stuck" in the highlighted mode in scrollable menus (partially [#29](https://github.com/notDmDrl/pull_down_button/issues/29)).
+
+### Added
+
+- Add `menuOffset` to `PullDownButton` and `showPullDownMenu` to allow customizing the menu's horizontal offset ([#32](https://github.com/notDmDrl/pull_down_button/issues/32)).
+- Expose `initialScrollOffset` from internal scrollable to `PullDownButton`, `PullDownMenu` and `showPullDownMenu` to allow customizing initial scroll offset ([#31](https://github.com/notDmDrl/pull_down_button/issues/31)).
+
 ## 0.9.1
 
 ###### 2023-05-05 - README images fixes

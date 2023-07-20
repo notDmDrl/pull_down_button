@@ -67,16 +67,18 @@ PullDownButton(
 
 <details><summary>Properties table</summary>
 
-| Properties       | Description                                                                                              |
-| ---------------- | -------------------------------------------------------------------------------------------------------- |
-| itemBuilder      | Called when the button is pressed to create the items to show in the menu.                               |
-| buttonBuilder    | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
-| onCanceled       | Called when the user dismisses the pull-down menu.                                                       |
-| position         | Whether the pull-down menu is positioned above, over, or under the pull-down menu button.                |
-| itemsOrder       | Whether the pull-down menu orders its items from `itemBuilder` in downward or upwards way.               |
-| buttonAnchor     | Whether the pull-down menu is anchored to the center, left, or right side of `buttonBuilder`             |
-| routeTheme       | The theme of the pull-down menu box.                                                                     |
-| animationBuilder | Custom animation for `buttonBuilder` when the pull-down menu is opening or closing                       |
+| Properties          | Description                                                                                              |
+|---------------------|----------------------------------------------------------------------------------------------------------|
+| itemBuilder         | Called when the button is pressed to create the items to show in the menu.                               |
+| buttonBuilder       | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
+| onCanceled          | Called when the user dismisses the pull-down menu.                                                       |
+| position            | Whether the pull-down menu is positioned above, over, or under the pull-down menu button.                |
+| itemsOrder          | Whether the pull-down menu orders its items from `itemBuilder` in downward or upwards way.               |
+| buttonAnchor        | Whether the pull-down menu is anchored to the center, left, or right side of `buttonBuilder`.            |
+| menuOffset          | Additional offset for the pull-down menu if the menu's desired position.                                 |
+| initialScrollOffset | The initial scroll offset of the pull-down menu's body.                                                  |
+| routeTheme          | The theme of the pull-down menu box.                                                                     |
+| animationBuilder    | Custom animation for `buttonBuilder` when the pull-down menu is opening or closing.                      |
 
 </details>
 
@@ -111,7 +113,7 @@ PullDownMenuItem(
 <details><summary>Properties table</summary>
 
 | Properties    | Description                                      |
-| ------------- | ------------------------------------------------ |
+|---------------|--------------------------------------------------|
 | onTap         | The action this item represents.                 |
 | tapHandler    | Handler to resolve how `onTap` callback is used. |
 | enabled       | Whether the user is permitted to tap this item.  |
@@ -154,7 +156,7 @@ PullDownMenuItem.selectable(
   title: 'Indigo',
   icon: CupertinoIcons.circle_fill,
   iconColor: CupertinoColors.systemIndigo.resolveFrom(context),
-        ),
+),
 ```
 
 <details><summary>Properties table</summary>
@@ -198,7 +200,7 @@ PullDownMenuActionsRow.medium(
 Depending on `PullDownMenuActionsRow`s size, `PullDownMenuItem` might be either icon only or icon and title in a vertical array.
 
 | Properties | Description                 |
-| ---------- | --------------------------- |
+|------------|-----------------------------|
 | items      | List of `PullDownMenuItem`. |
 
 ---
@@ -222,7 +224,7 @@ const PullDownMenuTitle(title: Text('Menu title')),
 ```
 
 | Properties | Description              |
-| ---------- | ------------------------ |
+|------------|--------------------------|
 | title      | Title widget.            |
 | titleStyle | Title widget text style. |
 
@@ -249,7 +251,7 @@ PullDownMenuHeader(
 <details><summary>Properties table</summary>
 
 | Properties | Description                                      |
-| ---------- | ------------------------------------------------ |
+|------------|--------------------------------------------------|
 | onTap      | The action this header represents.               |
 | tapHandler | Handler to resolve how `onTap` callback is used. |
 | leading    | Leading widget of this `PullDownMenuItem`.       |
@@ -281,14 +283,16 @@ onPressed: () async {
 
 <details><summary>Properties table</summary>
 
-| Properties | Description                                                                                 |
-| ---------- | ------------------------------------------------------------------------------------------- |
-| context    | For looking up `Navigator` for the menu.                                                    |
-| items      | List of `PullDownMenuEntry` widgets.                                                        |
-| position   | The `Rect` is used to align the top of the menu with the top of the **position** rectangle. |
-| itemsOrder | Whether the popup menu orders its items from `itemBuilder` in a downward or upwards way.    |
-| onCanceled | Called when the user dismisses the pull-down menu.                                          |
-| routeTheme | The theme of the pull-down menu box.                                                        |
+| Properties          | Description                                                                                 |
+|---------------------|---------------------------------------------------------------------------------------------|
+| context             | For looking up `Navigator` for the menu.                                                    |
+| items               | List of `PullDownMenuEntry` widgets.                                                        |
+| position            | The `Rect` is used to align the top of the menu with the top of the **position** rectangle. |
+| itemsOrder          | Whether the popup menu orders its items from `itemBuilder` in a downward or upwards way.    |
+| menuOffset          | Additional offset for the pull-down menu if the menu's desired position.                    |
+| initialScrollOffset | The initial scroll offset of the pull-down menu's body.                                     |
+| onCanceled          | Called when the user dismisses the pull-down menu.                                          |
+| routeTheme          | The theme of the pull-down menu box.                                                        |
 
 </details>
 
@@ -309,15 +313,16 @@ PullDownMenu(
       onTap: () {},
     ),
   ]
-)
+),
 ```
 
 <details><summary>Properties table</summary>
 
-| Properties | Description                          |
-| ---------- | ------------------------------------ |
-| items      | List of `PullDownMenuEntry` widgets. |
-| routeTheme | The theme of pull-down menu box.     |
+| Properties          | Description                                             |
+|---------------------|---------------------------------------------------------|
+| items               | List of `PullDownMenuEntry` widgets.                    |
+| initialScrollOffset | The initial scroll offset of the pull-down menu's body. |
+| routeTheme          | The theme of pull-down menu box.                        |
 
 </details>
 
@@ -328,7 +333,7 @@ PullDownMenu(
 This package also provides additional customization. By default, the iOS 16 theme is used, but it is also possible to override defaults with widget properties (see above) or with `PullDownButtonTheme` theme extension.
 
 | Light Theme                                                                                                               | Dark Theme                                                                                                                    |
-| ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+|---------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
 | ![light default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/usage.png) | ![dark default theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/usage_dark.png) |
 
 ### PullDownButtonTheme
@@ -359,7 +364,7 @@ ThemeData(
 <details><summary>PullDownButtonTheme</summary>
 
 | Properties   | Description                                               |
-| ------------ | --------------------------------------------------------- |
+|--------------|-----------------------------------------------------------|
 | routeTheme   | Menu container theme (`PullDownMenuRouteTheme`).          |
 | itemTheme    | `PullDownMenuItem` theme (`PullDownMenuItemTheme`).       |
 | dividerTheme | `PullDownMenuDivider` theme (`PullDownMenuDividerTheme`). |
@@ -370,10 +375,10 @@ ThemeData(
 <details><summary>PullDownMenuRouteTheme</summary>
 
 | Properties         | Description                                 |
-| ------------------ | ------------------------------------------- |
+|--------------------|---------------------------------------------|
 | backgroundColor    | The background color of the pull-down menu. |
 | borderRadius       | The border radius of the pull-down menu.    |
-| shadowhadow        | The pull-down menu shadow.                  |
+| shadow             | The pull-down menu shadow.                  |
 | width              | Pull-down menu width.                       |
 | accessibilityWidth | Pull-down menu accessibility width.         |
 
@@ -385,7 +390,7 @@ If `backgroundColor` is fully opaque (opacity set to **1**), no blur effect will
 <details><summary>PullDownMenuItemTheme</summary>
 
 | Properties               | Description                                                       |
-| ------------------------ | ----------------------------------------------------------------- |
+|--------------------------|-------------------------------------------------------------------|
 | destructiveColor         | Color for destructive action.                                     |
 | checkmark                | Checkmark icon.                                                   |
 | textStyle                | `PullDownMenuItem` text style.                                    |
@@ -400,7 +405,7 @@ If `backgroundColor` is fully opaque (opacity set to **1**), no blur effect will
 <details><summary>PullDownMenuDividerTheme</summary>
 
 | Properties        | Description          |
-| ----------------- | -------------------- |
+|-------------------|----------------------|
 | dividerColor      | Small divider color. |
 | largeDividerColor | Large divider color. |
 
@@ -411,7 +416,7 @@ If `backgroundColor` is fully opaque (opacity set to **1**), no blur effect will
 <details><summary>PullDownMenuTitleTheme</summary>
 
 | Properties | Description                     |
-| ---------- | ------------------------------- |
+|------------|---------------------------------|
 | style      | `PullDownMenuTitle` text style. |
 
 </details>
@@ -429,7 +434,7 @@ CupertinoApp(
     child: child!,
   ),
   home: ...,
-)
+),
 ```
 
 ---
@@ -438,7 +443,7 @@ Here is example of using `PullDownButtonTheme` with Material 3 color scheme colo
 (generated from `CupertinoColors.systemBlue` with `ColorScheme.fromSeed`) from [Material 3 Menu specs](https://m3.material.io/components/menus/specs).
 
 | Custom Material 3 light theme                                                                                           | Custom Material 3 dark theme                                                                                          |
-| ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+|-------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | ![light theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/theme_light.png) | ![dark theme example](https://raw.githubusercontent.com/notDmDrl/pull_down_button/main/readme_content/theme_dark.png) |
 
 ---

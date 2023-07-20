@@ -12,12 +12,14 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     required this.avoidBounds,
     required this.buttonRect,
     required this.menuPosition,
+    required this.menuOffset,
   });
 
   final EdgeInsets padding;
   final Set<Rect> avoidBounds;
   final Rect buttonRect;
   final PullDownMenuPosition menuPosition;
+  final double menuOffset;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
@@ -26,7 +28,6 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final constraintsHeight = biggest.height;
     final double height;
 
-    // TODO(notDmDrl): final height = switch (menuPosition) {
     switch (menuPosition) {
       case PullDownMenuPosition.over:
         height = buttonRect.center.dy >= constraintsHeight / 2
@@ -50,21 +51,15 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   Offset getPositionForChild(Size size, Size childSize) {
     final childWidth = childSize.width;
 
-    // Additionally moves desired `x` by 16px left or right if menu's alignment
-    // is not considered "centered".
-    // Based on native comparison with iOS 16 Simulator.
-    const additionalX = 16;
-
     final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
 
-    // TODO(notDmDrl): final x = switch (horizontalPosition) {
     final double x;
     switch (horizontalPosition) {
       case _MenuHorizontalPosition.right:
-        x = buttonRect.right - childWidth + additionalX;
+        x = buttonRect.right - childWidth + menuOffset;
         break;
       case _MenuHorizontalPosition.left:
-        x = buttonRect.left - additionalX;
+        x = buttonRect.left - menuOffset;
         break;
       case _MenuHorizontalPosition.center:
         x = buttonRect.left + buttonRect.width / 2 - childWidth / 2;

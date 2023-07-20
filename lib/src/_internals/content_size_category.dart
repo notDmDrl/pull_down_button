@@ -118,9 +118,6 @@ enum ContentSizeCategory {
 /// All of the values were eyeballed using the iOS 16 Simulator.
 @internal
 abstract class TextUtils {
-  // TODO(notDmDrl): if it ever is decided to bump the minimum dart version to
-  // 3.0 migrate to class modifiers
-  // `abstract final class TextScaleUtils` and remove this constructor.
   const TextUtils._();
 
   /// Utility method for resolving if current text scale factor is bigger

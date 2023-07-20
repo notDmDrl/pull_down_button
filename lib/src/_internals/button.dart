@@ -108,6 +108,10 @@ class _MenuActionButtonState extends State<MenuActionButton> {
     if (enabled && isPressed) setState(() => isPressed = false);
   }
 
+  void onTapCancel() {
+    if (enabled && isPressed) setState(() => isPressed = false);
+  }
+
   @override
   Widget build(BuildContext context) => MouseRegion(
         cursor: enabled && kIsWeb //
@@ -120,6 +124,7 @@ class _MenuActionButtonState extends State<MenuActionButton> {
           onTap: onTap,
           onTapDown: onTapDown,
           onTapUp: onTapUp,
+          onTapCancel: onTapCancel,
           behavior: HitTestBehavior.opaque,
           child: DecoratedBox(
             decoration: BoxDecoration(

@@ -18,6 +18,7 @@ class RoutePullDownMenu extends StatelessWidget {
     required this.routeTheme,
     required this.alignment,
     required this.animation,
+    required this.initialScrollOffset,
   });
 
   /// Items to show in the menu.
@@ -34,6 +35,9 @@ class RoutePullDownMenu extends StatelessWidget {
 
   /// The point menu scales from.
   final Alignment alignment;
+
+  /// Is used to define the initial scroll offset of menu's body.
+  final double? initialScrollOffset;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +85,7 @@ class RoutePullDownMenu extends StatelessWidget {
                   axisAlignment: -1,
                   sizeFactor: clampedAnimation,
                   child: MenuBody(
+                    initialScrollOffset: initialScrollOffset,
                     items: items,
                   ),
                 ),
