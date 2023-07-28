@@ -50,45 +50,23 @@ class MenuDecoration extends StatelessWidget {
 /// A widget used to create a scrollable body for pull-down menu items.
 @immutable
 @internal
-class MenuBody extends StatefulWidget {
+class MenuBody extends StatelessWidget {
   /// Creates [MenuBody].
   const MenuBody({
     super.key,
     required this.items,
-    required this.initialScrollOffset,
+    required this.scrollController,
   });
 
   /// Items to show in the menu.
   final List<PullDownMenuEntry> items;
 
-  /// The initial scroll offset of menu's body.
-  final double? initialScrollOffset;
+  /// A scroll controller that can be used to control the scrolling of the
+  /// [items] in the menu.
+  final ScrollController? scrollController;
 
-  @override
-  State<MenuBody> createState() => _MenuBodyState();
-}
-
-class _MenuBodyState extends State<MenuBody> {
-  // Making it nullable sounds unnecessary but leak_tracker is angry so leave it
-  // like this for now.
-  // TODO(notDmDrl): look into this when leak_tracker is fully baked into
-  // devtools.
-  ScrollController? scrollController;
-
-  @override
-  void initState() {
-    super.initState();
-    scrollController = ScrollController(
-      initialScrollOffset: widget.initialScrollOffset ?? 0,
-    );
-  }
-
-  @override
-  void dispose() {
-    scrollController?.dispose();
-    scrollController = null;
-    super.dispose();
-  }
+  ScrollController get _effectiveScrollController =>
+      scrollController ?? ScrollController();
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -97,13 +75,13 @@ class _MenuBodyState extends State<MenuBody> {
         explicitChildNodes: true,
         label: 'Pull-Down menu',
         child: CupertinoScrollbar(
-          controller: scrollController,
+          controller: _effectiveScrollController,
           child: SingleChildScrollView(
             primary: false,
             clipBehavior: Clip.none,
-            controller: scrollController,
+            controller: _effectiveScrollController,
             child: ListBody(
-              children: MenuSeparator.wrapVerticalList(widget.items),
+              children: MenuSeparator.wrapVerticalList(items),
             ),
           ),
         ),

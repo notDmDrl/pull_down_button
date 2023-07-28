@@ -67,18 +67,18 @@ PullDownButton(
 
 <details><summary>Properties table</summary>
 
-| Properties          | Description                                                                                              |
-|---------------------|----------------------------------------------------------------------------------------------------------|
-| itemBuilder         | Called when the button is pressed to create the items to show in the menu.                               |
-| buttonBuilder       | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
-| onCanceled          | Called when the user dismisses the pull-down menu.                                                       |
-| position            | Whether the pull-down menu is positioned above, over, or under the pull-down menu button.                |
-| itemsOrder          | Whether the pull-down menu orders its items from `itemBuilder` in downward or upwards way.               |
-| buttonAnchor        | Whether the pull-down menu is anchored to the center, left, or right side of `buttonBuilder`.            |
-| menuOffset          | Additional offset for the pull-down menu if the menu's desired position.                                 |
-| initialScrollOffset | The initial scroll offset of the pull-down menu's body.                                                  |
-| routeTheme          | The theme of the pull-down menu box.                                                                     |
-| animationBuilder    | Custom animation for `buttonBuilder` when the pull-down menu is opening or closing.                      |
+| Properties        | Description                                                                                              |
+|-------------------|----------------------------------------------------------------------------------------------------------|
+| itemBuilder       | Called when the button is pressed to create the items to show in the menu.                               |
+| buttonBuilder     | Builder that provides `BuildContext` as well as `showMenu` function to pass to any custom button widget. |
+| onCanceled        | Called when the user dismisses the pull-down menu.                                                       |
+| position          | Whether the pull-down menu is positioned above, over, or under the pull-down menu button.                |
+| itemsOrder        | Whether the pull-down menu orders its items from `itemBuilder` in downward or upwards way.               |
+| buttonAnchor      | Whether the pull-down menu is anchored to the center, left, or right side of `buttonBuilder`.            |
+| menuOffset        | Additional offset for the pull-down menu if the menu's desired position.                                 |
+| scrollController  | A custom menu scroll controller.                                                                         |
+| routeTheme        | The theme of the pull-down menu box.                                                                     |
+| animationBuilder  | Custom animation for `buttonBuilder` when the pull-down menu is opening or closing.                      |
 
 </details>
 
@@ -290,7 +290,7 @@ onPressed: () async {
 | position            | The `Rect` is used to align the top of the menu with the top of the **position** rectangle. |
 | itemsOrder          | Whether the popup menu orders its items from `itemBuilder` in a downward or upwards way.    |
 | menuOffset          | Additional offset for the pull-down menu if the menu's desired position.                    |
-| initialScrollOffset | The initial scroll offset of the pull-down menu's body.                                     |
+| scrollController    | A custom menu scroll controller.                                                            |
 | onCanceled          | Called when the user dismisses the pull-down menu.                                          |
 | routeTheme          | The theme of the pull-down menu box.                                                        |
 
@@ -318,11 +318,11 @@ PullDownMenu(
 
 <details><summary>Properties table</summary>
 
-| Properties          | Description                                             |
-|---------------------|---------------------------------------------------------|
-| items               | List of `PullDownMenuEntry` widgets.                    |
-| initialScrollOffset | The initial scroll offset of the pull-down menu's body. |
-| routeTheme          | The theme of pull-down menu box.                        |
+| Properties          | Description                          |
+|---------------------|--------------------------------------|
+| items               | List of `PullDownMenuEntry` widgets. |
+| scrollController    | A custom menu scroll controller.     |
+| routeTheme          | The theme of pull-down menu box.     |
 
 </details>
 

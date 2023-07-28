@@ -26,7 +26,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.itemsOrder,
     required this.alignment,
     required this.menuOffset,
-    required this.initialScrollOffset,
+    required this.scrollController,
   });
 
   /// Items to show in the [RoutePullDownMenu] created by this route.
@@ -63,8 +63,9 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// Is used to define additional on-side offset to the menu's final position.
   final double menuOffset;
 
-  /// Is used to define the initial scroll offset of menu's body.
-  final double? initialScrollOffset;
+  /// A scroll controller that can be used to control the scrolling of the
+  /// [items] in the menu.
+  final ScrollController? scrollController;
 
   @override
   final String barrierLabel;
@@ -108,7 +109,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     return MenuConfig(
       hasLeading: hasLeading,
       child: RoutePullDownMenu(
-        initialScrollOffset: initialScrollOffset,
+        scrollController: scrollController,
         items: orderedItems.toList(),
         routeTheme: routeTheme,
         animation: animation,

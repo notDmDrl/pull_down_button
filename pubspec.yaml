@@ -1,6 +1,6 @@
 name: pull_down_button
 description: A package that implements Pull-Down Button from iOS 14 in Flutter. Highly customizable.
-version: 0.9.2
+version: 0.9.3
 homepage: https://github.com/notDmDrl/pull_down_button
 repository: https://github.com/notDmDrl/pull_down_button
 issue_tracker: https://github.com/notDmDrl/pull_down_button/issues

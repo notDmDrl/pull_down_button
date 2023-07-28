@@ -1,3 +1,15 @@
+## 0.9.3
+
+##### 2023-07-28 - Menu scroll controller
+
+### Added
+
+- Add `scrollController` to `PullDownButton`, `PullDownMenu` and `showPullDownMenu` to allow passing custom scroll controller ([#31](https://github.com/notDmDrl/pull_down_button/issues/31)).
+
+### Removed
+
+- **Breaking:** remove `initialScrollOffset` from `PullDownButton`, `PullDownMenu` and `showPullDownMenu` to allow more precise scroll controller customization using `scrollController`.
+
 ## 0.9.2
 
 ##### 2023-07-20 - Add support for menu offsets
