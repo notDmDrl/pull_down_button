@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 import '../pull_down_button.dart';
 import '_internals/extensions.dart';
@@ -210,6 +211,7 @@ class PullDownButton extends StatefulWidget {
     this.scrollController,
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
+    this.animationAlignmentOverride,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -291,6 +293,49 @@ class PullDownButton extends StatefulWidget {
   /// If this property is null, then no animation will be used.
   final PullDownButtonAnimationBuilder? animationBuilder;
 
+  /// Custom animation alignment used to override default one.
+  ///
+  /// This is useful for cases when default animation alignment is not suitable
+  /// enough, for example in cases when its needed to "contain" menu in a
+  /// specific part of the screen.
+  ///
+  /// It is also recommended to change [menuOffset] and / or [buttonAnchor] to
+  /// reach expected results.
+  ///
+  /// All examples assume:
+  /// * Menu is located in the left third of the screen on a wide display,
+  /// such as tablet or desktop.
+  /// * Menu is located in top half of the screen.
+  /// * Default animation alignment resolves to [Alignment.topLeft].
+  ///
+  /// For example, to "flip" menu animation:
+  ///
+  /// ```dart
+  /// PullDownButton(
+  ///   itemBuilder: ...,
+  ///   buttonBuilder: ...,
+  ///   // ignore: invalid_use_of_internal_member
+  ///   menuOffset: PullDownMenuRouteTheme.resolve(
+  ///         context,
+  ///         routeTheme: null,
+  ///       ).width!,
+  ///   animationAlignmentOverride: Alignment.topRight,
+  ///   buttonAnchor: PullDownMenuAnchor.end,
+  /// )
+  /// ```
+  ///
+  /// In the example below, menu gets "moved" by the its width to the left to
+  /// align its right side with [buttonBuilder] and
+  /// [animationAlignmentOverride] is used to override the default animation
+  /// alignment to one that is correct for this specific case.
+  ///
+  /// See also:
+  ///
+  /// * [PullDownMenuRoute.animationAlignment], the default animation alignment
+  /// prediction algorithm.
+  @experimental
+  final Alignment? animationAlignmentOverride;
+
   /// Default animation builder for [animationBuilder].
   ///
   /// If [state] is [PullDownButtonAnimationState.opened], apply opacity
@@ -323,7 +368,7 @@ class _PullDownButtonState extends State<PullDownButton> {
     if (widget.buttonAnchor != null) {
       button = _anchorToButtonPart(context, button, widget.buttonAnchor!);
     }
-    final animationAlignment =
+    final animationAlignment = widget.animationAlignmentOverride ??
         PullDownMenuRoute.animationAlignment(context, button);
 
     final items = widget.itemBuilder(context);

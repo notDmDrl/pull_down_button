@@ -79,7 +79,7 @@ class ExampleScaffold extends StatelessWidget {
         for (final alignment in const [
           AlignmentDirectional.centerStart,
           AlignmentDirectional.center,
-          AlignmentDirectional.centerEnd
+          AlignmentDirectional.centerEnd,
         ])
           Expanded(
             child: Align(

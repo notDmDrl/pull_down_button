@@ -1,3 +1,4 @@
+import 'package:example/src/alignment_override.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:pull_down_button/pull_down_button.dart';
 
@@ -122,7 +123,11 @@ class ItemExamples extends StatelessWidget {
                   _Tile(
                     title: 'PullDownMenuAnchor',
                     destination: Anchor(),
-                  )
+                  ),
+                  _Tile(
+                    title: 'PullDownButton.animationAlignmentOverride',
+                    destination: AlignmentOverride(),
+                  ),
                 ],
               ),
             ],

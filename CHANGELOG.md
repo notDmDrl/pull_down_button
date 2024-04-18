@@ -1,3 +1,12 @@
+## 0.9.4
+
+##### 2024-04-18 - Menu animation alignment override
+
+### Added
+
+- Add `animationAlignmentOverride` to `PullDownButton`. _This feature is experimental and may be removed in the future versions._
+- Add example for `PullDownButton.animationAlignmentOverride`.
+
 ## 0.9.3
 
 ##### 2023-07-28 - Menu scroll controller
