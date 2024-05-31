@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 import '../../pull_down_button.dart';
 import 'animation.dart';
@@ -27,6 +28,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.alignment,
     required this.menuOffset,
     required this.scrollController,
+    required this.interceptMouseEvents,
   });
 
   /// Items to show in the [RoutePullDownMenu] created by this route.
@@ -66,6 +68,9 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// A scroll controller that can be used to control the scrolling of the
   /// [items] in the menu.
   final ScrollController? scrollController;
+
+  /// Whether the menu is intercepting pointer events
+  final bool interceptMouseEvents;
 
   @override
   final String barrierLabel;
@@ -108,12 +113,15 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
     return MenuConfig(
       hasLeading: hasLeading,
-      child: RoutePullDownMenu(
-        scrollController: scrollController,
-        items: orderedItems.toList(),
-        routeTheme: routeTheme,
-        animation: animation,
-        alignment: alignment,
+      child: PointerInterceptor(
+        intercepting: interceptMouseEvents,
+        child: RoutePullDownMenu(
+          scrollController: scrollController,
+          items: orderedItems.toList(),
+          routeTheme: routeTheme,
+          animation: animation,
+          alignment: alignment,
+        ),
       ),
     );
   }

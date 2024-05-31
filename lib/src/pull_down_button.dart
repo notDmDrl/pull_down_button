@@ -212,6 +212,7 @@ class PullDownButton extends StatefulWidget {
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
     this.animationAlignmentOverride,
+    this.interceptMouseEvents = false,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -336,6 +337,20 @@ class PullDownButton extends StatefulWidget {
   @experimental
   final Alignment? animationAlignmentOverride;
 
+  /// Determines whether to use PointerInterceptor to intercept pointer events
+  /// on the menu.
+  ///
+  /// PointerInterceptor is a widget designed to prevent pointer events
+  /// (e.g., mouse events) from being captured by underlying web components
+  /// (HtmlElementView) or platform-specific views (PlatformView on iOS).
+  /// This is particularly useful when overlaying widgets, such as WebView,
+  /// on top of these views. Enabling this feature (setting it to true) ensures
+  /// that pointer events are correctly handled by the overlaying widget rather
+  /// than being intercepted by the underlying view.
+  ///
+  /// For more information, visit: https://pub.dev/packages/pointer_interceptor
+  final bool interceptMouseEvents;
+
   /// Default animation builder for [animationBuilder].
   ///
   /// If [state] is [PullDownButtonAnimationState.opened], apply opacity
@@ -390,6 +405,7 @@ class _PullDownButtonState extends State<PullDownButton> {
       animationAlignment: animationAlignment,
       menuOffset: widget.menuOffset,
       scrollController: widget.scrollController,
+      interceptMouseEvents: widget.interceptMouseEvents,
     );
 
     if (!mounted) return;
@@ -445,6 +461,9 @@ class _PullDownButtonState extends State<PullDownButton> {
 /// [routeTheme] is used to define the theme of the route used to display
 /// the pull-down menu launched from this function.
 ///
+/// [interceptMouseEvents] is used to determine whether to use PointerInterceptor
+/// to intercept pointer events on the menu.
+///
 /// See also:
 ///
 /// * [PullDownMenuItem], a pull-down menu entry for a simple action.
@@ -470,6 +489,7 @@ Future<void> showPullDownMenu({
   ScrollController? scrollController,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
+  bool interceptMouseEvents = false,
 }) async {
   if (items.isEmpty) return;
 
@@ -486,6 +506,7 @@ Future<void> showPullDownMenu({
     animationAlignment: PullDownMenuRoute.animationAlignment(context, position),
     menuOffset: menuOffset,
     scrollController: scrollController,
+    interceptMouseEvents: interceptMouseEvents,
   );
 
   if (action != null) {
@@ -508,6 +529,7 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required Alignment animationAlignment,
   required double menuOffset,
   required ScrollController? scrollController,
+  required bool interceptMouseEvents,
 }) {
   final navigator = Navigator.of(context);
 
@@ -527,6 +549,7 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
       alignment: animationAlignment,
       menuOffset: menuOffset,
       scrollController: scrollController,
+      interceptMouseEvents: interceptMouseEvents,
     ),
   );
 }
