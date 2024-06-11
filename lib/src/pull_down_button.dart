@@ -203,6 +203,7 @@ class PullDownButton extends StatefulWidget {
     super.key,
     required this.itemBuilder,
     required this.buttonBuilder,
+    this.navigator,
     this.onCanceled,
     this.position = PullDownMenuPosition.automatic,
     this.itemsOrder = PullDownMenuItemsOrder.downwards,
@@ -336,6 +337,11 @@ class PullDownButton extends StatefulWidget {
   @experimental
   final Alignment? animationAlignmentOverride;
 
+  /// Custom navigator used to show the pull-down menu.
+  ///
+  /// If this property is null, then [Navigator.of] is used.
+  final NavigatorState Function()? navigator;
+
   /// Default animation builder for [animationBuilder].
   ///
   /// If [state] is [PullDownButtonAnimationState.opened], apply opacity
@@ -381,6 +387,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 
     final action = await _showMenu<VoidCallback>(
       context: context,
+      navigator: widget.navigator?.call(),
       items: items,
       buttonRect: button,
       menuPosition: widget.position,
@@ -465,6 +472,7 @@ Future<void> showPullDownMenu({
   required BuildContext context,
   required List<PullDownMenuEntry> items,
   required Rect position,
+  NavigatorState? navigator,
   PullDownMenuItemsOrder itemsOrder = PullDownMenuItemsOrder.downwards,
   double menuOffset = 16,
   ScrollController? scrollController,
@@ -477,6 +485,7 @@ Future<void> showPullDownMenu({
 
   final action = await _showMenu<VoidCallback>(
     context: context,
+    navigator: navigator,
     items: items,
     buttonRect: position,
     menuPosition: PullDownMenuPosition.automatic,
@@ -499,6 +508,7 @@ Future<void> showPullDownMenu({
 /// the pull-down menu.
 Future<VoidCallback?> _showMenu<VoidCallback>({
   required BuildContext context,
+  NavigatorState? navigator,
   required Rect buttonRect,
   required List<PullDownMenuEntry> items,
   required PullDownMenuPosition menuPosition,
@@ -509,7 +519,7 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required double menuOffset,
   required ScrollController? scrollController,
 }) {
-  final navigator = Navigator.of(context);
+  navigator ??= Navigator.of(context);
 
   return navigator.push<VoidCallback>(
     PullDownMenuRoute(
