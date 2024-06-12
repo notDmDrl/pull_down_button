@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 import '../pull_down_button.dart';
@@ -212,6 +213,7 @@ class PullDownButton extends StatefulWidget {
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
     this.animationAlignmentOverride,
+    this.rootNavigator = false,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -336,6 +338,15 @@ class PullDownButton extends StatefulWidget {
   @experimental
   final Alignment? animationAlignmentOverride;
 
+  /// Whether to use the root navigator to show the pull-down menu.
+  ///
+  /// Defaults to `false`.
+  /// This property allows to show the pull-down menu on the root navigator
+  /// instead of the current navigator, useful for nested navigation scenarios
+  /// where the popup menu wouldn't be visible or would be clipped by the
+  /// parent navigators.
+  final bool rootNavigator;
+
   /// Default animation builder for [animationBuilder].
   ///
   /// If [state] is [PullDownButtonAnimationState.opened], apply opacity
@@ -390,6 +401,7 @@ class _PullDownButtonState extends State<PullDownButton> {
       animationAlignment: animationAlignment,
       menuOffset: widget.menuOffset,
       scrollController: widget.scrollController,
+      rootNavigator: widget.rootNavigator,
     );
 
     if (!mounted) return;
@@ -470,6 +482,7 @@ Future<void> showPullDownMenu({
   ScrollController? scrollController,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
+  bool rootNavigator = false,
 }) async {
   if (items.isEmpty) return;
 
@@ -486,6 +499,7 @@ Future<void> showPullDownMenu({
     animationAlignment: PullDownMenuRoute.animationAlignment(context, position),
     menuOffset: menuOffset,
     scrollController: scrollController,
+    rootNavigator: rootNavigator,
   );
 
   if (action != null) {
@@ -508,8 +522,9 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required Alignment animationAlignment,
   required double menuOffset,
   required ScrollController? scrollController,
+  required bool rootNavigator,
 }) {
-  final navigator = Navigator.of(context);
+  final navigator = Navigator.of(context, rootNavigator: rootNavigator);
 
   return navigator.push<VoidCallback>(
     PullDownMenuRoute(
