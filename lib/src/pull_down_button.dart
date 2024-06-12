@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 import '../pull_down_button.dart';
@@ -203,7 +204,6 @@ class PullDownButton extends StatefulWidget {
     super.key,
     required this.itemBuilder,
     required this.buttonBuilder,
-    this.navigator,
     this.onCanceled,
     this.position = PullDownMenuPosition.automatic,
     this.itemsOrder = PullDownMenuItemsOrder.downwards,
@@ -213,6 +213,7 @@ class PullDownButton extends StatefulWidget {
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
     this.animationAlignmentOverride,
+    this.rootNavigator = false,
   });
 
   /// Called when the button is pressed to create the items to show in the menu.
@@ -337,10 +338,14 @@ class PullDownButton extends StatefulWidget {
   @experimental
   final Alignment? animationAlignmentOverride;
 
-  /// Custom navigator used to show the pull-down menu.
+  /// Whether to use the root navigator to show the pull-down menu.
   ///
-  /// If this property is null, then [Navigator.of] is used.
-  final NavigatorState Function()? navigator;
+  /// Defaults to `false`.
+  /// This property allows to show the pull-down menu on the root navigator
+  /// instead of the current navigator, useful for nested navigation scenarios
+  /// where the popup menu wouldn't be visible or would be clipped by the
+  /// parent navigators.
+  final bool rootNavigator;
 
   /// Default animation builder for [animationBuilder].
   ///
@@ -387,7 +392,6 @@ class _PullDownButtonState extends State<PullDownButton> {
 
     final action = await _showMenu<VoidCallback>(
       context: context,
-      navigator: widget.navigator?.call(),
       items: items,
       buttonRect: button,
       menuPosition: widget.position,
@@ -397,6 +401,7 @@ class _PullDownButtonState extends State<PullDownButton> {
       animationAlignment: animationAlignment,
       menuOffset: widget.menuOffset,
       scrollController: widget.scrollController,
+      rootNavigator: widget.rootNavigator,
     );
 
     if (!mounted) return;
@@ -472,12 +477,12 @@ Future<void> showPullDownMenu({
   required BuildContext context,
   required List<PullDownMenuEntry> items,
   required Rect position,
-  NavigatorState? navigator,
   PullDownMenuItemsOrder itemsOrder = PullDownMenuItemsOrder.downwards,
   double menuOffset = 16,
   ScrollController? scrollController,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
+  bool rootNavigator = false,
 }) async {
   if (items.isEmpty) return;
 
@@ -485,7 +490,6 @@ Future<void> showPullDownMenu({
 
   final action = await _showMenu<VoidCallback>(
     context: context,
-    navigator: navigator,
     items: items,
     buttonRect: position,
     menuPosition: PullDownMenuPosition.automatic,
@@ -495,6 +499,7 @@ Future<void> showPullDownMenu({
     animationAlignment: PullDownMenuRoute.animationAlignment(context, position),
     menuOffset: menuOffset,
     scrollController: scrollController,
+    rootNavigator: rootNavigator,
   );
 
   if (action != null) {
@@ -508,7 +513,6 @@ Future<void> showPullDownMenu({
 /// the pull-down menu.
 Future<VoidCallback?> _showMenu<VoidCallback>({
   required BuildContext context,
-  NavigatorState? navigator,
   required Rect buttonRect,
   required List<PullDownMenuEntry> items,
   required PullDownMenuPosition menuPosition,
@@ -518,8 +522,9 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required Alignment animationAlignment,
   required double menuOffset,
   required ScrollController? scrollController,
+  required bool rootNavigator,
 }) {
-  navigator ??= Navigator.of(context);
+  final navigator = Navigator.of(context, rootNavigator: rootNavigator);
 
   return navigator.push<VoidCallback>(
     PullDownMenuRoute(
