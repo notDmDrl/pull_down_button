@@ -117,7 +117,10 @@ enum PullDownButtonAnimationState {
 
   /// The menu is opened by calling [showMenu] using
   /// [PullDownButton.buttonBuilder]'s button widget.
-  opened,
+  opened;
+
+  // Helper method
+  bool get isPressed => this == PullDownButtonAnimationState.opened;
 }
 
 /// Used to configure what horizontal part of the
@@ -345,7 +348,7 @@ class PullDownButton extends StatefulWidget {
     PullDownButtonAnimationState state,
     Widget child,
   ) {
-    final isPressed = state == PullDownButtonAnimationState.opened;
+    final isPressed = state.isPressed;
 
     // All of the values where eyeballed using the iOS 16 Simulator.
     return AnimatedOpacity(
