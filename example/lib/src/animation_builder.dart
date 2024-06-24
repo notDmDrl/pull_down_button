@@ -41,7 +41,7 @@ class AnimationBuilder extends StatelessWidget {
             LabeledExample(
               label: 'Slide animation',
               animationBuilder: (context, state, child) {
-                final isPressed = state == PullDownButtonAnimationState.opened;
+                final isPressed = state.isPressed;
 
                 return AnimatedSlide(
                   offset: isPressed ? const Offset(0.3, 0) : Offset.zero,
