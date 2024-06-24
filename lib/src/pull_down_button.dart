@@ -119,7 +119,7 @@ enum PullDownButtonAnimationState {
   /// [PullDownButton.buttonBuilder]'s button widget.
   opened;
 
-  // Helper method
+  // Whether the button is pressed and the menu is open.
   bool get isPressed => this == PullDownButtonAnimationState.opened;
 }
 
