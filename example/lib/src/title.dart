@@ -89,7 +89,7 @@ class Title extends StatelessWidget {
                   icon: CupertinoIcons.square,
                 ),
               ],
-            )
+            ),
           ],
         ),
       );

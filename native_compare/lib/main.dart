@@ -76,7 +76,7 @@ enum CompareTest {
     PullDownMenuItem(
       onTap: _call,
       title: 'Item',
-    )
+    ),
   ]),
   ItemOverflow([
     PullDownMenuItem(
@@ -111,7 +111,7 @@ enum CompareTest {
     PullDownMenuItem(
       onTap: _call,
       title: 'Item',
-    )
+    ),
   ]),
   Pickers([
     PullDownMenuItem.selectable(
@@ -126,7 +126,7 @@ enum CompareTest {
     PullDownMenuItem.selectable(
       onTap: _call,
       title: 'Value3',
-    )
+    ),
   ]),
   ElementSizeSmall([
     PullDownMenuItem(

@@ -91,7 +91,7 @@ class _SwipeState extends InheritedNotifier<ValueNotifier<SwipeState>> {
 @immutable
 @internal
 @sealed
-abstract class SwipeState {
+sealed class SwipeState {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const SwipeState._();

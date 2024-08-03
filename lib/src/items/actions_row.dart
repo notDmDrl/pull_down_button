@@ -37,32 +37,24 @@ class PullDownMenuActionsRow extends StatelessWidget
   final List<PullDownMenuItem> items;
 
   /// Returns fixed height for [PullDownMenuItem] in [PullDownMenuActionsRow].
-  double _height(BuildContext context) {
-    switch (_size) {
-      case ElementSize.small:
-        return ElementSize.resolveLarge(context);
-      case ElementSize.medium:
-        return ElementSize.resolveMedium(context);
-      case ElementSize.large:
-        throw UnsupportedError(
-          '[PullDownMenuActionsRow] only supports `ElementSize.small` '
-          'and `ElementSize.medium`',
-        );
-    }
-  }
+  double _height(BuildContext context) => switch (_size) {
+        ElementSize.small => ElementSize.resolveLarge(context),
+        ElementSize.medium => ElementSize.resolveMedium(context),
+        ElementSize.large => throw UnsupportedError(
+            '[PullDownMenuActionsRow] only supports `ElementSize.small` '
+            'and `ElementSize.medium`',
+          )
+      };
 
   @protected
   bool _debugHasCorrectItemsCount() {
     assert(
       () {
-        switch (_size) {
-          case ElementSize.small:
-            return items.length <= 4;
-          case ElementSize.medium:
-            return items.length <= 3;
-          case ElementSize.large:
-            return true;
-        }
+        return switch (_size) {
+          ElementSize.small => items.length <= 4,
+          ElementSize.medium => items.length <= 3,
+          ElementSize.large => true
+        };
       }(),
       'Amount of [items] should not be more than 3 for '
       '[PullDownMenuActionsRow.medium] and not more than 4 for '

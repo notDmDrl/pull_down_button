@@ -14,8 +14,8 @@ class Header extends StatelessWidget {
           title: 'PullDownMenuHeader',
         ),
         child: ListView(
-          children: const [
-            LabeledExample(
+          children: [
+            const LabeledExample(
               label: 'PullDownMenuHeader',
               items: [
                 PullDownMenuHeader(
@@ -25,6 +25,18 @@ class Header extends StatelessWidget {
               ],
             ),
             LabeledExample(
+              label: 'PullDownMenuHeader with leadingBuilder',
+              items: [
+                PullDownMenuHeader(
+                  leadingBuilder: (context, constraints) => ConstrainedBox(
+                    constraints: constraints,
+                    child: const FlutterLogo(),
+                  ),
+                  title: 'Title',
+                ),
+              ],
+            ),
+            const LabeledExample(
               label: 'PullDownMenuHeader + subtitle',
               items: [
                 PullDownMenuHeader(
@@ -34,7 +46,7 @@ class Header extends StatelessWidget {
                 ),
               ],
             ),
-            LabeledExample(
+            const LabeledExample(
               label: 'PullDownMenuHeader + subtitle + onTap',
               items: [
                 PullDownMenuHeader(
@@ -45,7 +57,7 @@ class Header extends StatelessWidget {
                 ),
               ],
             ),
-            LabeledExample(
+            const LabeledExample(
               label: 'PullDownMenuHeader + subtitle + onTap + icon',
               items: [
                 PullDownMenuHeader(
@@ -57,7 +69,7 @@ class Header extends StatelessWidget {
                 ),
               ],
             ),
-            LabeledExample(
+            const LabeledExample(
               label: 'PullDownMenuHeader + subtitle + onTap + iconWidget',
               items: [
                 PullDownMenuHeader(

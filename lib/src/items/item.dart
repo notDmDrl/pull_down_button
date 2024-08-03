@@ -229,13 +229,12 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   bool _debugActionRowHasIcon(ElementSize size) {
     assert(
       () {
-        switch (size) {
-          case ElementSize.small:
-          case ElementSize.medium:
-            return icon != null || iconWidget != null;
-          case ElementSize.large:
-            return true;
-        }
+        return switch (size) {
+          ElementSize.small ||
+          ElementSize.medium =>
+            icon != null || iconWidget != null,
+          ElementSize.large => true
+        };
       }(),
       'Either icon or iconWidget should be provided',
     );
@@ -254,23 +253,18 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
       itemTheme: itemTheme,
     );
 
-    final Widget child;
-
     final isEnabled = enabled && onTap != null;
 
-    switch (size) {
-      case ElementSize.small:
-        child = _SmallItem(
+    final child = switch (size) {
+      ElementSize.small => _SmallItem(
           icon: iconWidget ?? Icon(icon),
           destructiveColor: theme.destructiveColor!,
           onHoverColor: theme.onHoverTextColor!,
           color: iconColor ?? theme.iconActionTextStyle!.color!,
           enabled: isEnabled,
           destructive: isDestructive,
-        );
-        break;
-      case ElementSize.medium:
-        child = _MediumItem(
+        ),
+      ElementSize.medium => _MediumItem(
           icon: iconWidget ?? Icon(icon),
           destructiveColor: theme.destructiveColor!,
           onHoverColor: theme.onHoverTextColor!,
@@ -279,14 +273,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
           destructive: isDestructive,
           title: title,
           titleStyle: theme.iconActionTextStyle!,
-        );
-        break;
-      case ElementSize.large:
-        // Don't do unnecessary checks from inherited widget if [selected] is
-        // not null.
-        final hasLeading = selected != null || MenuConfig.of(context);
-
-        child = _LargeItem(
+        ),
+      ElementSize.large => _LargeItem(
           icon: icon,
           iconWidget: iconWidget,
           destructiveColor: theme.destructiveColor!,
@@ -294,7 +282,9 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
           iconColor: iconColor,
           enabled: isEnabled,
           destructive: isDestructive,
-          leading: hasLeading
+          // Don't do unnecessary checks from inherited widget if [selected] is
+          // not null.
+          leading: selected != null || MenuConfig.of(context)
               ? _CheckmarkIcon(
                   selected: selected ?? false,
                   checkmark: theme.checkmark!,
@@ -304,9 +294,8 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
           titleStyle: theme.textStyle!,
           subtitle: subtitle,
           subtitleStyle: theme.subtitleStyle!,
-        );
-        break;
-    }
+        )
+    };
 
     return MergeSemantics(
       child: Semantics(

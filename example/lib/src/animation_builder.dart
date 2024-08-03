@@ -41,7 +41,7 @@ class AnimationBuilder extends StatelessWidget {
             LabeledExample(
               label: 'Slide animation',
               animationBuilder: (context, state, child) {
-                final isPressed = state == PullDownButtonAnimationState.opened;
+                final isPressed = state.isOpen;
 
                 return AnimatedSlide(
                   offset: isPressed ? const Offset(0.3, 0) : Offset.zero,
@@ -56,7 +56,7 @@ class AnimationBuilder extends StatelessWidget {
                   icon: CupertinoIcons.square,
                 ),
               ],
-            )
+            ),
           ],
         ),
       );

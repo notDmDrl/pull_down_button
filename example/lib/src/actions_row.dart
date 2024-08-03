@@ -41,7 +41,7 @@ class ActionsRow extends StatelessWidget {
                       icon: CupertinoIcons.delete,
                     ),
                   ],
-                )
+                ),
               ],
             ),
             LabeledExample(
@@ -65,9 +65,9 @@ class ActionsRow extends StatelessWidget {
                       icon: CupertinoIcons.doc_on_clipboard,
                     ),
                   ],
-                )
+                ),
               ],
-            )
+            ),
           ],
         ),
       );

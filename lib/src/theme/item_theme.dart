@@ -96,12 +96,10 @@ class PullDownMenuItemTheme with Diagnosticable {
   static double disabledOpacity(BuildContext context) {
     final brightness = Theme.of(context).brightness;
 
-    switch (brightness) {
-      case Brightness.dark:
-        return 0.55;
-      case Brightness.light:
-        return 0.45;
-    }
+    return switch (brightness) {
+      Brightness.dark => 0.55,
+      Brightness.light => 0.45
+    };
   }
 
   /// The helper method to quickly resolve [PullDownMenuItemTheme] from

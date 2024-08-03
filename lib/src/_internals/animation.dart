@@ -7,9 +7,7 @@ import '../../pull_down_button.dart';
 ///
 /// All of the values were eyeballed using the iOS 16 Simulator.
 @internal
-abstract class AnimationUtils {
-  const AnimationUtils._();
-
+abstract final class AnimationUtils {
   /// Pull-down menu animation duration.
   static const Duration kMenuDuration = Duration(milliseconds: 300);
 
@@ -34,7 +32,7 @@ abstract class AnimationUtils {
 /// [ScaleTransition] requires it, [ClampedAnimation] is introduced for every
 /// other *Transition* widget.
 @internal
-class ClampedAnimation extends Animation<double>
+final class ClampedAnimation extends Animation<double>
     with AnimationWithParentMixin<double> {
   /// Creates [ClampedAnimation].
   ClampedAnimation(this.parent);

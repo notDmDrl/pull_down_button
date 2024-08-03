@@ -27,6 +27,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     required this.alignment,
     required this.menuOffset,
     required this.scrollController,
+    required super.settings,
   });
 
   /// Items to show in the [RoutePullDownMenu] created by this route.
@@ -92,19 +93,12 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Iterable<PullDownMenuEntry> orderedItems;
-
-    switch (itemsOrder) {
-      case PullDownMenuItemsOrder.downwards:
-        orderedItems = items;
-        break;
-      case PullDownMenuItemsOrder.upwards:
-        orderedItems = items.reversed;
-        break;
-      case PullDownMenuItemsOrder.automatic:
-        orderedItems = alignment.y == -1 ? items : items.reversed;
-        break;
-    }
+    final orderedItems = switch (itemsOrder) {
+      PullDownMenuItemsOrder.downwards => items,
+      PullDownMenuItemsOrder.upwards => items.reversed,
+      PullDownMenuItemsOrder.automatic =>
+        alignment.y == -1 ? items : items.reversed
+    };
 
     return MenuConfig(
       hasLeading: hasLeading,
@@ -166,14 +160,16 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
     final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
 
-    switch (horizontalPosition) {
-      case _MenuHorizontalPosition.right:
-        return isInBottomHalf ? Alignment.bottomRight : Alignment.topRight;
-      case _MenuHorizontalPosition.left:
-        return isInBottomHalf ? Alignment.bottomLeft : Alignment.topLeft;
-      case _MenuHorizontalPosition.center:
-        return isInBottomHalf ? Alignment.bottomCenter : Alignment.topCenter;
-    }
+    return switch (horizontalPosition) {
+      _MenuHorizontalPosition.right when isInBottomHalf =>
+        Alignment.bottomRight,
+      _MenuHorizontalPosition.right => Alignment.topRight,
+      _MenuHorizontalPosition.left when isInBottomHalf => Alignment.bottomLeft,
+      _MenuHorizontalPosition.left => Alignment.topLeft,
+      _MenuHorizontalPosition.center when isInBottomHalf =>
+        Alignment.bottomCenter,
+      _MenuHorizontalPosition.center => Alignment.topCenter,
+    };
   }
 }
 

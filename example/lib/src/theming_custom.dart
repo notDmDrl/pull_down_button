@@ -35,7 +35,7 @@ class ThemingCustom extends StatelessWidget {
             ),
             dividerTheme: PullDownMenuDividerTheme(
               dividerColor: colorScheme.outlineVariant,
-              largeDividerColor: colorScheme.surfaceVariant,
+              largeDividerColor: colorScheme.surfaceContainerHighest,
             ),
             itemTheme: PullDownMenuItemTheme(
               destructiveColor: colorScheme.error,
@@ -49,7 +49,7 @@ class ThemingCustom extends StatelessWidget {
               ),
               onHoverBackgroundColor: colorScheme.primary,
               onHoverTextColor: colorScheme.onPrimary,
-              onPressedBackgroundColor: colorScheme.surfaceVariant,
+              onPressedBackgroundColor: colorScheme.surfaceContainerHighest,
             ),
           ),
         ],

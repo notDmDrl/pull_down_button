@@ -17,6 +17,22 @@ const EdgeInsetsDirectional _padding = EdgeInsetsDirectional.only(
   bottom: _kHeaderVerticalPadding,
 );
 
+/// The default size of a leading widget in [PullDownMenuHeader].
+const BoxConstraints _kLeadingSize = BoxConstraints.tightFor(
+  height: kMinInteractiveDimensionCupertino,
+  width: kMinInteractiveDimensionCupertino,
+);
+
+/// Signature used by [PullDownMenuHeader] to build custom leading widget.
+///
+/// Additionally provides a default constraints for the leading widget.
+///
+/// Used by [PullDownMenuHeader.leadingBuilder].
+typedef PullDownMenuHeaderLeadingBuilder = Widget Function(
+  BuildContext context,
+  BoxConstraints constraints,
+);
+
 /// The (optional) header of the pull-down menu that is usually displayed at the
 /// top of the pull-down menu.
 ///
@@ -34,15 +50,20 @@ class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
     super.key,
     this.onTap,
     this.tapHandler = PullDownMenuItem.defaultTapHandler,
-    required this.leading,
+    this.leading,
+    this.leadingBuilder,
     required this.title,
     this.subtitle,
     this.itemTheme,
     this.icon,
     this.iconWidget,
-  }) : assert(
+  })  : assert(
           icon == null || iconWidget == null,
           'Please provide either icon or iconWidget',
+        ),
+        assert(
+          leading == null || leadingBuilder == null,
+          'Please provide either leading or leadingBuilder',
         );
 
   /// The action this header represents.
@@ -70,8 +91,16 @@ class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
   /// Typically an [Image] widget.
   ///
   /// By default, a [PullDownMenuHeader.leading] is in a square box with
-  /// [kMinInteractiveDimensionCupertino] pixels height/width.
-  final Widget leading;
+  /// [kMinInteractiveDimensionCupertino] pixels height/width. To create a
+  /// custom, non-default, leading widget - use [leadingBuilder].
+  ///
+  /// If the [leadingBuilder] is used, this property must be null;
+  final Widget? leading;
+
+  /// Custom leading widget of [PullDownMenuHeader].
+  ///
+  /// If the [leading] is used, this property must be null;
+  final PullDownMenuHeaderLeadingBuilder? leadingBuilder;
 
   /// Title of this [PullDownMenuHeader].
   final String title;
@@ -115,7 +144,8 @@ class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
           hoverColor: theme.onHoverBackgroundColor!,
           pressedColor: theme.onPressedBackgroundColor!,
           child: _HeaderBody(
-            leading: leading,
+            leading: leadingBuilder?.call(context, _kLeadingSize) ??
+                _Leading(child: leading!),
             title: title,
             titleStyle: theme.textStyle!,
             subtitle: subtitle,
@@ -198,7 +228,7 @@ class _HeaderBody extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsetsDirectional.only(end: _kHeaderEndPadding),
-          child: _Leading(child: leading),
+          child: leading,
         ),
         Expanded(child: body),
         if (hasIcon)
@@ -215,7 +245,7 @@ class _HeaderBody extends StatelessWidget {
                 child: iconWidget ?? Icon(icon),
               ),
             ),
-          )
+          ),
       ],
     );
 
@@ -245,10 +275,7 @@ class _Leading extends StatelessWidget {
         PullDownMenuRouteTheme.resolve(context, routeTheme: null).shadow!.color;
 
     return Container(
-      constraints: const BoxConstraints.tightFor(
-        height: kMinInteractiveDimensionCupertino,
-        width: kMinInteractiveDimensionCupertino,
-      ),
+      constraints: _kLeadingSize,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(4)),
@@ -257,7 +284,7 @@ class _Leading extends StatelessWidget {
             color: shadowColor,
             blurRadius: 2,
             offset: const Offset(0, 1),
-          )
+          ),
         ],
       ),
       child: child,

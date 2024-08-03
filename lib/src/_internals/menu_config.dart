@@ -39,32 +39,20 @@ enum ElementSize {
   static double resolveLarge(BuildContext context) {
     final level = ContentSizeCategory.of(context);
 
-    switch (level) {
-      case ContentSizeCategory.extraSmall:
-        return 38;
-      case ContentSizeCategory.small:
-        return 40;
-      case ContentSizeCategory.medium:
-        return 42;
-      case ContentSizeCategory.large:
-        return 44;
-      case ContentSizeCategory.extraLarge:
-        return 48;
-      case ContentSizeCategory.extraExtraLarge:
-        return 52;
-      case ContentSizeCategory.extraExtraExtraLarge:
-        return 58;
-      case ContentSizeCategory.accessibilityMedium:
-        return 68;
-      case ContentSizeCategory.accessibilityLarge:
-        return 80;
-      case ContentSizeCategory.accessibilityExtraLarge:
-        return 96;
-      case ContentSizeCategory.accessibilityExtraExtraLarge:
-        return 112;
-      case ContentSizeCategory.accessibilityExtraExtraExtraLarge:
-        return 124;
-    }
+    return switch (level) {
+      ContentSizeCategory.extraSmall => 38,
+      ContentSizeCategory.small => 40,
+      ContentSizeCategory.medium => 42,
+      ContentSizeCategory.large => 44,
+      ContentSizeCategory.extraLarge => 48,
+      ContentSizeCategory.extraExtraLarge => 52,
+      ContentSizeCategory.extraExtraExtraLarge => 58,
+      ContentSizeCategory.accessibilityMedium => 68,
+      ContentSizeCategory.accessibilityLarge => 80,
+      ContentSizeCategory.accessibilityExtraLarge => 96,
+      ContentSizeCategory.accessibilityExtraExtraLarge => 112,
+      ContentSizeCategory.accessibilityExtraExtraExtraLarge => 124
+    };
   }
 
   /// Minimum allowed height for [ElementSize.large] with a subtitle.

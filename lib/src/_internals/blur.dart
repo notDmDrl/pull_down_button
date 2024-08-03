@@ -6,9 +6,7 @@ import 'package:meta/meta.dart';
 
 /// A set of blur utils.
 @internal
-abstract class BlurUtils {
-  const BlurUtils._();
-
+abstract final class BlurUtils {
   /// Check if the menu's background color is not fully opaque.
   ///
   /// Returns false if [color] has no transparency. If so, [BackdropFilter] will

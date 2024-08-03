@@ -104,7 +104,7 @@ enum ContentSizeCategory {
   /// The [ContentSizeCategory] from the closest [MediaQuery] instance that
   /// encloses the given context.
   static ContentSizeCategory of(BuildContext context) {
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     return ContentSizeCategory.values.firstWhere(
       (element) => element.textScaleFactor >= textScaleFactor,
@@ -117,9 +117,7 @@ enum ContentSizeCategory {
 ///
 /// All of the values were eyeballed using the iOS 16 Simulator.
 @internal
-abstract class TextUtils {
-  const TextUtils._();
-
+abstract final class TextUtils {
   /// Utility method for resolving if current text scale factor is bigger
   /// than [ContentSizeCategory.extraExtraExtraLarge]. At this text scale
   /// factor menu transitions to its bigger size "accessibility" mode.
@@ -127,7 +125,7 @@ abstract class TextUtils {
   /// Required text scale factor was deducted using the iPhone 14 Pro Max and
   /// iPhone SE (3rd gen) iOS 16 Simulators.
   static bool isInAccessibilityMode(BuildContext context) =>
-      MediaQuery.of(context).textScaleFactor >
+      MediaQuery.textScalerOf(context).scale(1) >
       ContentSizeCategory.extraExtraExtraLarge.textScaleFactor;
 }
 

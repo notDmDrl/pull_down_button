@@ -26,19 +26,17 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final biggest = constraints.biggest;
 
     final constraintsHeight = biggest.height;
-    final double height;
 
-    switch (menuPosition) {
-      case PullDownMenuPosition.over:
-        height = buttonRect.center.dy >= constraintsHeight / 2
-            ? buttonRect.bottom - padding.top
-            : constraintsHeight - buttonRect.top - padding.bottom;
-        break;
-      case PullDownMenuPosition.automatic:
-        height = buttonRect.center.dy >= constraintsHeight / 2
-            ? buttonRect.top - padding.top
-            : constraintsHeight - buttonRect.bottom - padding.bottom;
-    }
+    final check = buttonRect.center.dy >= constraintsHeight / 2;
+
+    final height = switch (menuPosition) {
+      PullDownMenuPosition.over when check => buttonRect.bottom - padding.top,
+      PullDownMenuPosition.over =>
+        constraintsHeight - buttonRect.top - padding.bottom,
+      PullDownMenuPosition.automatic when check => buttonRect.top - padding.top,
+      PullDownMenuPosition.automatic =>
+        constraintsHeight - buttonRect.bottom - padding.bottom,
+    };
 
     return BoxConstraints.loose(
       Size(biggest.width, height),
@@ -53,17 +51,13 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
 
     final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
 
-    final double x;
-    switch (horizontalPosition) {
-      case _MenuHorizontalPosition.right:
-        x = buttonRect.right - childWidth + menuOffset;
-        break;
-      case _MenuHorizontalPosition.left:
-        x = buttonRect.left - menuOffset;
-        break;
-      case _MenuHorizontalPosition.center:
-        x = buttonRect.left + buttonRect.width / 2 - childWidth / 2;
-    }
+    final x = switch (horizontalPosition) {
+      _MenuHorizontalPosition.right =>
+        buttonRect.right - childWidth + menuOffset,
+      _MenuHorizontalPosition.left => buttonRect.left - menuOffset,
+      _MenuHorizontalPosition.center =>
+        buttonRect.left + buttonRect.width / 2 - childWidth / 2
+    };
 
     final originCenter = buttonRect.center;
     final rect = Offset.zero & size;
@@ -127,7 +121,6 @@ abstract class _PositionUtils {
         if (isInBottomHalf) {
           y -= childHeight - buttonHeight;
         }
-        break;
       case PullDownMenuPosition.automatic:
         // Native variant applies additional 5px of padding to menu if
         // [buttonHeight] is smaller than 44px.

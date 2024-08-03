@@ -75,7 +75,7 @@ class IconBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     if (_isSmall) {
       return _TextScaledSizedBox(
@@ -135,7 +135,7 @@ class IconActionBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     return _TextScaledSizedBox(
       height: _kSize,
@@ -168,7 +168,7 @@ class _TextScaledSizedBox extends SingleChildRenderObjectWidget {
   final double? height;
 
   BoxConstraints _additionalConstraints(BuildContext context) {
-    final textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     return BoxConstraints.tightFor(
       width: width != null ? width! * textScaleFactor : null,

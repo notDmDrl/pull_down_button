@@ -44,7 +44,7 @@ class Divider extends StatelessWidget {
                   icon: CupertinoIcons.square,
                 ),
               ],
-            )
+            ),
           ],
         ),
       );

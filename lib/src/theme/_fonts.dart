@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 /// The default font family of pull-down menu items.
@@ -15,7 +14,7 @@ import 'package:meta/meta.dart';
 ///
 /// * [CupertinoTextThemeData] for origins of this font family name.
 @internal
-const String kFontFamily = '.SF Pro Text';
+const String kFontFamily = 'CupertinoSystemText';
 
 /// List of different font family name variations of Apple San Francisco.
 ///
@@ -30,10 +29,9 @@ const String kFontFamily = '.SF Pro Text';
 /// See also:
 ///
 /// * [TextStyle.fontFamilyFallback].
-/// * [Typography.blackCupertino] and [Typography.whiteCupertino] for origins
-/// of "UI" "dotted" name variations.
 @internal
 const List<String> kFontFallbacks = [
+  '.SF Pro Text',
   '.SF Pro Display',
   '.SF UI Text',
   '.SF UI Display',
