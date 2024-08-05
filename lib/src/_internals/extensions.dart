@@ -9,10 +9,17 @@ extension RectExtension on BuildContext {
 
   /// Given a [BuildContext], return the [Rect] of the corresponding
   /// [RenderBox]'s paintBounds in global coordinates.
+  /// 
+  /// To specify a different [RenderBox] as the ancestor, provide the [ancestor]
+  /// parameter. This is usually used to specify a Navigator's [Overlay] as the
+  /// ancestor coordinate space.
+  /// 
+  /// If no [ancestor] is provided, the returned rect is in the coordinate space
+  /// of the root [RenderObject] of the application, or in global coordinates.
   ///
   /// If [Rect]'s height is bigger than the screen size, additionally normalize
   /// [Rect] to help mitigate possible layout issues.
-  Rect get getRect {
+  Rect getRect({RenderObject? ancestor}) {
     final renderBoxContainer = currentRenderBox;
     final queryData = MediaQuery.of(this);
     final size = queryData.size;
@@ -20,9 +27,11 @@ extension RectExtension on BuildContext {
     final rect = Rect.fromPoints(
       renderBoxContainer.localToGlobal(
         renderBoxContainer.paintBounds.topLeft,
+        ancestor: ancestor,
       ),
       renderBoxContainer.localToGlobal(
         renderBoxContainer.paintBounds.bottomRight,
+        ancestor: ancestor,
       ),
     );
 
