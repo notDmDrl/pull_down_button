@@ -390,7 +390,7 @@ class _PullDownButtonState extends State<PullDownButton> {
       rootNavigator: widget.useRootNavigator,
     );
 
-    final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
+    final overlay = navigator.overlay!.context.currentRenderBox;
     var button = context.getRect(ancestor: overlay);
 
     if (widget.buttonAnchor != null) {
