@@ -1,3 +1,11 @@
+## 0.10.1
+
+##### 2024-08-06 - Fixes for nested navigators
+
+### Fixed
+
+-   Fix incorrect menu position inside of nested navigators ([#54](https://github.com/notDmDrl/pull_down_button/issues/54), [#55](https://github.com/notDmDrl/pull_down_button/pull/55)). Thanks to [@kekland](https://github.com/kekland).
+
 ## 0.10.0
 
 ##### 2024-08-03 - Multiple small improvements
@@ -40,7 +48,7 @@
 
 ##### 2023-07-20 - Add support for menu offsets
 
-### Changed
+### Fixed
 
 -   Fix menu items being "stuck" in the highlighted mode in scrollable menus (partially [#29](https://github.com/notDmDrl/pull_down_button/issues/29)).
 
