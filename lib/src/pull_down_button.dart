@@ -385,10 +385,18 @@ class _PullDownButtonState extends State<PullDownButton> {
   PullDownButtonAnimationState state = PullDownButtonAnimationState.closed;
 
   Future<void> showButtonMenu() async {
-    var button = context.getRect;
+    final navigator = Navigator.of(
+      context,
+      rootNavigator: widget.useRootNavigator,
+    );
+
+    final overlay = navigator.overlay!.context.currentRenderBox;
+    var button = context.getRect(ancestor: overlay);
+
     if (widget.buttonAnchor != null) {
       button = _anchorToButtonPart(context, button, widget.buttonAnchor!);
     }
+
     final animationAlignment = widget.animationAlignmentOverride ??
         PullDownMenuRoute.animationAlignment(context, button);
 
