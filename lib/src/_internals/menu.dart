@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../../pull_down_button.dart';
@@ -50,7 +51,7 @@ class MenuDecoration extends StatelessWidget {
 /// A widget used to create a scrollable body for pull-down menu items.
 @immutable
 @internal
-class MenuBody extends StatelessWidget {
+class MenuBody extends StatefulWidget {
   /// Creates [MenuBody].
   const MenuBody({
     super.key,
@@ -65,25 +66,52 @@ class MenuBody extends StatelessWidget {
   /// [items] in the menu.
   final ScrollController? scrollController;
 
-  ScrollController get _effectiveScrollController =>
-      scrollController ?? ScrollController();
+  @override
+  State<MenuBody> createState() => _MenuBodyState();
+}
+
+class _MenuBodyState extends State<MenuBody> {
+  late final ScrollController _effectiveScrollController;
 
   @override
-  Widget build(BuildContext context) => Semantics(
-        scopesRoute: true,
-        namesRoute: true,
-        explicitChildNodes: true,
-        label: 'Pull-Down menu',
-        child: CupertinoScrollbar(
-          controller: _effectiveScrollController,
-          child: SingleChildScrollView(
-            primary: false,
-            clipBehavior: Clip.none,
-            controller: _effectiveScrollController,
-            child: ListBody(
-              children: MenuSeparator.wrapVerticalList(items),
-            ),
-          ),
+  void initState() {
+    super.initState();
+    _effectiveScrollController = widget.scrollController ?? ScrollController();
+  }
+
+  @override
+  void dispose() {
+    _effectiveScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final child = CupertinoScrollbar(
+      controller: _effectiveScrollController,
+      child: SingleChildScrollView(
+        primary: false,
+        clipBehavior: Clip.none,
+        controller: _effectiveScrollController,
+        child: ListBody(
+          children: MenuSeparator.wrapVerticalList(widget.items),
         ),
-      );
+      ),
+    );
+
+    return Semantics(
+      scopesRoute: true,
+      namesRoute: true,
+      explicitChildNodes: true,
+      label: 'Pull-Down menu',
+      child: switch (defaultTargetPlatform) {
+        TargetPlatform.android || TargetPlatform.iOS => child,
+        _ => ScrollConfiguration(
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: child,
+          ),
+      },
+    );
+  }
 }

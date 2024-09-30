@@ -1,3 +1,12 @@
+## 0.10.2
+
+##### 2024-09-30 - Desktop scrollbar fixes
+
+### Fixed
+
+-   Fix `ScrollController` related warnings ([#58](https://github.com/notDmDrl/pull_down_button/issues/58)).
+-   Fix desktop platforms having a duplicate scrollbar.
+
 ## 0.10.1
 
 ##### 2024-08-06 - Fixes for nested navigators

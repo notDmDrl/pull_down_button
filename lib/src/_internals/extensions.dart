@@ -9,11 +9,11 @@ extension RectExtension on BuildContext {
 
   /// Given a [BuildContext], return the [Rect] of the corresponding
   /// [RenderBox]'s paintBounds in global coordinates.
-  /// 
+  ///
   /// To specify a different [RenderBox] as the ancestor, provide the [ancestor]
   /// parameter. This is usually used to specify a Navigator's [Overlay] as the
   /// ancestor coordinate space.
-  /// 
+  ///
   /// If no [ancestor] is provided, the returned rect is in the coordinate space
   /// of the root [RenderObject] of the application, or in global coordinates.
   ///
