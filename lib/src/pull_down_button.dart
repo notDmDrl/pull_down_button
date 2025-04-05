@@ -25,6 +25,17 @@ enum PullDownMenuPosition {
   /// if positioned above - upwards movement will be used.
   automatic,
 
+  /// Similar to [automatic], but with an upward preference:
+  /// If there's enough space above to display the menu, it will display upwards
+  /// even when the anchor is in the upper half of the screen.
+  upwardPreference,
+
+
+  /// Similar to [automatic], but with a downward preference:
+  /// If there's enough space below to display the menu, it will display downwards
+  /// even when the anchor is in the lower half of the screen.
+  downwardPreference,
+
   /// Menu is positioned under or above an anchor depending on the side that
   /// has more space available but also covers the button used to open the menu.
   ///
