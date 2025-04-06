@@ -36,8 +36,9 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
       PullDownMenuPosition.automatic when check => buttonRect.top - padding.top,
       PullDownMenuPosition.automatic =>
       constraintsHeight - buttonRect.bottom - padding.bottom,
-      PullDownMenuPosition.upwardPreference => constraintsHeight,
-      PullDownMenuPosition.downwardPreference => constraintsHeight,
+      PullDownMenuPosition.upwardPreference =>
+      constraintsHeight - buttonRect.bottom - padding.bottom,
+      PullDownMenuPosition.downwardPreference => buttonRect.top - padding.top,
     };
 
     return BoxConstraints.loose(
