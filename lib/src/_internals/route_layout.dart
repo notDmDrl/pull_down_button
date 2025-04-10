@@ -32,10 +32,13 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     final height = switch (menuPosition) {
       PullDownMenuPosition.over when check => buttonRect.bottom - padding.top,
       PullDownMenuPosition.over =>
-        constraintsHeight - buttonRect.top - padding.bottom,
+      constraintsHeight - buttonRect.top - padding.bottom,
       PullDownMenuPosition.automatic when check => buttonRect.top - padding.top,
       PullDownMenuPosition.automatic =>
-        constraintsHeight - buttonRect.bottom - padding.bottom,
+      constraintsHeight - buttonRect.bottom - padding.bottom,
+      PullDownMenuPosition.upwardPreference =>
+      constraintsHeight - buttonRect.bottom - padding.bottom,
+      PullDownMenuPosition.downwardPreference => buttonRect.top - padding.top,
     };
 
     return BoxConstraints.loose(
@@ -122,14 +125,23 @@ abstract class _PositionUtils {
           y -= childHeight - buttonHeight;
         }
       case PullDownMenuPosition.automatic:
-        // Native variant applies additional 5px of padding to menu if
-        // [buttonHeight] is smaller than 44px.
+      case PullDownMenuPosition.upwardPreference:
+      case PullDownMenuPosition.downwardPreference:
+      // Native variant applies additional 5px of padding to menu if
+      // [buttonHeight] is smaller than 44px.
         final padding =
-            buttonHeight < kMinInteractiveDimensionCupertino ? 5 : 0;
-
-        isInBottomHalf
-            ? y -= childHeight + padding
-            : y += buttonHeight + padding;
+        buttonHeight < kMinInteractiveDimensionCupertino ? 5 : 0;
+        if (menuPosition == PullDownMenuPosition.upwardPreference &&
+            childHeight + padding < y) {
+          y -= childHeight + padding;
+        } else if (menuPosition == PullDownMenuPosition.downwardPreference &&
+            childHeight + padding < screen.height - y) {
+          y += buttonHeight + padding;
+        } else {
+          isInBottomHalf
+              ? y -= childHeight + padding
+              : y += buttonHeight + padding;
+        }
     }
 
     return y;
