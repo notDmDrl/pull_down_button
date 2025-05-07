@@ -216,6 +216,7 @@ class PullDownButton extends StatefulWidget {
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
     this.animationAlignmentOverride,
+    this.navigator,
     this.useRootNavigator = false,
     this.routeSettings,
   });
@@ -289,6 +290,9 @@ class PullDownButton extends StatefulWidget {
   ///
   /// If that's null, then [PullDownMenuRouteTheme.defaults] is used.
   final PullDownMenuRouteTheme? routeTheme;
+
+  /// The navigator used to show the pull-down menu.
+  final NavigatorState? navigator;
 
   /// Custom animation for [buttonBuilder] when the pull-down menu is opening or
   /// closing.
@@ -419,6 +423,7 @@ class _PullDownButtonState extends State<PullDownButton> {
       animationAlignment: animationAlignment,
       menuOffset: widget.menuOffset,
       scrollController: widget.scrollController,
+      navigator: widget.navigator,
       useRootNavigator: widget.useRootNavigator,
       routeSettings: widget.routeSettings,
     );
@@ -476,6 +481,9 @@ class _PullDownButtonState extends State<PullDownButton> {
 /// [routeTheme] is used to define the theme of the route used to display
 /// the pull-down menu launched from this function.
 ///
+/// [navigator] is used to show the pull-down menu. If `null`, uses
+/// the current navigator.
+///
 /// [useRootNavigator] is used to determine whether to use the root navigator
 /// to show the pull-down menu. Defaults to `false`.
 ///
@@ -506,6 +514,7 @@ Future<void> showPullDownMenu({
   ScrollController? scrollController,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
+  NavigatorState? navigator,
   bool useRootNavigator = false,
   RouteSettings? routeSettings,
 }) async {
@@ -524,6 +533,7 @@ Future<void> showPullDownMenu({
     animationAlignment: PullDownMenuRoute.animationAlignment(context, position),
     menuOffset: menuOffset,
     scrollController: scrollController,
+    navigator: navigator,
     useRootNavigator: useRootNavigator,
     routeSettings: routeSettings,
   );
@@ -548,10 +558,13 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required Alignment animationAlignment,
   required double menuOffset,
   required ScrollController? scrollController,
+  required NavigatorState? navigator,
   required bool useRootNavigator,
   required RouteSettings? routeSettings,
 }) {
-  final navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+  final useCustomNavigator = navigator != null;
+
+  navigator ??= Navigator.of(context, rootNavigator: useRootNavigator);
 
   return navigator.push<VoidCallback>(
     PullDownMenuRoute(
@@ -561,7 +574,7 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
       routeTheme: routeTheme,
       menuPosition: menuPosition,
       capturedThemes: InheritedTheme.capture(
-        from: context,
+        from: useCustomNavigator ? navigator.context : context,
         to: navigator.context,
       ),
       hasLeading: hasLeading,
