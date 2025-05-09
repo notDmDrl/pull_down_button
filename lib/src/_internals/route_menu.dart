@@ -48,7 +48,7 @@ class RoutePullDownMenu extends StatelessWidget {
       begin: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: theme.shadow!.color.withOpacity(0),
+            color: theme.shadow!.color.withValues(alpha: 0),
             blurRadius: theme.shadow!.blurRadius,
             spreadRadius: theme.shadow!.spreadRadius,
           ),
