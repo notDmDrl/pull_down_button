@@ -212,6 +212,7 @@ class PullDownButton extends StatefulWidget {
     this.itemsOrder = PullDownMenuItemsOrder.downwards,
     this.buttonAnchor,
     this.menuOffset = 16,
+    this.menuSpacing = 0,
     this.scrollController,
     this.animationBuilder = defaultAnimationBuilder,
     this.routeTheme,
@@ -274,6 +275,18 @@ class PullDownButton extends StatefulWidget {
   ///
   /// Defaults to 16px.
   final double menuOffset;
+
+  /// Additional vertical spacing between the button and the pull-down menu.
+  ///
+  /// This spacing is added between the button and the menu when the menu is
+  /// positioned above or below the button (when [position] is
+  /// [PullDownMenuPosition.automatic]).
+  ///
+  /// When [position] is [PullDownMenuPosition.over], this parameter has no
+  /// effect as the menu overlaps with the button.
+  ///
+  /// Defaults to 0px (no additional spacing).
+  final double menuSpacing;
 
   /// A scroll controller that can be used to control the scrolling of the
   /// [itemBuilder] in the menu.
@@ -418,6 +431,7 @@ class _PullDownButtonState extends State<PullDownButton> {
       hasLeading: hasLeading,
       animationAlignment: animationAlignment,
       menuOffset: widget.menuOffset,
+      menuSpacing: widget.menuSpacing,
       scrollController: widget.scrollController,
       useRootNavigator: widget.useRootNavigator,
       routeSettings: widget.routeSettings,
@@ -467,6 +481,11 @@ class _PullDownButtonState extends State<PullDownButton> {
 /// the pull-down menu if the menu's desired position is not in the central
 /// third of the screen. Defaults to 16px.
 ///
+/// [menuSpacing] is used to define additional vertical spacing between
+/// the button and the pull-down menu when the menu is positioned above or below
+/// the button. This parameter has no effect when the menu position is 'over'.
+/// Defaults to 0px.
+///
 /// [scrollController] can be used to control the scrolling of the
 /// [items] in the menu. If `null`, uses an internally created
 /// [ScrollController].
@@ -503,6 +522,7 @@ Future<void> showPullDownMenu({
   required Rect position,
   PullDownMenuItemsOrder itemsOrder = PullDownMenuItemsOrder.downwards,
   double menuOffset = 16,
+  double menuSpacing = 0,
   ScrollController? scrollController,
   PullDownMenuCanceled? onCanceled,
   PullDownMenuRouteTheme? routeTheme,
@@ -523,6 +543,7 @@ Future<void> showPullDownMenu({
     hasLeading: hasLeading,
     animationAlignment: PullDownMenuRoute.animationAlignment(context, position),
     menuOffset: menuOffset,
+    menuSpacing: menuSpacing,
     scrollController: scrollController,
     useRootNavigator: useRootNavigator,
     routeSettings: routeSettings,
@@ -547,6 +568,7 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required bool hasLeading,
   required Alignment animationAlignment,
   required double menuOffset,
+  required double menuSpacing,
   required ScrollController? scrollController,
   required bool useRootNavigator,
   required RouteSettings? routeSettings,
@@ -568,6 +590,7 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
       itemsOrder: itemsOrder,
       alignment: animationAlignment,
       menuOffset: menuOffset,
+      menuSpacing: menuSpacing,
       scrollController: scrollController,
       settings: routeSettings,
     ),
