@@ -13,6 +13,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
     required this.buttonRect,
     required this.menuPosition,
     required this.menuOffset,
+    required this.menuSpacing,
   });
 
   final EdgeInsets padding;
@@ -20,6 +21,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   final Rect buttonRect;
   final PullDownMenuPosition menuPosition;
   final double menuOffset;
+  final double menuSpacing;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
@@ -72,6 +74,7 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
       childSize.height,
       padding,
       menuPosition,
+      menuSpacing,
     );
 
     return Offset(dx, dy);
@@ -82,7 +85,9 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
       padding != oldDelegate.padding ||
       !setEquals(avoidBounds, oldDelegate.avoidBounds) ||
       buttonRect != oldDelegate.buttonRect ||
-      menuPosition != oldDelegate.menuPosition;
+      menuPosition != oldDelegate.menuPosition ||
+      menuOffset != oldDelegate.menuOffset ||
+      menuSpacing != oldDelegate.menuSpacing;
 }
 
 /// A set of utils to help calculating menu's position on screen.
@@ -110,6 +115,7 @@ abstract class _PositionUtils {
     double childHeight,
     EdgeInsets padding,
     PullDownMenuPosition menuPosition,
+    double menuSpacing,
   ) {
     var y = buttonRect.top;
     final buttonHeight = buttonRect.height;
@@ -124,12 +130,13 @@ abstract class _PositionUtils {
       case PullDownMenuPosition.automatic:
         // Native variant applies additional 5px of padding to menu if
         // [buttonHeight] is smaller than 44px.
-        final padding =
+        final basePadding =
             buttonHeight < kMinInteractiveDimensionCupertino ? 5 : 0;
+        final totalSpacing = basePadding + menuSpacing;
 
         isInBottomHalf
-            ? y -= childHeight + padding
-            : y += buttonHeight + padding;
+            ? y -= childHeight + totalSpacing
+            : y += buttonHeight + totalSpacing;
     }
 
     return y;
