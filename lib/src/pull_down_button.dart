@@ -423,10 +423,13 @@ class _PullDownButtonState extends State<PullDownButton> {
       routeSettings: widget.routeSettings,
     );
 
-    if (!mounted) return;
+    // Update state only if widget is still mounted
+    if (mounted) {
+      setState(() => state = PullDownButtonAnimationState.closed);
+    }
 
-    setState(() => state = PullDownButtonAnimationState.closed);
-
+    // Execute action callback even if widget is unmounted
+    // The user performed an action and it should be honored
     if (action != null) {
       action.call();
     } else {
