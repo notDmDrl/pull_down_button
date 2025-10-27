@@ -19,11 +19,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<ThemeMode>(
-        valueListenable: themeNotifier,
-        builder: (context, value, child) => MaterialApp(
+    valueListenable: themeNotifier,
+    builder:
+        (context, value, child) => MaterialApp(
           title: 'PullDownButton Example',
           theme: ThemeData(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'CupertinoSystemText',
             cupertinoOverrideTheme: const CupertinoThemeData(
               scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
               barBackgroundColor: Color(0xF0F9F9F9),
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           darkTheme: ThemeData(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'CupertinoSystemText',
             brightness: Brightness.dark,
             cupertinoOverrideTheme: const CupertinoThemeData(
               brightness: Brightness.dark,
@@ -41,14 +42,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
           themeMode: value,
-          builder: (context, child) => Directionality(
-            textDirection: TextDirection.ltr,
-            child: child!,
-          ),
+          builder:
+              (context, child) => Directionality(
+                textDirection: TextDirection.ltr,
+                child: child!,
+              ),
           home: child,
         ),
-        child: const MyHomePage(),
-      );
+    child: const MyHomePage(),
+  );
 }
 
 class MyHomePage extends StatelessWidget {
@@ -56,30 +58,31 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-          leading: const CupertinoButton(
-            onPressed: onThemeModeChange,
-            padding: EdgeInsets.zero,
-            child: Icon(CupertinoIcons.sun_max_fill),
+    navigationBar: CupertinoNavigationBar(
+      leading: const CupertinoButton(
+        onPressed: onThemeModeChange,
+        padding: EdgeInsets.zero,
+        child: Icon(CupertinoIcons.sun_max_fill),
+      ),
+      middle: Text(
+        'PullDownButton',
+        style: TextStyle(
+          color: CupertinoDynamicColor.resolve(
+            CupertinoColors.label,
+            context,
           ),
-          middle: Text(
-            'PullDownButton',
-            style: TextStyle(
-              color: CupertinoDynamicColor.resolve(
-                CupertinoColors.label,
-                context,
-              ),
-            ),
-          ),
-          trailing: CupertinoButton(
-            onPressed: () => Navigator.push(
+        ),
+      ),
+      trailing: CupertinoButton(
+        onPressed:
+            () => Navigator.push(
               context,
               CupertinoPageRoute<void>(builder: (_) => const ItemExamples()),
             ),
-            padding: EdgeInsets.zero,
-            child: const Text('Examples'),
-          ),
-        ),
-        child: const Example(),
-      );
+        padding: EdgeInsets.zero,
+        child: const Text('Examples'),
+      ),
+    ),
+    child: const Example(),
+  );
 }

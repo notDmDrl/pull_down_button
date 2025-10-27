@@ -3,8 +3,6 @@ import 'package:pull_down_button/pull_down_button.dart';
 
 import 'example_scaffold.dart';
 
-// ignore_for_file: avoid_redundant_argument_values
-
 @immutable
 class Title extends StatelessWidget {
   const Title({super.key});
@@ -19,7 +17,6 @@ class Title extends StatelessWidget {
               items: [
                 PullDownMenuTitle(
                   title: Text('Menu title'),
-                  alignment: PullDownMenuTitleAlignment.start,
                 ),
               ],
             ),
@@ -37,7 +34,6 @@ class Title extends StatelessWidget {
               items: [
                 PullDownMenuTitle(
                   title: Text('Menu title'),
-                  alignment: PullDownMenuTitleAlignment.start,
                 ),
                 PullDownMenuItem(
                   onTap: noAction,
@@ -65,7 +61,6 @@ class Title extends StatelessWidget {
               items: [
                 PullDownMenuTitle(
                   title: Text('Menu title'),
-                  alignment: PullDownMenuTitleAlignment.start,
                 ),
                 PullDownMenuItem.selectable(
                   onTap: noAction,

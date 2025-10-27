@@ -23,13 +23,13 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    final biggest = constraints.biggest;
+    final Size biggest = constraints.biggest;
 
-    final constraintsHeight = biggest.height;
+    final double constraintsHeight = biggest.height;
 
-    final check = buttonRect.center.dy >= constraintsHeight / 2;
+    final bool check = buttonRect.center.dy >= constraintsHeight / 2;
 
-    final height = switch (menuPosition) {
+    final double height = switch (menuPosition) {
       PullDownMenuPosition.over when check => buttonRect.bottom - padding.top,
       PullDownMenuPosition.over =>
         constraintsHeight - buttonRect.top - padding.bottom,
@@ -47,26 +47,30 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    final childWidth = childSize.width;
+    final double childWidth = childSize.width;
 
-    final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
+    final _MenuHorizontalPosition horizontalPosition =
+        _MenuHorizontalPosition.get(size, buttonRect);
 
-    final x = switch (horizontalPosition) {
+    final double x = switch (horizontalPosition) {
       _MenuHorizontalPosition.right =>
         buttonRect.right - childWidth + menuOffset,
       _MenuHorizontalPosition.left => buttonRect.left - menuOffset,
       _MenuHorizontalPosition.center =>
-        buttonRect.left + buttonRect.width / 2 - childWidth / 2
+        buttonRect.left + buttonRect.width / 2 - childWidth / 2,
     };
 
-    final originCenter = buttonRect.center;
-    final rect = Offset.zero & size;
-    final subScreens =
+    final Offset originCenter = buttonRect.center;
+    final Rect rect = Offset.zero & size;
+    final Iterable<Rect> subScreens =
         DisplayFeatureSubScreen.subScreensInBounds(rect, avoidBounds);
-    final subScreen = _PositionUtils.closestScreen(subScreens, originCenter);
+    final Rect subScreen = _PositionUtils.closestScreen(
+      subScreens,
+      originCenter,
+    );
 
-    final dx = _PositionUtils.fitX(x, subScreen, childWidth, padding);
-    final dy = _PositionUtils.fitY(
+    final double dx = _PositionUtils.fitX(x, subScreen, childWidth, padding);
+    final double dy = _PositionUtils.fitY(
       buttonRect,
       subScreen,
       childSize.height,
@@ -92,7 +96,7 @@ abstract class _PositionUtils {
 
   /// Returns closest screen for specific [point].
   static Rect closestScreen(Iterable<Rect> screens, Offset point) {
-    var closest = screens.first;
+    Rect closest = screens.first;
     for (final screen in screens) {
       if ((screen.center - point).distance <
           (closest.center - point).distance) {
@@ -111,10 +115,10 @@ abstract class _PositionUtils {
     EdgeInsets padding,
     PullDownMenuPosition menuPosition,
   ) {
-    var y = buttonRect.top;
-    final buttonHeight = buttonRect.height;
+    double y = buttonRect.top;
+    final double buttonHeight = buttonRect.height;
 
-    final isInBottomHalf = y + buttonHeight / 2 >= screen.height / 2;
+    final bool isInBottomHalf = y + buttonHeight / 2 >= screen.height / 2;
 
     switch (menuPosition) {
       case PullDownMenuPosition.over:
@@ -142,8 +146,10 @@ abstract class _PositionUtils {
     double childWidth,
     EdgeInsets padding,
   ) {
-    final leftSafeArea = screen.left + _kMenuScreenPadding + padding.left;
-    final rightSafeArea = screen.right - _kMenuScreenPadding - padding.right;
+    final double leftSafeArea =
+        screen.left + _kMenuScreenPadding + padding.left;
+    final double rightSafeArea =
+        screen.right - _kMenuScreenPadding - padding.right;
 
     if (wantedX < leftSafeArea) {
       return leftSafeArea;

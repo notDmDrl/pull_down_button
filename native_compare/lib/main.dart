@@ -6,8 +6,9 @@ import 'utils.dart';
 
 // ignore_for_file: constant_identifier_names, avoid_redundant_argument_values
 
-const EventChannel _platformEventChannel =
-    EventChannel('native_compare.example.com/responder');
+const EventChannel _platformEventChannel = EventChannel(
+  'native_compare.example.com/responder',
+);
 
 void main() {
   runApp(
@@ -41,16 +42,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
-        child: Center(
-          child: AspectRatio(
-            aspectRatio: 1,
-            child: Align(
-              alignment: Alignment.center,
-              child: body(controlName),
-            ),
-          ),
+    child: Center(
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Align(
+          alignment: Alignment.center,
+          child: body(controlName),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 Widget body(CompareTest controlName) {
@@ -107,7 +108,7 @@ enum CompareTest {
       onTap: _call,
       title: 'Item',
     ),
-    PullDownMenuDivider.large(),
+    PullDownMenuDivider(),
     PullDownMenuItem(
       onTap: _call,
       title: 'Item',
@@ -146,7 +147,7 @@ enum CompareTest {
 
   static void _call() {}
 
-  final List<PullDownMenuEntry> entries;
+  final List<Widget> entries;
 }
 
 const small = PullDownMenuActionsRow.small(

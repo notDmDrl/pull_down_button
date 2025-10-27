@@ -27,11 +27,14 @@ class ThemingCustom extends StatelessWidget {
         extensions: [
           PullDownButtonTheme(
             routeTheme: PullDownMenuRouteTheme(
-              backgroundColor: ElevationOverlay.applySurfaceTint(
-                colorScheme.surface,
-                colorScheme.surfaceTint,
-                2,
-              ),
+              backgroundColor: colorScheme.surfaceContainer,
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+              borderClipper:
+                  (radius, child) => ClipRSuperellipse(
+                    borderRadius: radius,
+                    child: child,
+                  ),
+              width: 280,
             ),
             dividerTheme: PullDownMenuDividerTheme(
               dividerColor: colorScheme.outlineVariant,
@@ -43,13 +46,20 @@ class ThemingCustom extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: colorScheme.onSurface,
               ),
+              subtitleStyle: TextStyle(
+                color: colorScheme.onSurfaceVariant,
+              ),
               iconActionTextStyle: TextStyle(
                 fontWeight: FontWeight.w500,
                 color: colorScheme.onSurface,
               ),
-              onHoverBackgroundColor: colorScheme.primary,
-              onHoverTextColor: colorScheme.onPrimary,
-              onPressedBackgroundColor: colorScheme.surfaceContainerHighest,
+              onHoverBackgroundColor: colorScheme.onSurface.withValues(
+                alpha: 0.08,
+              ),
+              onHoverTextColor: colorScheme.onSurface,
+              onPressedBackgroundColor: colorScheme.onSurface.withValues(
+                alpha: 0.1,
+              ),
             ),
           ),
         ],

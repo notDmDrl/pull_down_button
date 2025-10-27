@@ -1,15 +1,18 @@
-import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
+/// @docImport '/src/pull_down_button.dart';
+library;
 
-import '../../pull_down_button.dart';
+import 'package:flutter/cupertino.dart';
+
+import '/src/theme/route_theme.dart';
 import 'animation.dart';
 import 'content_size_category.dart';
+import 'item_layout.dart';
 import 'menu.dart';
+import 'menu_config.dart';
 import 'route.dart';
 
 /// Pull-down menu displayed by [PullDownButton] or [showPullDownMenu].
 @immutable
-@internal
 class RoutePullDownMenu extends StatelessWidget {
   /// Creates [RoutePullDownMenu].
   const RoutePullDownMenu({
@@ -22,11 +25,11 @@ class RoutePullDownMenu extends StatelessWidget {
   });
 
   /// Items to show in the menu.
-  final List<PullDownMenuEntry> items;
+  final List<Widget> items;
 
   /// A per-menu custom theme.
   ///
-  /// Final theme is resolved using [PullDownMenuRouteTheme.resolve].
+  /// Final theme is resolved using [MenuConfig.ambientThemeOf].
   final PullDownMenuRouteTheme? routeTheme;
 
   /// An animation provided by [PullDownMenuRoute] for scale, fade, and size
@@ -41,25 +44,27 @@ class RoutePullDownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme =
-        PullDownMenuRouteTheme.resolve(context, routeTheme: routeTheme);
+    final bool isInAccessibilityMode =
+        ContentSizeCategory.isInAccessibilityMode(context);
 
+    final PullDownMenuRouteTheme theme =
+        MenuConfig.ambientThemeOf(context).routeTheme;
+
+    final BoxShadow shadow = theme.shadow!;
     final shadowTween = DecorationTween(
       begin: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: theme.shadow!.color.withOpacity(0),
-            blurRadius: theme.shadow!.blurRadius,
-            spreadRadius: theme.shadow!.spreadRadius,
+            color: shadow.color.withValues(alpha: 0),
+            blurRadius: shadow.blurRadius,
+            spreadRadius: shadow.spreadRadius,
           ),
         ],
       ),
-      end: BoxDecoration(boxShadow: [theme.shadow!]),
+      end: BoxDecoration(boxShadow: [shadow]),
     );
 
     final clampedAnimation = ClampedAnimation(animation);
-
-    final isInAccessibilityMode = TextUtils.isInAccessibilityMode(context);
 
     return ScaleTransition(
       scale: animation,
@@ -73,13 +78,15 @@ class RoutePullDownMenu extends StatelessWidget {
           child: MenuDecoration(
             backgroundColor: theme.backgroundColor!,
             borderRadius: theme.borderRadius!,
+            borderClipper: theme.borderClipper!,
             child: FadeTransition(
               opacity: clampedAnimation,
               child: AnimatedMenuContainer(
                 constraints: BoxConstraints.tightFor(
-                  width: isInAccessibilityMode
-                      ? theme.accessibilityWidth
-                      : theme.width,
+                  width:
+                      isInAccessibilityMode
+                          ? theme.accessibilityWidth
+                          : theme.width,
                 ),
                 child: SizeTransition(
                   axisAlignment: -1,

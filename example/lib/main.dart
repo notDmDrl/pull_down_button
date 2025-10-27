@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_redundant_argument_values
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_down_button/pull_down_button.dart';
@@ -23,12 +21,8 @@ class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final edgeInsets = MediaQuery.of(context).padding;
-    final padding = EdgeInsets.only(
-      left: 16 + edgeInsets.left,
-      top: 24 + edgeInsets.top,
-      right: 16 + edgeInsets.right,
-      bottom: 24 + edgeInsets.bottom,
-    );
+    final padding =
+        EdgeInsets.symmetric(horizontal: 16, vertical: 24) + edgeInsets;
 
     return ListView.separated(
       padding: padding,
@@ -39,12 +33,13 @@ class Example extends StatelessWidget {
         return Align(
           alignment: isSender ? Alignment.centerRight : Alignment.centerLeft,
           child: ExampleMenu(
-            builder: (_, showMenu) => CupertinoButton(
-              onPressed: showMenu,
-              padding: EdgeInsets.zero,
-              pressedOpacity: 1,
-              child: _MessageExample(isSender: isSender),
-            ),
+            builder:
+                (_, showMenu) => CupertinoButton(
+                  onPressed: showMenu,
+                  padding: EdgeInsets.zero,
+                  pressedOpacity: 1,
+                  child: _MessageExample(isSender: isSender),
+                ),
           ),
         );
       },
@@ -65,7 +60,8 @@ class ExampleMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PullDownButton(
-        itemBuilder: (context) => [
+    itemBuilder:
+        (context) => [
           PullDownMenuHeader(
             leading: ColoredBox(
               color: CupertinoColors.systemBlue.resolveFrom(context),
@@ -75,7 +71,7 @@ class ExampleMenu extends StatelessWidget {
             onTap: () {},
             icon: CupertinoIcons.profile_circled,
           ),
-          const PullDownMenuDivider.large(),
+          const PullDownMenuDivider(),
           PullDownMenuActionsRow.medium(
             items: [
               PullDownMenuItem(
@@ -95,7 +91,7 @@ class ExampleMenu extends StatelessWidget {
               ),
             ],
           ),
-          const PullDownMenuDivider.large(),
+          const PullDownMenuDivider(),
           PullDownMenuItem(
             onTap: () {},
             title: 'Pin',
@@ -113,17 +109,16 @@ class ExampleMenu extends StatelessWidget {
             isDestructive: true,
             icon: CupertinoIcons.delete,
           ),
-          const PullDownMenuDivider.large(),
+          const PullDownMenuDivider(),
           PullDownMenuItem(
             title: 'Select',
             onTap: () {},
             icon: CupertinoIcons.checkmark_circle,
           ),
         ],
-        animationBuilder: null,
-        position: PullDownMenuPosition.automatic,
-        buttonBuilder: builder,
-      );
+    animationBuilder: null,
+    buttonBuilder: builder,
+  );
 }
 
 // Eyeballed message box from iMessage
@@ -137,31 +132,33 @@ class _MessageExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        width: 267,
-        child: Material(
-          color: isSender
+    width: 267,
+    child: Material(
+      color:
+          isSender
               ? CupertinoColors.systemBlue.resolveFrom(context)
               : CupertinoColors.systemFill.resolveFrom(context),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(18)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(
-              isSender
-                  ? 'How’s next Tuesday? Can’t wait to see you! 🤗'
-                  : 'Let’s get lunch! When works for you? 😋',
-              style: TextStyle(
-                fontSize: 17,
-                height: 22 / 17,
-                letterSpacing: -0.41,
-                fontFamily: '.SF Pro Text',
-                color: isSender
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(18)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Text(
+          isSender
+              ? 'How’s next Tuesday? Can’t wait to see you! 🤗'
+              : 'Let’s get lunch! When works for you? 😋',
+          style: TextStyle(
+            fontSize: 17,
+            height: 22 / 17,
+            letterSpacing: -0.41,
+            fontFamily: '.SF Pro Text',
+            color:
+                isSender
                     ? CupertinoColors.label.darkColor
                     : CupertinoColors.label.resolveFrom(context),
-              ),
-            ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

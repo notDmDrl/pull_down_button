@@ -8,13 +8,11 @@
 ///
 /// See also:
 ///
-/// * Apple guidelines for Pull-Down buttons:
-///   https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons
-library pull_down_button;
+/// * Apple guidelines for [Pull-Down buttons](https://developer.apple.com/design/human-interface-guidelines/pull-down-buttons)
+library;
 
 export 'src/items/actions_row.dart';
-export 'src/items/divider.dart' hide MenuSeparator;
-export 'src/items/entry.dart';
+export 'src/items/divider.dart' hide PullDownMenuSeparator;
 export 'src/items/header.dart';
 export 'src/items/item.dart';
 export 'src/items/title.dart';

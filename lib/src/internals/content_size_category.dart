@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
-
-import '../items/entry.dart';
-import 'animation.dart';
 
 /// Text scale levels available in iOS 16 accessibility menu.
 ///
 /// The value of each level was taken by writing down values returned by
-/// `MediaQuery.of(context).textScaleFactor`.
+/// `MediaQuery.textScaleFactorOf(context)`.
 ///
 /// [ContentSizeCategory.large] is the default value.
 ///
-/// Those values are used to resolve heights of various [PullDownMenuEntry].
+/// Those values are used to resolve heights of various menu items.
 ///
 /// See also:
 ///
-/// * preferredContentSizeCategory:
-///   https://developer.apple.com/documentation/uikit/uiapplication/1623048-preferredcontentsizecategory
-/// * UIContentSizeCategory:
-///   https://developer.apple.com/documentation/uikit/uicontentsizecategory
-@internal
+/// * [UIKit documentation: preferredContentSizeCategory](https://developer.apple.com/documentation/uikit/uiapplication/1623048-preferredcontentsizecategory)
+/// * [UIKit documentation: UIContentSizeCategory](https://developer.apple.com/documentation/uikit/uicontentsizecategory)
 enum ContentSizeCategory {
   /// An extra-small font.
   ///
@@ -104,20 +97,14 @@ enum ContentSizeCategory {
   /// The [ContentSizeCategory] from the closest [MediaQuery] instance that
   /// encloses the given context.
   static ContentSizeCategory of(BuildContext context) {
-    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
+    final double textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     return ContentSizeCategory.values.firstWhere(
       (element) => element.textScaleFactor >= textScaleFactor,
       orElse: () => ContentSizeCategory.large,
     );
   }
-}
 
-/// A set of text scale related utils.
-///
-/// All of the values were eyeballed using the iOS 16 Simulator.
-@internal
-abstract final class TextUtils {
   /// Utility method for resolving if current text scale factor is bigger
   /// than [ContentSizeCategory.extraExtraExtraLarge]. At this text scale
   /// factor menu transitions to its bigger size "accessibility" mode.
@@ -127,22 +114,4 @@ abstract final class TextUtils {
   static bool isInAccessibilityMode(BuildContext context) =>
       MediaQuery.textScalerOf(context).scale(1) >
       ContentSizeCategory.extraExtraExtraLarge.textScaleFactor;
-}
-
-/// An [AnimatedContainer] with predefined [duration] and [curve].
-///
-/// Is used to animate a container on text scale factor change.
-@internal
-class AnimatedMenuContainer extends AnimatedContainer {
-  /// Creates [AnimatedMenuContainer].
-  AnimatedMenuContainer({
-    super.key,
-    super.constraints,
-    super.alignment,
-    super.padding,
-    required super.child,
-  }) : super(
-          duration: AnimationUtils.kMenuDuration,
-          curve: Curves.fastOutSlowIn,
-        );
 }

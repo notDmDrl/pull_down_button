@@ -3,8 +3,6 @@ import 'package:pull_down_button/pull_down_button.dart';
 
 import 'example_scaffold.dart';
 
-// ignore_for_file: avoid_redundant_argument_values
-
 @immutable
 class AnimationBuilder extends StatelessWidget {
   const AnimationBuilder({super.key});
@@ -18,6 +16,9 @@ class AnimationBuilder extends StatelessWidget {
           children: [
             const LabeledExample(
               label: 'Opacity animation',
+              // We want to see that this was achieved with the
+              // [defaultAnimationBuilder]
+              // ignore: avoid_redundant_argument_values
               animationBuilder: PullDownButton.defaultAnimationBuilder,
               items: [
                 PullDownMenuItem(

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../pull_down_button.dart';
-import '_internals/content_size_category.dart';
-import '_internals/continuous_swipe.dart';
-import '_internals/menu.dart';
-import '_internals/menu_config.dart';
+import 'internals/content_size_category.dart';
+import 'internals/continuous_swipe.dart';
+import 'internals/item_layout.dart';
+import 'internals/menu.dart';
+import 'internals/menu_config.dart';
 
 /// Displays a pull-down menu as a simple widget without animations or adding
 /// routes to the navigation stack.
@@ -17,9 +18,8 @@ import '_internals/menu_config.dart';
 /// * [PullDownMenuItem], a pull-down menu entry for a simple action.
 /// * [PullDownMenuItem.selectable], a pull-down menu entry for a selection
 ///   action.
-/// * [PullDownMenuDivider], a pull-down menu entry for a divider.
-/// * [PullDownMenuDivider.large], a pull-down menu entry that is a large
-///   divider.
+/// * [PullDownMenuDivider], a pull-down menu entry that is a large
+///   divider
 /// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
 /// * [PullDownMenuActionsRow], a more compact way to show multiple pull-down
 ///   menu entries for a simple action.
@@ -47,7 +47,7 @@ class PullDownMenu extends StatelessWidget {
   ///
   /// In order to achieve it all [PullDownMenuItem]s will automatically switch
   /// to the "selectable" view.
-  final List<PullDownMenuEntry> items;
+  final List<Widget> items;
 
   /// A scroll controller that can be used to control the scrolling of the
   /// [items] in the menu.
@@ -65,17 +65,20 @@ class PullDownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuRouteTheme.resolve(
+    final PullDownButtonTheme ambientOf = PullDownButtonTheme.ambientOf(
       context,
-      routeTheme: routeTheme,
     );
+    final PullDownMenuRouteTheme theme = ambientOf.routeTheme;
 
-    final hasLeading = MenuConfig.menuHasLeading(items);
+    final bool hasLeading = MenuConfig.menuHasLeading(items);
 
-    final isInAccessibilityMode = TextUtils.isInAccessibilityMode(context);
+    final bool isInAccessibilityMode =
+        ContentSizeCategory.isInAccessibilityMode(context);
 
     return MenuConfig(
       hasLeading: hasLeading,
+      ambientTheme: ambientOf,
+      contentSizeCategory: ContentSizeCategory.of(context),
       child: DecoratedBox(
         decoration: BoxDecoration(
           boxShadow: [theme.shadow!],
@@ -83,11 +86,13 @@ class PullDownMenu extends StatelessWidget {
         child: MenuDecoration(
           backgroundColor: theme.backgroundColor!,
           borderRadius: theme.borderRadius!,
+          borderClipper: theme.borderClipper!,
           child: AnimatedMenuContainer(
             constraints: BoxConstraints.tightFor(
-              width: isInAccessibilityMode
-                  ? theme.accessibilityWidth
-                  : theme.width,
+              width:
+                  isInAccessibilityMode
+                      ? theme.accessibilityWidth
+                      : theme.width,
             ),
             child: SwipeRegion(
               child: MenuBody(

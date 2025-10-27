@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
 import 'button.dart';
 
@@ -13,7 +12,6 @@ import 'button.dart';
 ///
 /// Descendants listen to [SwipeState] changes using [SwipeState.maybeOf].
 @immutable
-@internal
 class SwipeRegion extends StatefulWidget {
   /// Creates [SwipeRegion].
   const SwipeRegion({
@@ -29,10 +27,6 @@ class SwipeRegion extends StatefulWidget {
 }
 
 class _SwipeRegionState extends State<SwipeRegion> {
-  // Making it nullable sounds unnecessary but leak_tracker is angry so leave it
-  // like this for now.
-  // TODO(notDmDrl): look into this when leak_tracker is fully baked into
-  // devtools.
   ValueNotifier<SwipeState>? _state;
 
   @override
@@ -48,23 +42,25 @@ class _SwipeRegionState extends State<SwipeRegion> {
     super.dispose();
   }
 
-  void _onPanUpdate(DragUpdateDetails details) =>
-      _state?.value = SwipeInProcessState._(
-        offset: details.globalPosition,
-      );
+  void _onPanUpdate(DragUpdateDetails details) {
+    _state?.value = SwipeInProcessState._(
+      offset: details.globalPosition,
+    );
+  }
 
-  void _onPanEnd(DragEndDetails _) =>
-      _state?.value = const SwipeCompleteState._();
+  void _onPanEnd(DragEndDetails _) {
+    _state?.value = const SwipeCompleteState._();
+  }
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onPanUpdate: _onPanUpdate,
-        onPanEnd: _onPanEnd,
-        child: _SwipeState(
-          notifier: _state,
-          child: widget.child,
-        ),
-      );
+    onPanUpdate: _onPanUpdate,
+    onPanEnd: _onPanEnd,
+    child: _SwipeState(
+      notifier: _state,
+      child: widget.child,
+    ),
+  );
 }
 
 /// An inherited widget used to indicate current [SwipeState].
@@ -81,21 +77,16 @@ class _SwipeState extends InheritedNotifier<ValueNotifier<SwipeState>> {
 
   /// The closest nullable instance of this class that encloses the given
   /// context.
-  static SwipeState? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<_SwipeState>()
-      ?.notifier
-      ?.value;
+  static SwipeState? maybeOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_SwipeState>()
+          ?.notifier
+          ?.value;
 }
 
 /// Basic continuous swipe state class.
 @immutable
-@internal
-@sealed
 sealed class SwipeState {
-  /// Abstract const constructor. This constructor enables subclasses to provide
-  /// const constructors so that they can be used in const expressions.
-  const SwipeState._();
-
   /// Returns the current swipe state from the closest [_SwipeState] ancestor.
   ///
   /// If there is no ancestor, it returns `0`.
@@ -105,7 +96,6 @@ sealed class SwipeState {
 
 /// Initial continuous swipe state, the user has not yet initiated the movement.
 @immutable
-@internal
 class SwipeInitState implements SwipeState {
   const SwipeInitState._();
 }
@@ -113,7 +103,6 @@ class SwipeInitState implements SwipeState {
 /// The coordinates of the movement are transmitted, the user in the process of
 /// selecting the menu item.
 @immutable
-@internal
 class SwipeInProcessState implements SwipeState {
   const SwipeInProcessState._({
     required this.offset,
@@ -128,11 +117,11 @@ class SwipeInProcessState implements SwipeState {
     required Offset itemPosition,
     required Size itemSize,
   }) {
-    final dy = offset.dy;
-    final dx = offset.dx;
+    final double dy = offset.dy;
+    final double dx = offset.dx;
 
-    final itemDY = itemPosition.dy;
-    final itemDX = itemPosition.dx;
+    final double itemDY = itemPosition.dy;
+    final double itemDX = itemPosition.dx;
 
     return (dy >= itemDY && (itemDY + itemSize.height) > dy) &&
         (dx >= itemDX && (itemDX + itemSize.width) > dx);
@@ -141,7 +130,6 @@ class SwipeInProcessState implements SwipeState {
 
 /// The state of the completed continuous swipe, the user has selected the item.
 @immutable
-@internal
 class SwipeCompleteState implements SwipeState {
   const SwipeCompleteState._();
 }

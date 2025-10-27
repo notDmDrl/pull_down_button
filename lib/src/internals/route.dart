@@ -1,9 +1,14 @@
+/// @docImport '/src/items/item.dart';
+library;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
-import '../../pull_down_button.dart';
+import '/src/pull_down_button.dart';
+import '/src/theme/route_theme.dart';
+import '/src/theme/theme.dart';
 import 'animation.dart';
+import 'content_size_category.dart';
 import 'continuous_swipe.dart';
 import 'menu_config.dart';
 import 'route_menu.dart';
@@ -12,7 +17,6 @@ part 'route_layout.dart';
 
 /// Route used by [PullDownButton] or [showPullDownMenu] to display
 /// [RoutePullDownMenu].
-@internal
 class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   /// Creates [PullDownMenuRoute].
   PullDownMenuRoute({
@@ -31,7 +35,7 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
   });
 
   /// Items to show in the [RoutePullDownMenu] created by this route.
-  final List<PullDownMenuEntry> items;
+  final List<Widget> items;
 
   /// Captured inherited themes, specifically [PullDownButtonInheritedTheme],
   /// to pass to [RoutePullDownMenu] and all its [items].
@@ -73,10 +77,10 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
   @override
   Animation<double> createAnimation() => CurvedAnimation(
-        parent: super.createAnimation(),
-        curve: AnimationUtils.kCurve,
-        reverseCurve: AnimationUtils.kCurveReverse,
-      );
+    parent: super.createAnimation(),
+    curve: AnimationUtils.kCurve,
+    reverseCurve: AnimationUtils.kCurveReverse,
+  );
 
   @override
   Duration get transitionDuration => AnimationUtils.kMenuDuration;
@@ -93,15 +97,17 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final orderedItems = switch (itemsOrder) {
+    final Iterable<Widget> orderedItems = switch (itemsOrder) {
       PullDownMenuItemsOrder.downwards => items,
       PullDownMenuItemsOrder.upwards => items.reversed,
       PullDownMenuItemsOrder.automatic =>
-        alignment.y == -1 ? items : items.reversed
+        alignment.y == -1 ? items : items.reversed,
     };
 
     return MenuConfig(
       hasLeading: hasLeading,
+      ambientTheme: PullDownButtonTheme.ambientOf(context),
+      contentSizeCategory: ContentSizeCategory.of(context),
       child: RoutePullDownMenu(
         scrollController: scrollController,
         items: orderedItems.toList(),
@@ -119,9 +125,10 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    final mediaQuery = MediaQuery.of(context);
+    final MediaQueryData mediaQuery = MediaQuery.of(context);
 
-    final avoidBounds = DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
+    final Set<Rect> avoidBounds =
+        DisplayFeatureSubScreen.avoidBounds(mediaQuery).toSet();
 
     return SwipeRegion(
       child: MediaQuery.removePadding(
@@ -150,15 +157,16 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     BuildContext context,
     Rect buttonRect,
   ) {
-    final buttonCenter = buttonRect.center;
+    final Offset buttonCenter = buttonRect.center;
 
-    final size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
 
-    final heightCenter = size.height / 2;
+    final double heightCenter = size.height / 2;
 
-    final isInBottomHalf = buttonCenter.dy >= heightCenter;
+    final bool isInBottomHalf = buttonCenter.dy >= heightCenter;
 
-    final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
+    final _MenuHorizontalPosition horizontalPosition =
+        _MenuHorizontalPosition.get(size, buttonRect);
 
     return switch (horizontalPosition) {
       _MenuHorizontalPosition.right when isInBottomHalf =>
@@ -195,19 +203,19 @@ enum _MenuHorizontalPosition {
     Size size,
     Rect buttonRect,
   ) {
-    final leftPosition = buttonRect.left;
-    final rightPosition = buttonRect.right;
+    final double leftPosition = buttonRect.left;
+    final double rightPosition = buttonRect.right;
 
-    final width = size.width;
-    final widthCenter = width / 2;
+    final double width = size.width;
+    final double widthCenter = width / 2;
 
     // Allowed threshold of screen side (left / right) for the menu to be opened
     // using "centered" alignment.
     // Based on native comparison with iOS 16 Simulator.
     const threshold = 0.2744;
 
-    final leftCenteredThreshold = widthCenter * (1 - threshold);
-    final rightCenteredThreshold = widthCenter * threshold + widthCenter;
+    final double leftCenteredThreshold = widthCenter * (1 - threshold);
+    final double rightCenteredThreshold = widthCenter * threshold + widthCenter;
 
     if (buttonRect.center.dx == widthCenter ||
         (leftPosition >= leftCenteredThreshold &&

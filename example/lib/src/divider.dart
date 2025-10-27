@@ -37,7 +37,7 @@ class Divider extends StatelessWidget {
                   title: 'Title',
                   icon: CupertinoIcons.square,
                 ),
-                PullDownMenuDivider.large(),
+                PullDownMenuDivider(),
                 PullDownMenuItem(
                   onTap: noAction,
                   title: 'Title',

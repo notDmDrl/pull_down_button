@@ -1,14 +1,5 @@
-include: package:very_good_analysis/analysis_options.yaml
+include: package:yet_another_lint/package.yaml
 
 linter:
   rules:
-    always_use_package_imports: false
-    prefer_relative_imports: true
-    library_private_types_in_public_api: false
-    sort_pub_dependencies: false
-    no_leading_underscores_for_local_identifiers: true
-    unnecessary_to_list_in_spreads: true
-    unnecessary_null_aware_operator_on_extension_on_nullable: true
-    prefer_constructors_over_static_methods: false
-    always_put_required_named_parameters_first: false
-    depend_on_referenced_packages: false
+    - prefer_constructors_over_static_methods: false

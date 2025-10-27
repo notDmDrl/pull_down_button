@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 
 /// Extension for [Rect] related calculations.
-@internal
 extension RectExtension on BuildContext {
-  /// Shorthand for `context.findRenderObject()! as RenderBox`
+  /// Shorthand for `context.findRenderObject()! as RenderBox`.
   RenderBox get currentRenderBox => findRenderObject()! as RenderBox;
 
   /// Given a [BuildContext], return the [Rect] of the corresponding
@@ -20,9 +18,9 @@ extension RectExtension on BuildContext {
   /// If [Rect]'s height is bigger than the screen size, additionally normalize
   /// [Rect] to help mitigate possible layout issues.
   Rect getRect({RenderObject? ancestor}) {
-    final renderBoxContainer = currentRenderBox;
-    final queryData = MediaQuery.of(this);
-    final size = queryData.size;
+    final RenderBox renderBoxContainer = currentRenderBox;
+    final MediaQueryData queryData = MediaQuery.of(this);
+    final Size size = queryData.size;
 
     final rect = Rect.fromPoints(
       renderBoxContainer.localToGlobal(
@@ -50,11 +48,11 @@ Rect _normalizeLargeRect(
   Size size,
   EdgeInsets padding,
 ) {
-  const minimumAllowedSize = kMinInteractiveDimensionCupertino * 2;
+  const double minimumAllowedSize = kMinInteractiveDimensionCupertino * 2;
 
-  final topIsNegative = rect.top.isNegative;
-  final height = size.height;
-  final rectBottom = rect.bottom;
+  final bool topIsNegative = rect.top.isNegative;
+  final double height = size.height;
+  final double rectBottom = rect.bottom;
 
   double? top;
   double? bottom;
@@ -63,14 +61,14 @@ Rect _normalizeLargeRect(
     top = height * 0.65;
     bottom = height * 0.75;
   } else if (topIsNegative && rectBottom < height) {
-    final diff = height - rectBottom - padding.bottom;
+    final double diff = height - rectBottom - padding.bottom;
 
     if (diff < minimumAllowedSize) {
       top = rectBottom;
       bottom = height - padding.bottom;
     }
   } else {
-    final diff = rect.top - padding.top;
+    final double diff = rect.top - padding.top;
 
     if (diff < minimumAllowedSize) {
       top = padding.top;

@@ -1,9 +1,9 @@
-import 'package:example/src/alignment_override.dart';
 import 'package:flutter/cupertino.dart' hide Title;
 import 'package:pull_down_button/pull_down_button.dart';
 
 import 'setup.dart';
 import 'src/actions_row.dart';
+import 'src/alignment_override.dart';
 import 'src/anchor.dart';
 import 'src/animation_builder.dart';
 import 'src/divider.dart';
@@ -147,16 +147,16 @@ class _Category extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoListSection.insetGrouped(
-        header: Text(
-          header,
-          style: TextStyle(
-            color: CupertinoColors.secondaryLabel.resolveFrom(context),
-          ),
-        ),
-        hasLeading: false,
-        additionalDividerMargin: 6,
-        children: children,
-      );
+    header: Text(
+      header,
+      style: TextStyle(
+        color: CupertinoColors.secondaryLabel.resolveFrom(context),
+      ),
+    ),
+    hasLeading: false,
+    additionalDividerMargin: 6,
+    children: children,
+  );
 }
 
 @immutable
@@ -168,19 +168,20 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoListTile(
-        onTap: () => Navigator.push(
+    onTap:
+        () => Navigator.push(
           context,
           CupertinoPageRoute<void>(builder: (_) => destination),
         ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: CupertinoDynamicColor.resolve(
-              CupertinoColors.label,
-              context,
-            ),
-          ),
+    title: Text(
+      title,
+      style: TextStyle(
+        color: CupertinoDynamicColor.resolve(
+          CupertinoColors.label,
+          context,
         ),
-        trailing: const CupertinoListTileChevron(),
-      );
+      ),
+    ),
+    trailing: const CupertinoListTileChevron(),
+  );
 }

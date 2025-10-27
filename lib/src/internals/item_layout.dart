@@ -1,16 +1,32 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:meta/meta.dart';
+
+import 'animation.dart';
+
+/// An [AnimatedContainer] with predefined [duration] and [curve].
+///
+/// Is used to animate a container on text scale factor change.
+final class AnimatedMenuContainer extends AnimatedContainer {
+  /// Creates [AnimatedMenuContainer].
+  AnimatedMenuContainer({
+    super.key,
+    super.constraints,
+    super.alignment,
+    super.padding,
+    required super.child,
+  }) : super(
+         duration: AnimationUtils.kMenuDuration,
+         curve: AnimationUtils.kOnSizeChangeCurve,
+       );
+}
 
 /// A widget used to create a leading widget for pull-down menu items while
 /// complying with layouts defined in the Apple Design Resources Sketch file.
 ///
 /// See also:
 ///
-/// * Apple Design Resources Sketch file:
-///   https://developer.apple.com/design/resources/
+/// * Apple Design Resources Sketch and Figma [libraries](https://developer.apple.com/design/resources/)
 @immutable
-@internal
 class LeadingWidgetBox extends StatelessWidget {
   /// Creates [LeadingWidgetBox].
   const LeadingWidgetBox({
@@ -30,15 +46,15 @@ class LeadingWidgetBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsetsDirectional.only(
-          end: 4,
-        ),
-        child: _TextScaledSizedBox(
-          width: _kLeadingWidth,
-          height: height,
-          child: child,
-        ),
-      );
+    padding: const EdgeInsetsDirectional.only(
+      end: 4,
+    ),
+    child: _TextScaledSizedBox(
+      width: _kLeadingWidth,
+      height: height,
+      child: child,
+    ),
+  );
 }
 
 /// A widget used to create a icon widget for pull-down menu items while
@@ -46,24 +62,22 @@ class LeadingWidgetBox extends StatelessWidget {
 ///
 /// See also:
 ///
-/// * Apple Design Resources Sketch file:
-///   https://developer.apple.com/design/resources/
+/// * Apple Design Resources Sketch and Figma [libraries](https://developer.apple.com/design/resources/)
 @immutable
-@internal
 class IconBox extends StatelessWidget {
   /// Creates [IconBox].
   const IconBox({
     super.key,
     this.color,
     required this.child,
-  }) : _isSmall = false;
+  }) : _config = const (height: 22, width: 20, size: 22);
 
   /// Creates [IconBox.small].
   const IconBox.small({
     super.key,
     this.color,
     required this.child,
-  }) : _isSmall = true;
+  }) : _config = const (height: 18, width: 18, size: 17);
 
   /// The widget below this widget in the tree.
   final Widget child;
@@ -71,35 +85,20 @@ class IconBox extends StatelessWidget {
   /// The color of icon widget.
   final Color? color;
 
-  final bool _isSmall;
+  /// The icons dimensions.
+  final ({double height, double width, double size}) _config;
 
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
-
-    if (_isSmall) {
-      return _TextScaledSizedBox(
-        height: 18,
-        width: 18,
-        child: Center(
-          child: IconTheme.merge(
-            data: IconThemeData(
-              color: color,
-              size: 17 * textScaleFactor,
-            ),
-            child: child,
-          ),
-        ),
-      );
-    }
+    final double textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     return _TextScaledSizedBox(
-      height: 22,
-      width: 20,
+      height: _config.height,
+      width: _config.width,
       child: IconTheme.merge(
         data: IconThemeData(
           color: color,
-          size: 22 * textScaleFactor,
+          size: _config.size * textScaleFactor,
         ),
         child: child,
       ),
@@ -112,10 +111,8 @@ class IconBox extends StatelessWidget {
 ///
 /// See also:
 ///
-/// * Apple Design Resources Sketch file:
-///   https://developer.apple.com/design/resources/
+/// * Apple Design Resources Sketch and Figma [libraries](https://developer.apple.com/design/resources/)
 @immutable
-@internal
 class IconActionBox extends StatelessWidget {
   /// Creates [IconActionBox].
   const IconActionBox({
@@ -133,9 +130,12 @@ class IconActionBox extends StatelessWidget {
   /// The size of [IconActionBox].
   static const double _kSize = 28;
 
+  /// The size of icon at the default text scale factor.
+  static const double _kIconSize = 17;
+
   @override
   Widget build(BuildContext context) {
-    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
+    final double textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     return _TextScaledSizedBox(
       height: _kSize,
@@ -143,7 +143,7 @@ class IconActionBox extends StatelessWidget {
       child: IconTheme.merge(
         data: IconThemeData(
           color: color,
-          size: 17 * textScaleFactor,
+          size: _kIconSize * textScaleFactor,
         ),
         child: child,
       ),
@@ -168,7 +168,7 @@ class _TextScaledSizedBox extends SingleChildRenderObjectWidget {
   final double? height;
 
   BoxConstraints _additionalConstraints(BuildContext context) {
-    final textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
+    final double textScaleFactor = MediaQuery.textScalerOf(context).scale(1);
 
     return BoxConstraints.tightFor(
       width: width != null ? width! * textScaleFactor : null,
@@ -186,6 +186,5 @@ class _TextScaledSizedBox extends SingleChildRenderObjectWidget {
   void updateRenderObject(
     BuildContext context,
     RenderConstrainedBox renderObject,
-  ) =>
-      renderObject.additionalConstraints = _additionalConstraints(context);
+  ) => renderObject.additionalConstraints = _additionalConstraints(context);
 }

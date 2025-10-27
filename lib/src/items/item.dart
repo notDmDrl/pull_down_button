@@ -1,12 +1,20 @@
+/// @docImport '/src/theme/theme.dart';
+/// @docImport 'actions_row.dart';
+/// @docImport 'header.dart';
+library;
+
 import 'package:flutter/cupertino.dart';
 
-import '../../pull_down_button.dart';
-import '../_internals/animation.dart';
-import '../_internals/button.dart';
-import '../_internals/content_size_category.dart';
-import '../_internals/item_layout.dart';
-import '../_internals/menu_config.dart';
-import '../_internals/route.dart';
+import '/src/internals/actions_row_size_config.dart';
+import '/src/internals/animation.dart';
+import '/src/internals/brightness.dart';
+import '/src/internals/button.dart';
+import '/src/internals/content_size_category.dart';
+import '/src/internals/element_size.dart';
+import '/src/internals/item_layout.dart';
+import '/src/internals/menu_config.dart';
+import '/src/internals/route.dart';
+import '/src/theme/item_theme.dart';
 
 const double _kItemVerticalPadding = 11;
 const double _kItemStartPadding = 16;
@@ -40,17 +48,18 @@ const EdgeInsetsGeometry _kIconActionPadding = EdgeInsetsDirectional.all(10);
 /// [onTap] without popping the menu.
 /// * [PullDownMenuItem.delayedTapHandler], a tap handler that pops the menu,
 /// waits for an animation to end and calls the [onTap].
-typedef PullDownMenuItemTapHandler = void Function(
-  BuildContext context,
-  VoidCallback? onTap,
-);
+typedef PullDownMenuItemTapHandler =
+    void Function(
+      BuildContext context,
+      VoidCallback? onTap,
+    );
 
 /// An item in a cupertino style pull-down menu.
 ///
 /// To show a checkmark next to the pull-down menu item (an item with a
 /// selection state), use [PullDownMenuItem.selectable].
 @immutable
-class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
+class PullDownMenuItem extends StatelessWidget {
   /// Creates an item for a pull-down menu.
   ///
   /// By default, the item is [enabled].
@@ -66,11 +75,11 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     this.iconColor,
     this.iconWidget,
     this.isDestructive = false,
-  })  : selected = null,
-        assert(
-          icon == null || iconWidget == null,
-          'Please provide either icon or iconWidget',
-        );
+  }) : selected = null,
+       assert(
+         icon == null || iconWidget == null,
+         'Please provide either icon or iconWidget',
+       );
 
   /// Creates a selectable item for a pull-down menu.
   ///
@@ -89,9 +98,9 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
     this.isDestructive = false,
     this.selected = false,
   }) : assert(
-          icon == null || iconWidget == null,
-          'Please provide either icon or iconWidget',
-        );
+         icon == null || iconWidget == null,
+         'Please provide either icon or iconWidget',
+       );
 
   /// The action this item represents.
   ///
@@ -220,81 +229,68 @@ class PullDownMenuItem extends StatelessWidget implements PullDownMenuEntry {
   static void noPopTapHandler(
     BuildContext _,
     VoidCallback? onTap,
-  ) =>
-      onTap?.call();
-
-  /// Asserts that an item with sizes [ElementSize.small] or
-  /// [ElementSize.medium] has an [icon] or a [iconWidget].
-  @protected
-  bool _debugActionRowHasIcon(ElementSize size) {
-    assert(
-      () {
-        return switch (size) {
-          ElementSize.small ||
-          ElementSize.medium =>
-            icon != null || iconWidget != null,
-          ElementSize.large => true
-        };
-      }(),
-      'Either icon or iconWidget should be provided',
-    );
-
-    return true;
-  }
+  ) => onTap?.call();
 
   @override
   Widget build(BuildContext context) {
-    final size = ActionsRowSizeConfig.of(context);
+    final ElementSize size = ActionsRowSizeConfig.of(context);
 
-    assert(_debugActionRowHasIcon(size), '');
-
-    final theme = PullDownMenuItemTheme.resolve(
-      context,
-      itemTheme: itemTheme,
+    assert(
+      switch (size) {
+        ElementSize.small ||
+        ElementSize.medium => icon != null || iconWidget != null,
+        ElementSize.large => true,
+        _ => throw UnsupportedError(''),
+      },
+      'Either icon or iconWidget should be provided',
     );
 
-    final isEnabled = enabled && onTap != null;
+    final PullDownMenuItemTheme theme =
+        MenuConfig.ambientThemeOf(context).itemTheme;
 
-    final child = switch (size) {
+    final bool isEnabled = enabled && onTap != null;
+
+    final Widget child = switch (size) {
       ElementSize.small => _SmallItem(
-          icon: iconWidget ?? Icon(icon),
-          destructiveColor: theme.destructiveColor!,
-          onHoverColor: theme.onHoverTextColor!,
-          color: iconColor ?? theme.iconActionTextStyle!.color!,
-          enabled: isEnabled,
-          destructive: isDestructive,
-        ),
+        icon: iconWidget ?? Icon(icon),
+        destructiveColor: theme.destructiveColor!,
+        onHoverColor: theme.onHoverTextColor!,
+        color: iconColor ?? theme.iconActionTextStyle!.color!,
+        enabled: isEnabled,
+        destructive: isDestructive,
+      ),
       ElementSize.medium => _MediumItem(
-          icon: iconWidget ?? Icon(icon),
-          destructiveColor: theme.destructiveColor!,
-          onHoverColor: theme.onHoverTextColor!,
-          iconColor: iconColor,
-          enabled: isEnabled,
-          destructive: isDestructive,
-          title: title,
-          titleStyle: theme.iconActionTextStyle!,
-        ),
-      ElementSize.large => _LargeItem(
-          icon: icon,
-          iconWidget: iconWidget,
-          destructiveColor: theme.destructiveColor!,
-          onHoverColor: theme.onHoverTextColor!,
-          iconColor: iconColor,
-          enabled: isEnabled,
-          destructive: isDestructive,
-          // Don't do unnecessary checks from inherited widget if [selected] is
-          // not null.
-          leading: selected != null || MenuConfig.of(context)
-              ? _CheckmarkIcon(
+        icon: iconWidget ?? Icon(icon),
+        destructiveColor: theme.destructiveColor!,
+        onHoverColor: theme.onHoverTextColor!,
+        iconColor: iconColor,
+        enabled: isEnabled,
+        destructive: isDestructive,
+        title: title,
+        titleStyle: theme.iconActionTextStyle!,
+      ),
+      ElementSize.large || _ => _LargeItem(
+        icon: icon,
+        iconWidget: iconWidget,
+        destructiveColor: theme.destructiveColor!,
+        onHoverColor: theme.onHoverTextColor!,
+        iconColor: iconColor,
+        enabled: isEnabled,
+        destructive: isDestructive,
+        // Don't do unnecessary checks from inherited widget if [selected] is
+        // not null.
+        leading:
+            selected != null || MenuConfig.hasLeadingOf(context)
+                ? _CheckmarkIcon(
                   selected: selected ?? false,
                   checkmark: theme.checkmark!,
                 )
-              : null,
-          title: title,
-          titleStyle: theme.textStyle!,
-          subtitle: subtitle,
-          subtitleStyle: theme.subtitleStyle!,
-        )
+                : null,
+        title: title,
+        titleStyle: theme.textStyle!,
+        subtitle: subtitle,
+        subtitleStyle: theme.subtitleStyle!,
+      ),
     };
 
     return MergeSemantics(
@@ -334,9 +330,9 @@ class _SmallItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHovered = MenuActionButtonState.of(context);
+    final bool isHovered = MenuActionButtonHoverState.of(context);
 
-    var resolvedColor = color;
+    Color resolvedColor = color;
     if (destructive) {
       resolvedColor = destructiveColor;
     } else if (isHovered) {
@@ -344,8 +340,8 @@ class _SmallItem extends StatelessWidget {
     }
 
     if (!enabled) {
-      resolvedColor = resolvedColor.withOpacity(
-        PullDownMenuItemTheme.disabledOpacity(context),
+      resolvedColor = resolvedColor.withValues(
+        alpha: disabledOpacityOf(context),
       );
     }
 
@@ -384,10 +380,10 @@ class _MediumItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHovered = MenuActionButtonState.of(context);
+    final bool isHovered = MenuActionButtonHoverState.of(context);
 
-    var resolvedColor = iconColor ?? titleStyle.color!;
-    var resolvedStyle = titleStyle;
+    Color resolvedColor = iconColor ?? titleStyle.color!;
+    TextStyle resolvedStyle = titleStyle;
     if (destructive) {
       resolvedColor = destructiveColor;
       resolvedStyle = resolvedStyle.copyWith(color: destructiveColor);
@@ -397,11 +393,11 @@ class _MediumItem extends StatelessWidget {
     }
 
     if (!enabled) {
-      final disabledOpacity = PullDownMenuItemTheme.disabledOpacity(context);
+      final double disabledOpacity = disabledOpacityOf(context);
 
-      resolvedColor = resolvedColor.withOpacity(disabledOpacity);
+      resolvedColor = resolvedColor.withValues(alpha: disabledOpacity);
       resolvedStyle = resolvedStyle.copyWith(
-        color: resolvedStyle.color!.withOpacity(disabledOpacity),
+        color: resolvedStyle.color!.withValues(alpha: disabledOpacity),
       );
     }
 
@@ -464,18 +460,23 @@ class _LargeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHovered = MenuActionButtonState.of(context);
+    final bool isHovered = MenuActionButtonHoverState.of(context);
 
-    final minHeight = subtitle != null
-        ? ElementSize.resolveLargeWithSubtitle(context)
-        : ElementSize.resolveLarge(context);
+    final ContentSizeCategory contentSizeCategory =
+        MenuConfig.contentSizeCategoryOf(context);
 
-    final isInAccessibilityMode = TextUtils.isInAccessibilityMode(context);
+    final double minHeight =
+        subtitle != null
+            ? ElementSize.extraLarge.resolve(contentSizeCategory)
+            : ElementSize.large.resolve(contentSizeCategory);
+
+    final bool isInAccessibilityMode =
+        ContentSizeCategory.isInAccessibilityMode(context);
     final maxLines = isInAccessibilityMode ? 3 : 2;
 
-    var resolvedColor = iconColor ?? titleStyle.color!;
-    var resolvedStyle = titleStyle;
-    var resolvedSubtitleStyle = subtitleStyle;
+    Color resolvedColor = iconColor ?? titleStyle.color!;
+    TextStyle resolvedStyle = titleStyle;
+    TextStyle resolvedSubtitleStyle = subtitleStyle;
     if (destructive) {
       resolvedColor = destructiveColor;
       resolvedStyle = resolvedStyle.copyWith(color: destructiveColor);
@@ -485,14 +486,14 @@ class _LargeItem extends StatelessWidget {
     }
 
     if (!enabled) {
-      final disabledOpacity = PullDownMenuItemTheme.disabledOpacity(context);
+      final double disabledOpacity = disabledOpacityOf(context);
 
-      resolvedColor = resolvedColor.withOpacity(disabledOpacity);
+      resolvedColor = resolvedColor.withValues(alpha: disabledOpacity);
       resolvedStyle = resolvedStyle.copyWith(
-        color: resolvedStyle.color!.withOpacity(disabledOpacity),
+        color: resolvedStyle.color!.withValues(alpha: disabledOpacity),
       );
       resolvedSubtitleStyle = resolvedSubtitleStyle.copyWith(
-        color: resolvedSubtitleStyle.color!.withOpacity(disabledOpacity),
+        color: resolvedSubtitleStyle.color!.withValues(alpha: disabledOpacity),
       );
     }
 
@@ -523,8 +524,9 @@ class _LargeItem extends StatelessWidget {
       );
     }
 
-    final hasIcon =
+    final bool hasIcon =
         !isInAccessibilityMode && (icon != null || iconWidget != null);
+
     final hasLeading = leading != null;
 
     if (hasLeading || hasIcon) {

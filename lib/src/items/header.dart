@@ -1,16 +1,23 @@
+/// @docImport '/src/theme/theme.dart';
+/// @docImport 'actions_row.dart';
+library;
+
 import 'package:flutter/cupertino.dart';
 
-import '../../pull_down_button.dart';
-import '../_internals/button.dart';
-import '../_internals/content_size_category.dart';
-import '../_internals/item_layout.dart';
-import '../_internals/menu_config.dart';
+import '/src/internals/button.dart';
+import '/src/internals/content_size_category.dart';
+import '/src/internals/element_size.dart';
+import '/src/internals/item_layout.dart';
+import '/src/internals/menu_config.dart';
+import '/src/theme/item_theme.dart';
+import '/src/theme/route_theme.dart';
+import 'item.dart';
 
 const double _kHeaderVerticalPadding = 10;
 const double _kHeaderStartPadding = 16;
 const double _kHeaderEndPadding = 12;
 
-const EdgeInsetsDirectional _padding = EdgeInsetsDirectional.only(
+const _padding = EdgeInsetsDirectional.only(
   start: _kHeaderStartPadding,
   end: _kHeaderEndPadding,
   top: _kHeaderVerticalPadding,
@@ -18,7 +25,7 @@ const EdgeInsetsDirectional _padding = EdgeInsetsDirectional.only(
 );
 
 /// The default size of a leading widget in [PullDownMenuHeader].
-const BoxConstraints _kLeadingSize = BoxConstraints.tightFor(
+const _kLeadingSize = BoxConstraints.tightFor(
   height: kMinInteractiveDimensionCupertino,
   width: kMinInteractiveDimensionCupertino,
 );
@@ -28,10 +35,11 @@ const BoxConstraints _kLeadingSize = BoxConstraints.tightFor(
 /// Additionally provides a default constraints for the leading widget.
 ///
 /// Used by [PullDownMenuHeader.leadingBuilder].
-typedef PullDownMenuHeaderLeadingBuilder = Widget Function(
-  BuildContext context,
-  BoxConstraints constraints,
-);
+typedef PullDownMenuHeaderLeadingBuilder =
+    Widget Function(
+      BuildContext context,
+      BoxConstraints constraints,
+    );
 
 /// The (optional) header of the pull-down menu that is usually displayed at the
 /// top of the pull-down menu.
@@ -41,10 +49,9 @@ typedef PullDownMenuHeaderLeadingBuilder = Widget Function(
 ///
 /// See also:
 ///
-/// * UIDocumentProperties:
-///   https://developer.apple.com/documentation/uikit/uidocumentproperties
+/// * [UIKit documentation, UIDocumentProperties](https://developer.apple.com/documentation/uikit/uidocumentproperties)
 @immutable
-class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
+class PullDownMenuHeader extends StatelessWidget {
   /// Creates a header for pull-down menu.
   const PullDownMenuHeader({
     super.key,
@@ -57,14 +64,14 @@ class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
     this.itemTheme,
     this.icon,
     this.iconWidget,
-  })  : assert(
-          icon == null || iconWidget == null,
-          'Please provide either icon or iconWidget',
-        ),
-        assert(
-          leading == null || leadingBuilder == null,
-          'Please provide either leading or leadingBuilder',
-        );
+  }) : assert(
+         icon == null || iconWidget == null,
+         'Please provide either icon or iconWidget',
+       ),
+       assert(
+         leading == null || leadingBuilder == null,
+         'Please provide either leading or leadingBuilder',
+       );
 
   /// The action this header represents.
   ///
@@ -131,10 +138,8 @@ class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuItemTheme.resolve(
-      context,
-      itemTheme: itemTheme,
-    );
+    final PullDownMenuItemTheme theme =
+        MenuConfig.ambientThemeOf(context).itemTheme;
 
     return MergeSemantics(
       child: Semantics(
@@ -144,7 +149,8 @@ class PullDownMenuHeader extends StatelessWidget implements PullDownMenuEntry {
           hoverColor: theme.onHoverBackgroundColor!,
           pressedColor: theme.onPressedBackgroundColor!,
           child: _HeaderBody(
-            leading: leadingBuilder?.call(context, _kLeadingSize) ??
+            leading:
+                leadingBuilder?.call(context, _kLeadingSize) ??
                 _Leading(child: leading!),
             title: title,
             titleStyle: theme.textStyle!,
@@ -186,11 +192,14 @@ class _HeaderBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isHovered = MenuActionButtonState.of(context);
+    final bool isHovered = MenuActionButtonHoverState.of(context);
 
-    final minHeight = ElementSize.resolveLargeWithSubtitle(context);
+    final double minHeight = ElementSize.extraLarge.resolve(
+      MenuConfig.contentSizeCategoryOf(context),
+    );
 
-    final isInAccessibilityMode = TextUtils.isInAccessibilityMode(context);
+    final bool isInAccessibilityMode =
+        ContentSizeCategory.isInAccessibilityMode(context);
     final maxLines = isInAccessibilityMode ? 3 : 2;
 
     Widget body = Text(
@@ -221,7 +230,7 @@ class _HeaderBody extends StatelessWidget {
       );
     }
 
-    final hasIcon =
+    final bool hasIcon =
         !isInAccessibilityMode && (icon != null || iconWidget != null);
 
     body = Row(
@@ -237,7 +246,7 @@ class _HeaderBody extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: (isHovered ? onHoverTextColor : subtitleStyle.color!)
-                    .withOpacity(0.18),
+                    .withValues(alpha: 0.18),
                 shape: BoxShape.circle,
               ),
               child: IconActionBox(
@@ -271,23 +280,28 @@ class _Leading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shadowColor =
-        PullDownMenuRouteTheme.resolve(context, routeTheme: null).shadow!.color;
+    final PullDownMenuRouteTheme theme =
+        MenuConfig.ambientThemeOf(context).routeTheme;
 
-    return Container(
+    final resolvedChild = ConstrainedBox(
       constraints: _kLeadingSize,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(4)),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadow!.color,
+              blurRadius: 2,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: child,
       ),
-      child: child,
+    );
+
+    return theme.borderClipper!.call(
+      const BorderRadius.all(Radius.circular(4)),
+      resolvedChild,
     );
   }
 }

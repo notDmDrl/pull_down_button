@@ -1,27 +1,25 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../pull_down_button.dart';
-import '../_internals/content_size_category.dart';
-import '../_internals/item_layout.dart';
-import '../_internals/menu_config.dart';
+import '../internals/content_size_category.dart';
+import '../internals/element_size.dart';
+import '../internals/item_layout.dart';
+import '../internals/menu_config.dart';
 
 /// Used to configure how [PullDownMenuTitle.title] is aligned.
 enum PullDownMenuTitleAlignment {
-  /// [PullDownMenuTitle.title] is aligned at the start of [PullDownMenuTitle]
-  /// widget.
+  /// [PullDownMenuTitle]'s title widget is aligned at the start edge
+  /// (with applied padding).
   start,
 
-  /// [PullDownMenuTitle.title] is aligned at the center of [PullDownMenuTitle]
-  /// widget.
-  center;
+  /// [PullDownMenuTitle]'s title widget is aligned at the center.
+  center,
 }
 
-/// The (optional) title of the pull-down menu that is usually displayed at the
+/// The optional title of the pull-down menu that is usually displayed at the
 /// top of the pull-down menu.
-///
-/// [title] is typically a [Text] widget.
 @immutable
-class PullDownMenuTitle extends StatelessWidget implements PullDownMenuEntry {
+class PullDownMenuTitle extends StatelessWidget {
   /// Creates a title for a pull-down menu.
   const PullDownMenuTitle({
     super.key,
@@ -40,56 +38,52 @@ class PullDownMenuTitle extends StatelessWidget implements PullDownMenuEntry {
 
   /// The text style of the title.
   ///
-  /// If this property is null, then [PullDownButtonTheme.titleTheme] from
-  /// [PullDownButtonTheme] theme extension is used.
   ///
-  /// If that's null, then defaults from [PullDownMenuTitleTheme.defaults] are
-  /// used.
+  /// If this property is null, then the value from the ambient
+  /// [PullDownMenuTitleTheme] is used.
   final TextStyle? titleStyle;
-
-  /// Returns a minimum height of title container.
-  ///
-  /// The default height is 32px.
-  static double _resolveHeight(BuildContext context) =>
-      (ElementSize.resolveLarge(context) * 0.72).ceilToDouble();
 
   @override
   Widget build(BuildContext context) {
-    final theme = PullDownMenuTitleTheme.resolve(
+    final PullDownMenuTitleTheme theme =
+        MenuConfig.ambientThemeOf(context).titleTheme;
+    final bool hasLeading = MenuConfig.hasLeadingOf(context);
+    final ContentSizeCategory contentSize = MenuConfig.contentSizeCategoryOf(
       context,
-      titleStyle: titleStyle,
     );
 
-    final minHeight = _resolveHeight(context);
+    final TextStyle resolvedStyle = theme.style!.merge(titleStyle);
+    final double minHeight = ElementSize.title.resolve(contentSize);
+    final isAlignedToStart = alignment == PullDownMenuTitleAlignment.start;
+    final bool isAlignedToLeading = hasLeading && isAlignedToStart;
 
-    final hasLeading = MenuConfig.of(context);
-
-    final alignedToStart = alignment == PullDownMenuTitleAlignment.start;
-
-    final box = hasLeading && alignedToStart
-        ? Row(
-            children: [
-              const LeadingWidgetBox(),
-              Expanded(child: title),
-            ],
-          )
-        : title;
+    Widget resolvedChild = title;
+    if (isAlignedToLeading) {
+      resolvedChild = Row(
+        children: [
+          const LeadingWidgetBox(),
+          Expanded(child: resolvedChild),
+        ],
+      );
+    }
 
     return AnimatedMenuContainer(
       constraints: BoxConstraints(minHeight: minHeight),
       padding: EdgeInsetsDirectional.only(
         // Use title with menu item's padding so it's all nicely aligned.
-        start: alignedToStart && hasLeading ? 9 : 16,
+        start: isAlignedToLeading ? 9 : 16,
         top: 8,
         bottom: 8,
         end: 16,
       ),
-      alignment: alignedToStart
-          ? AlignmentDirectional.centerStart
-          : AlignmentDirectional.center,
+      alignment:
+          isAlignedToStart
+              ? AlignmentDirectional.centerStart
+              : AlignmentDirectional.center,
       child: DefaultTextStyle(
-        style: theme.style!,
-        child: box,
+        style: resolvedStyle,
+        textAlign: isAlignedToStart ? TextAlign.start : TextAlign.center,
+        child: resolvedChild,
       ),
     );
   }

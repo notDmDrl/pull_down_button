@@ -18,11 +18,7 @@ class AlignmentOverride extends StatelessWidget {
             child: PullDownButton(
               itemBuilder: ExampleScaffold.exampleItems,
               buttonBuilder: ExampleButton.builder,
-              // ignore: invalid_use_of_internal_member
-              menuOffset: PullDownMenuRouteTheme.resolve(
-                context,
-                routeTheme: null,
-              ).width!,
+              menuOffset: PullDownMenuRouteTheme.resolvedWidthOf(context),
               animationAlignmentOverride: Alignment.topRight,
               buttonAnchor: PullDownMenuAnchor.end,
             ),

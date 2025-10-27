@@ -1,16 +1,40 @@
+/// @docImport '/pull_down_button.dart';
+/// @docImport '/src/internals/content_size_category.dart';
+library;
+
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
-import '../../pull_down_button.dart';
-import '../_internals/content_size_category.dart';
+import '/src/internals/content_size_category.dart';
+import '_dynamic_color.dart';
+import 'theme.dart';
 
-/// Defines the visual properties of the routes used to display pull-down menus.
+/// Signature for the callback invoked when pull-down menu's body is being
+/// built.
+///
+/// The [borderRadius] is passed from [PullDownMenuRouteTheme.borderRadius].
+///
+/// Used by [PullDownMenuRouteTheme.borderClipper].
+@experimental
+typedef PullDownMenuRouteBorderClipper =
+    SingleChildRenderObjectWidget Function(
+      BorderRadius borderRadius,
+      Widget child,
+    );
+
+/// Defines the visual properties of the pull-down menus.
+///
+/// Is used by the menu's container.
+///
+/// Typically a [PullDownMenuRouteTheme] is specified as part of the overall
+/// [PullDownButtonTheme] with [PullDownButtonTheme.routeTheme].
 ///
 /// All [PullDownMenuRouteTheme] properties are `null` by default. When null,
-/// the pull-down menu will use iOS 16 defaults specified in
+/// defined earlier use cases will use the values from [PullDownButtonTheme]
+/// if they exist, otherwise it will use iOS 18 defaults specified in
 /// [PullDownMenuRouteTheme.defaults].
 @immutable
 class PullDownMenuRouteTheme with Diagnosticable {
@@ -18,6 +42,7 @@ class PullDownMenuRouteTheme with Diagnosticable {
   const PullDownMenuRouteTheme({
     this.backgroundColor,
     this.borderRadius,
+    this.borderClipper,
     this.shadow,
     this.width,
     this.accessibilityWidth,
@@ -26,21 +51,44 @@ class PullDownMenuRouteTheme with Diagnosticable {
   /// Creates default set of properties used to configure
   /// [PullDownMenuRouteTheme].
   ///
-  /// Default properties were taken from the Apple Design Resources Sketch file.
+  /// Default properties were taken from the Apple Design Resources Sketch and
+  /// Figma libraries for iOS 18 and iPadOS 18.
   ///
   /// See also:
   ///
-  /// * Apple Design Resources Sketch file:
-  ///   https://developer.apple.com/design/resources/
+  /// * Apple Design Resources Sketch and Figma [libraries](https://developer.apple.com/design/resources/)
   @internal
   const factory PullDownMenuRouteTheme.defaults(BuildContext context) =
-      _PullDownMenuRouteThemeDefaults;
+      _Defaults;
 
   /// The background color of the pull-down menu.
   final Color? backgroundColor;
 
   /// The border radius of the pull-down menu.
   final BorderRadius? borderRadius;
+
+  /// The border radius clipper of the pull-down menu.
+  ///
+  /// Can be set to [ClipRSuperellipse] on newer Flutter versions past 3.32.0
+  /// with Impeller enabled.
+  ///
+  /// The *borderRadius* is passed from [PullDownMenuRouteTheme.borderRadius].
+  ///
+  /// If null, defaults to [ClipRRect].
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// PullDownMenuRouteTheme(
+  ///   borderClipper: (borderRadius, child) =>
+  ///     ClipRSuperellipse(
+  ///       borderRadius: borderRadius,
+  ///       child: child,
+  ///     ),
+  /// )
+  /// ```
+  @experimental
+  final PullDownMenuRouteBorderClipper? borderClipper;
 
   /// The pull-down menu shadow.
   final BoxShadow? shadow;
@@ -55,35 +103,17 @@ class PullDownMenuRouteTheme with Diagnosticable {
   /// scale factor menu transitions to its bigger size "accessibility" mode.
   final double? accessibilityWidth;
 
-  /// The [PullDownButtonTheme.routeTheme] property of the ambient
-  /// [PullDownButtonTheme].
-  static PullDownMenuRouteTheme? maybeOf(BuildContext context) =>
-      PullDownButtonTheme.maybeOf(context)?.routeTheme;
+  /// The helper method to quickly resolve [PullDownMenuRouteTheme]'s width from
+  /// [PullDownButtonTheme.routeTheme] or [PullDownMenuRouteTheme.defaults].
+  ///
+  /// Usually used to offset the menu position in [PullDownButton.menuOffset].
+  static double resolvedWidthOf(BuildContext context) {
+    final PullDownMenuRouteTheme routeTheme =
+        PullDownButtonTheme.ambientOf(context).routeTheme;
 
-  /// The helper method to quickly resolve [PullDownMenuRouteTheme] from
-  /// [PullDownButtonTheme.routeTheme] or [PullDownMenuRouteTheme.defaults]
-  /// as well as from theme data from [PullDownButton] or [showPullDownMenu].
-  @internal
-  static PullDownMenuRouteTheme resolve(
-    BuildContext context, {
-    required PullDownMenuRouteTheme? routeTheme,
-  }) {
-    final theme = PullDownMenuRouteTheme.maybeOf(context);
-    final defaults = PullDownMenuRouteTheme.defaults(context);
-
-    return PullDownMenuRouteTheme(
-      backgroundColor: routeTheme?.backgroundColor ??
-          theme?.backgroundColor ??
-          defaults.backgroundColor!,
-      borderRadius: routeTheme?.borderRadius ??
-          theme?.borderRadius ??
-          defaults.borderRadius!,
-      shadow: routeTheme?.shadow ?? theme?.shadow ?? defaults.shadow!,
-      width: routeTheme?.width ?? theme?.width ?? defaults.width!,
-      accessibilityWidth: routeTheme?.accessibilityWidth ??
-          theme?.accessibilityWidth ??
-          defaults.accessibilityWidth!,
-    );
+    return ContentSizeCategory.isInAccessibilityMode(context)
+        ? routeTheme.accessibilityWidth!
+        : routeTheme.width!;
   }
 
   /// Creates a copy of this object with the given fields replaced with the
@@ -94,14 +124,15 @@ class PullDownMenuRouteTheme with Diagnosticable {
     BoxShadow? shadow,
     double? width,
     double? accessibilityWidth,
-  }) =>
-      PullDownMenuRouteTheme(
-        backgroundColor: backgroundColor ?? this.backgroundColor,
-        borderRadius: borderRadius ?? this.borderRadius,
-        shadow: shadow ?? this.shadow,
-        width: width ?? this.width,
-        accessibilityWidth: accessibilityWidth ?? this.accessibilityWidth,
-      );
+    PullDownMenuRouteBorderClipper? borderClipper,
+  }) => PullDownMenuRouteTheme(
+    backgroundColor: backgroundColor ?? this.backgroundColor,
+    borderRadius: borderRadius ?? this.borderRadius,
+    shadow: shadow ?? this.shadow,
+    width: width ?? this.width,
+    accessibilityWidth: accessibilityWidth ?? this.accessibilityWidth,
+    borderClipper: borderClipper ?? this.borderClipper,
+  );
 
   /// Linearly interpolate between two themes.
   static PullDownMenuRouteTheme lerp(
@@ -109,38 +140,50 @@ class PullDownMenuRouteTheme with Diagnosticable {
     PullDownMenuRouteTheme? b,
     double t,
   ) {
-    if (identical(a, b) && a != null) return a;
+    if (identical(a, b) && a != null) {
+      return a;
+    }
 
     return PullDownMenuRouteTheme(
       backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
       borderRadius: BorderRadius.lerp(a?.borderRadius, b?.borderRadius, t),
       shadow: BoxShadow.lerp(a?.shadow, b?.shadow, t),
       width: ui.lerpDouble(a?.width, b?.width, t),
-      accessibilityWidth:
-          ui.lerpDouble(a?.accessibilityWidth, b?.accessibilityWidth, t),
+      accessibilityWidth: ui.lerpDouble(
+        a?.accessibilityWidth,
+        b?.accessibilityWidth,
+        t,
+      ),
+      borderClipper: t < 0.5 ? a?.borderClipper : b?.borderClipper,
     );
   }
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        borderRadius,
-        shadow,
-        width,
-        accessibilityWidth,
-      );
+    backgroundColor,
+    borderRadius,
+    shadow,
+    width,
+    accessibilityWidth,
+    borderClipper,
+  );
 
   @override
   bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other.runtimeType != runtimeType) return false;
+    if (identical(this, other)) {
+      return true;
+    }
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
 
     return other is PullDownMenuRouteTheme &&
         other.backgroundColor == backgroundColor &&
         other.borderRadius == borderRadius &&
         other.shadow == shadow &&
         other.width == width &&
-        other.accessibilityWidth == accessibilityWidth;
+        other.accessibilityWidth == accessibilityWidth &&
+        other.borderClipper == borderClipper;
   }
 
   @override
@@ -165,31 +208,43 @@ class PullDownMenuRouteTheme with Diagnosticable {
           accessibilityWidth,
           defaultValue: null,
         ),
+      )
+      ..add(
+        DiagnosticsProperty('borderClipper', borderClipper, defaultValue: null),
       );
   }
 }
 
 /// A set of default values for [PullDownMenuRouteTheme].
 @immutable
-class _PullDownMenuRouteThemeDefaults extends PullDownMenuRouteTheme {
-  /// Creates [_PullDownMenuRouteThemeDefaults].
-  const _PullDownMenuRouteThemeDefaults(this.context)
-      : super(
-          borderRadius: const BorderRadius.all(Radius.circular(12)),
-          width: 250,
-          accessibilityWidth: 390,
-          shadow: const BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.2),
-            blurRadius: 64,
-          ),
-        );
+class _Defaults extends PullDownMenuRouteTheme {
+  /// Creates [_Defaults].
+  const _Defaults(this.context)
+    : super(
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        borderClipper: _defaultBorderClipper,
+        width: 250,
+        accessibilityWidth: 370,
+        shadow: const BoxShadow(
+          color: Color.fromRGBO(0, 0, 0, 0.2),
+          blurRadius: 32,
+        ),
+      );
+
+  static ClipRRect _defaultBorderClipper(
+    BorderRadius borderRadius,
+    Widget child,
+  ) => ClipRRect(
+    borderRadius: borderRadius,
+    child: child,
+  );
 
   /// A build context used to resolve [CupertinoDynamicColor]s defined in this
   /// theme.
   final BuildContext context;
 
   /// The light and dark color of the menu's background.
-  static const kBackgroundColor = CupertinoDynamicColor.withBrightness(
+  static const kBackgroundColor = SimpleDynamicColor(
     color: Color.fromRGBO(247, 247, 247, 0.8),
     darkColor: Color.fromRGBO(36, 36, 36, 0.75),
   );

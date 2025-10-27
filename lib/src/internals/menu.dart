@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
-import '../../pull_down_button.dart';
-import '../items/divider.dart';
+import '/src/items/divider.dart';
+import '/src/theme/route_theme.dart';
 import 'blur.dart';
 
 /// A widget used to create pull-down menu container.
 @immutable
-@internal
 class MenuDecoration extends StatelessWidget {
   /// Creates [MenuDecoration].
   const MenuDecoration({
@@ -16,6 +14,7 @@ class MenuDecoration extends StatelessWidget {
     required this.child,
     required this.backgroundColor,
     required this.borderRadius,
+    required this.borderClipper,
   });
 
   /// A menu content widget.
@@ -26,6 +25,9 @@ class MenuDecoration extends StatelessWidget {
 
   /// The border radius of the pull-down menu.
   final BorderRadius borderRadius;
+
+  /// The border radius clipper of the pull-down menu.
+  final PullDownMenuRouteBorderClipper borderClipper;
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +43,12 @@ class MenuDecoration extends StatelessWidget {
       );
     }
 
-    return ClipRRect(
-      borderRadius: borderRadius,
-      child: box,
-    );
+    return borderClipper(borderRadius, box);
   }
 }
 
 /// A widget used to create a scrollable body for pull-down menu items.
 @immutable
-@internal
 class MenuBody extends StatefulWidget {
   /// Creates [MenuBody].
   const MenuBody({
@@ -60,7 +58,7 @@ class MenuBody extends StatefulWidget {
   });
 
   /// Items to show in the menu.
-  final List<PullDownMenuEntry> items;
+  final List<Widget> items;
 
   /// A scroll controller that can be used to control the scrolling of the
   /// [items] in the menu.
@@ -94,7 +92,7 @@ class _MenuBodyState extends State<MenuBody> {
         clipBehavior: Clip.none,
         controller: _effectiveScrollController,
         child: ListBody(
-          children: MenuSeparator.wrapVerticalList(widget.items),
+          children: PullDownMenuSeparator.wrapVerticalList(widget.items),
         ),
       ),
     );
@@ -107,10 +105,9 @@ class _MenuBodyState extends State<MenuBody> {
       child: switch (defaultTargetPlatform) {
         TargetPlatform.android || TargetPlatform.iOS => child,
         _ => ScrollConfiguration(
-            behavior:
-                ScrollConfiguration.of(context).copyWith(scrollbars: false),
-            child: child,
-          ),
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: child,
+        ),
       },
     );
   }

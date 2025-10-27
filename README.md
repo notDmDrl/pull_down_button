@@ -1,17 +1,23 @@
-# Pull-Down Button from iOS 14 for Flutter
+# Pull-Down Button from iOS 14-18 for Flutter
 
 [![Dart SDK Version](https://badgen.net/pub/sdk-version/pull_down_button)](https://pub.dev/packages/pull_down_button)
 [![Pub Version](https://img.shields.io/pub/v/pull_down_button)](https://pub.dev/packages/pull_down_button)
 [![Pub Likes](https://img.shields.io/pub/likes/pull_down_button)](https://pub.dev/packages/pull_down_button)
-[![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
 [![Common Changelog](https://common-changelog.org/badge.svg)](https://common-changelog.org)
 
 **pull_down_button** is an attempt to bring
 [Pop-Up](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pop-up-buttons) and
 [Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons)
-Buttons from iOS 14+ to Flutter with some additional customisation options.
+Buttons from iOS 14-18 to Flutter with some additional customisation options.
 
 ##### This package only tries to visually replicate the native counterpart, some parts might be somewhat different.
+
+---
+
+> [!IMPORTANT]
+> This package is no longer actively maintained and will most likely be deprecated and unlisted some time after Flutter finally supports iOS menus out of the box to give some time for migration. You can follow the progress here - [#60298](https://github.com/flutter/flutter/issues/60298).
+>
+> One of the core features of this package is an extensive customizability, which, most likely, will not be present in Flutter's pull-down menus. If there won't be any plans to add customizability to Flutter's menus, but there will be a big interest in it, this package might migrate most of the code to use Flutter's more advanced implementation with customisation options present right now. You can post your feedback on this topic [here](https://github.com/notDmDrl/pull_down_button/issues/38).
 
 ---
 
@@ -219,7 +225,9 @@ There is no need in adding `PullDownMenuDivider` by hand, pull-down menu does it
 `PullDownMenuTitle` is a widget used to create cupertino-style pull-down menu title (usually at the top of menu).
 
 ```dart
-const PullDownMenuTitle(title: Text('Menu title')),
+const PullDownMenuTitle(
+  title: Text('Menu title'),
+),
 ```
 
 | Properties | Description              |
@@ -376,13 +384,14 @@ ThemeData(
 
 <details><summary>PullDownMenuRouteTheme</summary>
 
-| Properties         | Description                                 |
-| ------------------ | ------------------------------------------- |
-| backgroundColor    | The background color of the pull-down menu. |
-| borderRadius       | The border radius of the pull-down menu.    |
-| shadow             | The pull-down menu shadow.                  |
-| width              | Pull-down menu width.                       |
-| accessibilityWidth | Pull-down menu accessibility width.         |
+| Properties         | Description                                      |
+| ------------------ | ------------------------------------------------ |
+| backgroundColor    | The background color of the pull-down menu.      |
+| borderRadius       | The border radius of the pull-down menu.         |
+| borderClipper      | The border radius clipper of the pull-down menu. |
+| shadow             | The pull-down menu shadow.                       |
+| width              | Pull-down menu width.                            |
+| accessibilityWidth | Pull-down menu accessibility width.              |
 
 `backgroundColor` usually has opacity in the range of **0.7-0.8** so that menu has a blur effect.
 If `backgroundColor` is fully opaque (opacity set to **1**), no blur effect will be applied.
@@ -440,6 +449,8 @@ CupertinoApp(
 ```
 
 ---
+
+#### Custom theming example
 
 Here is an [example](https://github.com/notDmDrl/pull_down_button/blob/main/example/lib/src/theming_custom.dart) of using `PullDownButtonTheme` with Material 3 color scheme colors
 (generated from `CupertinoColors.systemBlue` with `ColorScheme.fromSeed`) from [Material 3 Menu specs](https://m3.material.io/components/menus/specs).

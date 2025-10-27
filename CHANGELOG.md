@@ -1,3 +1,39 @@
+## 1.0.0-beta.0
+
+##### 2025-xx-xx - Match guidelines from the Apple Design Resources Figma file for iOS 18
+
+### Changed
+
+-   Bump Flutter minimum supported version from **3.19.0** to **3.29.0**.
+-   Bump Dart minimum supported version from **3.3.0** to **3.7.0**.
+-   Update menu blur values to be closer to native variant.
+-   Update default theme values to iOS 18 values.
+-   **Breaking:** change all sub-themes of `PullDownButtonTheme` to be non-null.
+
+### Added
+
+-   Add `resolvedWidthOf(context)` to `PullDownMenuRouteTheme`. Improves [#46](https://github.com/notDmDrl/pull_down_button/issues/46#issuecomment-2064471654).
+-   Add `borderClipper` to `PullDownMenuRouteTheme` to allow users on Flutter 3.32.0+ to use a more SwiftUI like border style with `ClipRSuperellipse`. _This feature is experimental and will be removed when `ClipRSuperellipse` is available in minimum supported Flutter version._
+
+    <details><summary>Example</summary>
+
+    ```dart
+    PullDownMenuRouteTheme(
+      borderClipper: (borderRadius, child) =>
+        ClipRSuperellipse(
+          borderRadius: borderRadius,
+          child: child,
+        ),
+    )
+    ```
+
+    </details>
+
+### Removed
+
+-   **Breaking:** remove `PullDownMenuEntry`. _Now menu accepts any widget as its child._
+-   **Breaking:** remove `PullDownMenuDivider.large`. _Use `PullDownMenuDivider` instead._
+
 ## 0.10.2
 
 ##### 2024-09-30 - Desktop scrollbar fixes

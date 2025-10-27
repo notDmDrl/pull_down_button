@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../pull_down_button.dart';
-import '_internals/extensions.dart';
-import '_internals/menu_config.dart';
-import '_internals/route.dart';
+import 'internals/extensions.dart';
+import 'internals/menu_config.dart';
+import 'internals/route.dart';
 
 /// Used to configure how the [PullDownButton] positions its pull-down menu.
 ///
@@ -160,17 +160,19 @@ typedef PullDownMenuCanceled = void Function();
 /// the button is pressed.
 ///
 /// Used by [PullDownButton.itemBuilder].
-typedef PullDownMenuItemBuilder = List<PullDownMenuEntry> Function(
-  BuildContext context,
-);
+typedef PullDownMenuItemBuilder =
+    List<Widget> Function(
+      BuildContext context,
+    );
 
 /// Signature used by [PullDownButton] to build button widget.
 ///
 /// Used by [PullDownButton.buttonBuilder].
-typedef PullDownMenuButtonBuilder = Widget Function(
-  BuildContext context,
-  Future<void> Function() showMenu,
-);
+typedef PullDownMenuButtonBuilder =
+    Widget Function(
+      BuildContext context,
+      Future<void> Function() showMenu,
+    );
 
 /// Signature used by [PullDownButton] to create animation for
 /// [PullDownButton.buttonBuilder] when the pull-down menu is opened.
@@ -178,11 +180,12 @@ typedef PullDownMenuButtonBuilder = Widget Function(
 /// [child] is a button created with [PullDownButton.buttonBuilder].
 ///
 /// Used by [PullDownButton.animationBuilder].
-typedef PullDownButtonAnimationBuilder = Widget Function(
-  BuildContext context,
-  PullDownButtonAnimationState state,
-  Widget child,
-);
+typedef PullDownButtonAnimationBuilder =
+    Widget Function(
+      BuildContext context,
+      PullDownButtonAnimationState state,
+      Widget child,
+    );
 
 /// Displays a pull-down menu and animates button to lower opacity when pressed.
 ///
@@ -191,9 +194,7 @@ typedef PullDownButtonAnimationBuilder = Widget Function(
 /// * [PullDownMenuItem], a pull-down menu entry for a simple action.
 /// * [PullDownMenuItem.selectable], a pull-down menu entry for a selection
 ///   action.
-/// * [PullDownMenuDivider], a pull-down menu entry for a divider.
-/// * [PullDownMenuDivider.large], a pull-down menu entry that is a large
-///   divider.
+/// * [PullDownMenuDivider], a pull-down menu entry for a large divider.
 /// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
 /// * [PullDownMenuActionsRow], a more compact way to show multiple pull-down
 ///   menu entries for a simple action.
@@ -366,7 +367,7 @@ class PullDownButton extends StatefulWidget {
     PullDownButtonAnimationState state,
     Widget child,
   ) {
-    final isOpen = state.isOpen;
+    final bool isOpen = state.isOpen;
 
     // All of the values where eyeballed using the iOS 16 Simulator.
     return AnimatedOpacity(
@@ -385,30 +386,33 @@ class _PullDownButtonState extends State<PullDownButton> {
   PullDownButtonAnimationState state = PullDownButtonAnimationState.closed;
 
   Future<void> showButtonMenu() async {
-    final navigator = Navigator.of(
+    final NavigatorState navigator = Navigator.of(
       context,
       rootNavigator: widget.useRootNavigator,
     );
 
-    final overlay = navigator.overlay!.context.currentRenderBox;
-    var button = context.getRect(ancestor: overlay);
+    final RenderBox overlay = navigator.overlay!.context.currentRenderBox;
+    Rect button = context.getRect(ancestor: overlay);
 
     if (widget.buttonAnchor != null) {
       button = _anchorToButtonPart(context, button, widget.buttonAnchor!);
     }
 
-    final animationAlignment = widget.animationAlignmentOverride ??
+    final Alignment animationAlignment =
+        widget.animationAlignmentOverride ??
         PullDownMenuRoute.animationAlignment(context, button);
 
-    final items = widget.itemBuilder(context);
+    final List<Widget> items = widget.itemBuilder(context);
 
-    if (items.isEmpty) return;
+    if (items.isEmpty) {
+      return;
+    }
 
-    final hasLeading = MenuConfig.menuHasLeading(items);
+    final bool hasLeading = MenuConfig.menuHasLeading(items);
 
     setState(() => state = PullDownButtonAnimationState.opened);
 
-    final action = await _showMenu<VoidCallback>(
+    final VoidCallback? action = await _showMenu<VoidCallback>(
       context: context,
       items: items,
       buttonRect: button,
@@ -423,7 +427,9 @@ class _PullDownButtonState extends State<PullDownButton> {
       routeSettings: widget.routeSettings,
     );
 
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     setState(() => state = PullDownButtonAnimationState.closed);
 
@@ -436,7 +442,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 
   @override
   Widget build(BuildContext context) {
-    final buttonBuilder = widget.buttonBuilder(context, showButtonMenu);
+    final Widget buttonBuilder = widget.buttonBuilder(context, showButtonMenu);
 
     return widget.animationBuilder?.call(context, state, buttonBuilder) ??
         buttonBuilder;
@@ -486,9 +492,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 /// * [PullDownMenuItem], a pull-down menu entry for a simple action.
 /// * [PullDownMenuItem.selectable], a pull-down menu entry for a selection
 ///   action.
-/// * [PullDownMenuDivider], a pull-down menu entry for a divider.
-/// * [PullDownMenuDivider.large], a pull-down menu entry that is a large
-///   divider.
+/// * [PullDownMenuDivider], a pull-down menu entry for a large divider.
 /// * [PullDownMenuTitle], a pull-down menu entry for a menu title.
 /// * [PullDownMenuActionsRow], a more compact way to show multiple pull-down
 ///   menu entries for a simple action.
@@ -499,7 +503,7 @@ class _PullDownButtonState extends State<PullDownButton> {
 ///   menu.
 Future<void> showPullDownMenu({
   required BuildContext context,
-  required List<PullDownMenuEntry> items,
+  required List<Widget> items,
   required Rect position,
   PullDownMenuItemsOrder itemsOrder = PullDownMenuItemsOrder.downwards,
   double menuOffset = 16,
@@ -509,11 +513,13 @@ Future<void> showPullDownMenu({
   bool useRootNavigator = false,
   RouteSettings? routeSettings,
 }) async {
-  if (items.isEmpty) return;
+  if (items.isEmpty) {
+    return;
+  }
 
-  final hasLeading = MenuConfig.menuHasLeading(items);
+  final bool hasLeading = MenuConfig.menuHasLeading(items);
 
-  final action = await _showMenu<VoidCallback>(
+  final VoidCallback? action = await _showMenu<VoidCallback>(
     context: context,
     items: items,
     buttonRect: position,
@@ -540,7 +546,7 @@ Future<void> showPullDownMenu({
 Future<VoidCallback?> _showMenu<VoidCallback>({
   required BuildContext context,
   required Rect buttonRect,
-  required List<PullDownMenuEntry> items,
+  required List<Widget> items,
   required PullDownMenuPosition menuPosition,
   required PullDownMenuItemsOrder itemsOrder,
   required PullDownMenuRouteTheme? routeTheme,
@@ -551,9 +557,12 @@ Future<VoidCallback?> _showMenu<VoidCallback>({
   required bool useRootNavigator,
   required RouteSettings? routeSettings,
 }) {
-  final navigator = Navigator.of(context, rootNavigator: useRootNavigator);
+  final NavigatorState navigator = Navigator.of(
+    context,
+    rootNavigator: useRootNavigator,
+  );
 
-  return navigator.push<VoidCallback>(
+  return navigator.push(
     PullDownMenuRoute(
       buttonRect: buttonRect,
       items: items,
@@ -582,9 +591,9 @@ Rect _anchorToButtonPart(
   Rect buttonRect,
   PullDownMenuAnchor anchor,
 ) {
-  final textDirection = Directionality.of(context);
+  final TextDirection textDirection = Directionality.of(context);
 
-  final side = switch (anchor) {
+  final double side = switch (anchor) {
     PullDownMenuAnchor.start when textDirection == TextDirection.ltr =>
       buttonRect.left,
     PullDownMenuAnchor.start => buttonRect.right,
@@ -606,12 +615,12 @@ Rect _anchorToButtonPart(
 String _barrierLabel(BuildContext context) {
   // Use this instead of `MaterialLocalizations.of(context)` because
   // [MaterialLocalizations] might be null in some cases.
-  final materialLocalizations =
+  final MaterialLocalizations? materialLocalizations =
       Localizations.of<MaterialLocalizations>(context, MaterialLocalizations);
 
   // Use this instead of `CupertinoLocalizations.of(context)` because
   // [CupertinoLocalizations] might be null in some cases.
-  final cupertinoLocalizations =
+  final CupertinoLocalizations? cupertinoLocalizations =
       Localizations.of<CupertinoLocalizations>(context, CupertinoLocalizations);
 
   // If both localizations are null, fallback to

@@ -14,11 +14,11 @@ class ExampleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoButton(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        color: CupertinoColors.systemGreen,
-        minSize: MediaQuery.textScalerOf(context).scale(34),
-        onPressed: onTap,
-        pressedOpacity: 1,
-        child: const Text('Button'),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    color: CupertinoColors.systemGreen,
+    minimumSize: Size.square(34),
+    onPressed: onTap,
+    pressedOpacity: 1,
+    child: const Text('Button'),
+  );
 }

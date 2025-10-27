@@ -1,19 +1,21 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../pull_down_button.dart';
-import '../_internals/menu_config.dart';
+import '/src/internals/actions_row_size_config.dart';
+import '/src/internals/element_size.dart';
+import '/src/internals/menu_config.dart';
+import '/src/items/item.dart';
 import 'divider.dart';
 
 /// Displays several actions in a more compact way (in a row, 3 or 4 items
 /// depending on the desired size).
 ///
+/// ![](https://docs-assets.developer.apple.com/published/a52c40a3e56e894d1c64dce93b8a252d/media-4047986~dark%402x.png)
+///
 /// See also:
 ///
-/// * preferredElementSize:
-///   https://developer.apple.com/documentation/uikit/uimenu/4013313-preferredelementsize
+/// * [UIKit documentation, preferredElementSize](https://developer.apple.com/documentation/uikit/uimenu/preferredelementsize)
 @immutable
-class PullDownMenuActionsRow extends StatelessWidget
-    implements PullDownMenuEntry {
+class PullDownMenuActionsRow extends StatelessWidget {
   /// Creates a row of 4 actions at max; icon only.
   const PullDownMenuActionsRow.small({
     super.key,
@@ -37,36 +39,22 @@ class PullDownMenuActionsRow extends StatelessWidget
   final List<PullDownMenuItem> items;
 
   /// Returns fixed height for [PullDownMenuItem] in [PullDownMenuActionsRow].
-  double _height(BuildContext context) => switch (_size) {
-        ElementSize.small => ElementSize.resolveLarge(context),
-        ElementSize.medium => ElementSize.resolveMedium(context),
-        ElementSize.large => throw UnsupportedError(
-            '[PullDownMenuActionsRow] only supports `ElementSize.small` '
-            'and `ElementSize.medium`',
-          )
-      };
+  double _height(BuildContext context) => _size.resolve(
+    MenuConfig.contentSizeCategoryOf(context),
+  );
 
-  @protected
-  bool _debugHasCorrectItemsCount() {
+  @override
+  Widget build(BuildContext context) {
     assert(
-      () {
-        return switch (_size) {
-          ElementSize.small => items.length <= 4,
-          ElementSize.medium => items.length <= 3,
-          ElementSize.large => true
-        };
-      }(),
+      switch (_size) {
+        ElementSize.small => items.length <= 4,
+        ElementSize.medium => items.length <= 3,
+        _ => true,
+      },
       'Amount of [items] should not be more than 3 for '
       '[PullDownMenuActionsRow.medium] and not more than 4 for '
       '[PullDownMenuActionsRow.small]',
     );
-
-    return true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    assert(_debugHasCorrectItemsCount(), '');
 
     return ConstrainedBox(
       constraints: BoxConstraints.tightFor(
@@ -75,7 +63,7 @@ class PullDownMenuActionsRow extends StatelessWidget
       child: ActionsRowSizeConfig(
         size: _size,
         child: Row(
-          children: MenuSeparator.wrapSideBySide(items),
+          children: PullDownMenuSeparator.wrapSideBySide(items),
         ),
       ),
     );
