@@ -4,6 +4,68 @@ part of 'route.dart';
 /// rendered from.
 const double _kMenuScreenPadding = 8;
 
+/// Calculates the menu's horizontal position using smooth interpolation
+/// based on the button's position relative to the screen center.
+///
+/// Instead of discrete left/center/right states, this provides a gradual
+/// transition as the button moves across the screen.
+///
+/// - When button is at exact center: menu is centered on button
+/// - When button is at left edge: menu's left edge aligns with button's left
+/// - When button is at right edge: menu's right edge aligns with button's right
+/// - In between: smooth interpolation between these states
+double _calculateSmoothX(
+  Size screenSize,
+  Rect buttonRect,
+  double menuWidth,
+  double menuOffset,
+) {
+  final screenWidth = screenSize.width;
+  final buttonCenterX = buttonRect.center.dx;
+
+  // Calculate how far the button center is from the screen center
+  // normalized to range [-1, 1] where:
+  // -1 = left edge, 0 = center, 1 = right edge
+  final normalizedPosition =
+      (buttonCenterX - screenWidth / 2) / (screenWidth / 2);
+
+  // Clamp to ensure we stay within bounds
+  final clampedPosition = normalizedPosition.clamp(-1.0, 1.0);
+
+  // Calculate the three reference x positions:
+  // 1. Left-aligned: menu starts at button's left edge
+  final leftAlignedX = buttonRect.left - menuOffset;
+
+  // 2. Center-aligned: menu is centered on button
+  final centerAlignedX = buttonRect.center.dx - menuWidth / 2;
+
+  // 3. Right-aligned: menu ends at button's right edge
+  final rightAlignedX = buttonRect.right - menuWidth + menuOffset;
+
+  // Interpolate between positions based on button's horizontal position
+  // Use a smooth curve for more natural feel
+  if (clampedPosition <= 0) {
+    // Button is in left half of screen: interpolate between left and center
+    // When clampedPosition = -1 (left edge): use leftAlignedX
+    // When clampedPosition = 0 (center): use centerAlignedX
+    final t = clampedPosition + 1; // Convert from [-1, 0] to [0, 1]
+    return _smoothLerp(leftAlignedX, centerAlignedX, t);
+  } else {
+    // Button is in right half of screen: interpolate between center and right
+    // When clampedPosition = 0 (center): use centerAlignedX
+    // When clampedPosition = 1 (right edge): use rightAlignedX
+    return _smoothLerp(centerAlignedX, rightAlignedX, clampedPosition);
+  }
+}
+
+/// Performs a smooth interpolation using an ease-in-out curve.
+double _smoothLerp(double a, double b, double t) {
+  // Apply ease-in-out curve for smoother transitions
+  // This creates a more natural feel compared to linear interpolation
+  final smoothT = t * t * (3 - 2 * t); // Smoothstep function
+  return a + (b - a) * smoothT;
+}
+
 /// Positioning and size of the menu on the screen.
 @immutable
 class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
@@ -51,15 +113,9 @@ class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
   Offset getPositionForChild(Size size, Size childSize) {
     final childWidth = childSize.width;
 
-    final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
-
-    final x = switch (horizontalPosition) {
-      _MenuHorizontalPosition.right =>
-        buttonRect.right - childWidth + menuOffset,
-      _MenuHorizontalPosition.left => buttonRect.left - menuOffset,
-      _MenuHorizontalPosition.center =>
-        buttonRect.left + buttonRect.width / 2 - childWidth / 2
-    };
+    // Calculate the menu's x position using smooth interpolation
+    // instead of discrete left/center/right states
+    final x = _calculateSmoothX(size, buttonRect, childWidth, menuOffset);
 
     final originCenter = buttonRect.center;
     final rect = Offset.zero & size;

@@ -151,6 +151,9 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
 
   /// Attempt to predict an animation alignment for [RoutePullDownMenu] using
   /// a button's position.
+  ///
+  /// Uses smooth interpolation for horizontal alignment based on the button's
+  /// relative position on screen.
   static Alignment animationAlignment(
     BuildContext context,
     Rect buttonRect,
@@ -162,66 +165,14 @@ class PullDownMenuRoute<VoidCallback> extends PopupRoute<VoidCallback> {
     final heightCenter = size.height / 2;
 
     final isInBottomHalf = buttonCenter.dy >= heightCenter;
+    final y = isInBottomHalf ? 1.0 : -1.0;
 
-    final horizontalPosition = _MenuHorizontalPosition.get(size, buttonRect);
+    // Calculate smooth horizontal alignment based on button position
+    // normalized to range [-1, 1] where:
+    // -1 = left edge, 0 = center, 1 = right edge
+    final normalizedX = (buttonCenter.dx - size.width / 2) / (size.width / 2);
+    final x = normalizedX.clamp(-1.0, 1.0);
 
-    return switch (horizontalPosition) {
-      _MenuHorizontalPosition.right when isInBottomHalf =>
-        Alignment.bottomRight,
-      _MenuHorizontalPosition.right => Alignment.topRight,
-      _MenuHorizontalPosition.left when isInBottomHalf => Alignment.bottomLeft,
-      _MenuHorizontalPosition.left => Alignment.topLeft,
-      _MenuHorizontalPosition.center when isInBottomHalf =>
-        Alignment.bottomCenter,
-      _MenuHorizontalPosition.center => Alignment.topCenter,
-    };
-  }
-}
-
-/// A predicted menu's horizontal position.
-///
-/// Is used by [PullDownMenuRoute.animationAlignment]
-enum _MenuHorizontalPosition {
-  /// The button's left side is located closer to the left side of the screen
-  /// than the button's right side to the right side of the screen.
-  left,
-
-  /// The button's right side is located closer to the right side of the screen
-  /// than the button's left side to the left side of the screen.
-  right,
-
-  /// Both horizontal button's sides are located in an allowed screen zone
-  /// around center.
-  center;
-
-  /// Returns a [_MenuHorizontalPosition] for provided screen [size] and a
-  /// [buttonRect].
-  static _MenuHorizontalPosition get(
-    Size size,
-    Rect buttonRect,
-  ) {
-    final leftPosition = buttonRect.left;
-    final rightPosition = buttonRect.right;
-
-    final width = size.width;
-    final widthCenter = width / 2;
-
-    // Allowed threshold of screen side (left / right) for the menu to be opened
-    // using "centered" alignment.
-    // Based on native comparison with iOS 16 Simulator.
-    const threshold = 0.2744;
-
-    final leftCenteredThreshold = widthCenter * (1 - threshold);
-    final rightCenteredThreshold = widthCenter * threshold + widthCenter;
-
-    if (buttonRect.center.dx == widthCenter ||
-        (leftPosition >= leftCenteredThreshold &&
-            rightPosition <= rightCenteredThreshold)) {
-      return _MenuHorizontalPosition.center;
-    } else if (leftPosition < width - rightPosition) {
-      return _MenuHorizontalPosition.left;
-    } else {
-      return _MenuHorizontalPosition.right;
-    }
+    return Alignment(x, y);
   }
 }
