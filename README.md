@@ -5,6 +5,9 @@
 [![Pub Likes](https://img.shields.io/pub/likes/pull_down_button)](https://pub.dev/packages/pull_down_button)
 [![Common Changelog](https://common-changelog.org/badge.svg)](https://common-changelog.org)
 
+> [!CAUTION]
+> This package is discontinued and will no longer receive any updates. Replacement is available in Flutter since stable version 3.44 - [`CupertinoMenuAnchor`](https://github.com/flutter/flutter/pull/182036)
+
 **pull_down_button** is an attempt to bring
 [Pop-Up](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pop-up-buttons) and
 [Pull-Down](https://developer.apple.com/design/human-interface-guidelines/components/menus-and-actions/pull-down-buttons)
